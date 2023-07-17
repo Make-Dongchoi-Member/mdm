@@ -19,7 +19,6 @@ services:
     volumes:
       - ./web:/usr/src/app
     tty: true
-    command: sh -c "/usr/src/app/init.sh"
   database:
     build: ./database
     image: database

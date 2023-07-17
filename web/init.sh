@@ -18,7 +18,7 @@ else
 	cd $SERVER_PATH
 	npm install
 	npm run build
-	npm run start
+	npm run start &
 
 	echo "DEV!!!"
 	cd $CLIENT_PATH
