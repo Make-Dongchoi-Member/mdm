@@ -1,55 +1,24 @@
-# compose_test
+# Make Dongchoi Member
+이 저장소는 42서울 과제인 ft_transcendence를 위한 저장소입니다.
 
-+ `docker-compose`로 서비스 실행
-
-+ 두 개의 컨테이너
-	+ server : `NestJs` + `svelteKit`
-	+ db : `postgreSQL`
-
-#### 실행
+### 실행
+기본적으로 development mode 로 `docker compose up` 실행 (평가 시 production을 기본으로 변경 예정).
+`Makefile` 에서 `NODE_ENV=development` 또는 `NODE_ENV=production` 으로 환경변수 설정.
 ``` bash
-docker-compose up -d
+make
 ```
-+ 실행 후 빌드하기 때문에 시간이 좀걸림
+아래는 다른 옵션들
+``` bash
+make dev    # development mode
+make prod   # production mode
+make down   # docker compose down
+```
++ 실행 후 빌드하기 때문에 시간이 약 1분 정도 걸림
 
 ### 접속
-```
-http://localhost:3000
-```
-+ `svelteKit` 기본 페이지
++ development mode: http://localhost:5173
++ production mode: http://localhost:3000
 
-### DB TEST
-+ DB test는 `Thunder Client`로 진행
-##### POST
-```
-http://localhost:3000/user/create
-```
-```JSON
-{
-  "userId" : 1003,
-  "userName" : "abc",
-  "email" : "abc@student.42seoul.kr"
-}
-```
-+ 유저생성 `POST`요청으로 HTTP Body에 유저 정보 넣어줘야됨 
-##### GET
-```
-http://localhost:3000/user/info?user_id=1003
-```
-+ 유저조회 `GET`요청으로 Query Parameter로 조회할 `user_id`를 넣어줘야됨
-##### DB조회
-```bash
-docker-compose exec db /bin/bash
-```
-+ 실행중인 db 컨테이너 접속
-
-```bash
-psql -U postgres -d mydatabase
-```
-+ postgres 사용자로 DB접속
-
-```SQL
-SELECT * FROM users;
-```
-+ `users` 테이블 조회
-
+### Docker Compose
++ web : `NestJs` + `svelteKit`
++ database : `postgreSQL`
