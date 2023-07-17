@@ -1,0 +1,9 @@
+FROM node
+
+ARG NODE_ENV
+
+ENV NODE_ENV=${NODE_ENV}
+
+COPY ./init.sh /usr/src/app/init.sh
+
+ENTRYPOINT ["/bin/bash", "/usr/src/app/init.sh"]
