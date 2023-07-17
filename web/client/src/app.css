@@ -1,0 +1,23 @@
+@import url('https://rsms.me/inter/inter.css');
+html { font-family: 'Inter', sans-serif; }
+@supports (font-variation-settings: normal) {
+html { font-family: 'Inter var', sans-serif; }
+}
+
+:root {    
+    --bg-color: #424242;
+    --text-color: #d2d2d2;
+    --border-color: #848484;
+    --point-color: #FF6231;
+  }
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter';
+    font-weight: 200;
+}
+
+
+
+

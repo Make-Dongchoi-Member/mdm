@@ -1,3 +1,13 @@
 {
-	"/": []
+	"/(sign)": [],
+	"/(app)": [],
+	"/": [],
+	"/(app)/chat": [],
+	"/(app)/chat/room": [],
+	"/(app)/game": [],
+	"/(sign)/join": [],
+	"/(app)/profile": [],
+	"/(app)/profile/social": [],
+	"/(sign)/signin": [],
+	"/(sign)/verify": []
 }

@@ -1,0 +1,342 @@
+<script lang="ts">
+    import Modal from './ChatRoomListModal.svelte';
+    let isModalOpen = false;
+
+    function openModal() {
+        isModalOpen = true;
+    }
+    function closeModal() {
+        isModalOpen = false;
+    }
+</script>
+
+
+<Modal {isModalOpen} {closeModal} />
+<div class="chatroom-box">
+    <div class="chat-title">
+        <div>
+            CHAT ROOM LIST
+        </div>
+        <div>
+            <button on:click={openModal}>+</button>
+        </div>
+    </div>
+    <div class="room-list">
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+            <div>
+                <div>
+                    CHAT ROOM NAME 01
+                </div>
+                <div>
+                    &#x1F512
+                </div>
+                <div>
+                    num
+                </div>
+            </div>
+    </div>
+</div>
+
+<style>
+    .chatroom-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* 스크롤바 설정 */ 
+    .room-list {
+        width: 770px;
+        height: 380px;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: flex-start;
+
+
+        margin-bottom: 20px;
+        /* border: 1px solid var(--border-color); */
+    }
+
+    .room-list::-webkit-scrollbar {
+        width: 6px;
+        height: 30px;
+    }
+
+    .room-list::-webkit-scrollbar-track {
+        background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
+    }
+
+    .room-list::-webkit-scrollbar-thumb {
+        background-color: #D9D9D9; /* 스크롤바 썸바 배경색 설정 */
+        border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
+    }
+
+    .room-list::-webkit-scrollbar-thumb:hover {
+        background-color: #555; /* 스크롤바 썸바 호버 배경색 설정 */
+    }
+    /* 스크롤바 설정 */ 
+
+
+    .chat-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        
+        width: 760px;
+        margin-top : 80px;
+        margin-bottom: 20px;
+    }
+    
+    .chat-title > :nth-child(1) {        
+        flex-grow: 10;
+        text-align: center;
+    }
+
+    .chat-title > :nth-child(2) > button {
+        font-size: 25px;
+        font-weight: 500;
+        flex-grow: 0;
+        text-align: right;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border: none;
+        outline: none;
+    }
+
+
+
+
+    .room-list > div {        
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+
+        height: 40px;
+        width: 370px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        outline: none;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        color: var(--text-color);         
+    } 
+
+    .room-list > div > :nth-child(2) {
+        display: flex;
+        padding-left: 5px;        
+    }
+
+    .room-list > div > :nth-child(3) {
+        flex-grow: 10;
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .room-list > div:hover {
+        background-color: var(--hover-color);
+    }
+
+
+</style>

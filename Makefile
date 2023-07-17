@@ -1,6 +1,5 @@
 dev:
 	export NODE_ENV=development
-	mkdir -p /Users/$(USER)/mdm/dev_client
 	docker-compose -f docker-compose.dev.yml up
 
 prod:
