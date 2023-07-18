@@ -8,11 +8,13 @@
     const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
     
     privateButton.addEventListener("click", (e: any) => {
-    if (isPrivate) {
-        e.target.style.backgroundColor = "var(--bg-color)";        
-    } else {
-        e.target.style.backgroundColor = "var(--hover-color)";  
-    }
+        if (isPrivate) {
+            e.target.style.backgroundColor = "var(--bg-color)";
+            e.target.style.border = "1px solid var(--border-color)";
+        } else {
+            e.target.style.backgroundColor = "var(--hover-color)";
+            e.target.style.border = "1px solid var(--point-color)";
+        }
         isPrivate = !isPrivate;
     });
 
@@ -21,9 +23,9 @@
     });
     
     privateButton.addEventListener("mouseout", (e: any) => {
-    if (!isPrivate) {
-        e.target.style.backgroundColor = "var(--bg-color)";
-    }
+        if (!isPrivate) {
+            e.target.style.backgroundColor = "var(--bg-color)";
+        }
     });           
         
     });
@@ -51,12 +53,16 @@
             <div class="password-option">
                 <input type="password" placeholder="PASSWORD IF YOU NEED">
             </div>
-        <div>
-            IT DOESN"T SHOW YOUR ROOM ON LIST
-        </div>
-        <div>
-            CHANGE
-        </div>
+            {#if isPrivate}
+                <div>
+                    IT DOESN'T SHOW YOUR ROOM ON LIST
+                </div>
+            {:else}
+                <div></div>
+            {/if}
+            <div>
+                CHANGE
+            </div>
         </div>
     </div>
     </div>
@@ -153,6 +159,7 @@
     font-weight: 200;
 
     margin-left: 20px;
+    flex-basis: 250px;
     }
 
     .room-option > :nth-child(3) {
