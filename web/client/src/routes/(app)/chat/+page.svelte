@@ -85,12 +85,12 @@
     }
 
     .room-list::-webkit-scrollbar-thumb {
-        background-color: #D9D9D9; /* 스크롤바 썸바 배경색 설정 */
+        background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
         border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
     }
 
     .room-list::-webkit-scrollbar-thumb:hover {
-        background-color: #555; /* 스크롤바 썸바 호버 배경색 설정 */
+        background-color: var(--text-color); /* 스크롤바 썸바 호버 배경색 설정 */
     }
 
     .chat-title {
