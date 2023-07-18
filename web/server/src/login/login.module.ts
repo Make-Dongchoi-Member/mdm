@@ -12,7 +12,7 @@ import { PendingUserService } from './objects/pending-user.service';
   imports: [
     HttpModule,
     MailerModule.forRootAsync({
-      useFactory: (config: ConfigService, handlebar: HandlebarsAdapter) => ({
+      useFactory: (config: ConfigService) => ({
         transport: {
           host: config.get('SMTP_HOST'),
           auth: {
@@ -21,11 +21,11 @@ import { PendingUserService } from './objects/pending-user.service';
           },
         },
         defaults: {
-          from: '"MDM"',
+          from: 'MDM <mdm@gmail.com>',
         },
         template: {
           dir: __dirname + '/templates',
-          adapter: handlebar,
+          adapter: new HandlebarsAdapter(),
           options: {
             strict: true,
           },

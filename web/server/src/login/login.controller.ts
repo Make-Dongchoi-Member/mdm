@@ -30,11 +30,12 @@ export class LoginController {
     if (!token) {
       // oauth42로 redirect
       url = await this.loginService.oAuth42AccessUrl();
+      console.log(url);
     } else {
       // 로그인 url
       // url = 로그인 url
     }
-    return url;
+    return { url };
   }
 
   /**
@@ -48,7 +49,8 @@ export class LoginController {
   @Get('oauth42')
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
-    const url = new ConfigService().get('APP_URL') + '/mailauth';
+    // const url = new ConfigService().get('APP_URL') + '/mailauth';
+    const url = new ConfigService().get('APP_URL');
     if (!code) {
       // error
       throw new BadRequestException();
@@ -58,7 +60,7 @@ export class LoginController {
       res.header('user_id', `${user.id}`);
       res.header('user_email', user.email);
     }
-    return url;
+    return { url };
   }
 
   /**

@@ -13,6 +13,7 @@ export class PendingUserService {
   save(user: PendingUser) {
     user.authCode = this.generateRandomString(6);
     user.validity = new Date(new Date().getTime() + 5 * 60000);
+    this.users.set(user.id, user);
   }
 
   verify(userId: number, emailCode: string) {
@@ -26,7 +27,7 @@ export class PendingUserService {
       // err) 인증시간이 지남
       throw new InternalServerErrorException('TimeOver');
     }
-    if (emailCode != findUser.authCode) {
+    if (emailCode !== findUser.authCode) {
       // err) 인증번호가 다름
       throw new UnauthorizedException('WorngCode');
     }

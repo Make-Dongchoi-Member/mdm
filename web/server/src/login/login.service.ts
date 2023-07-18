@@ -34,7 +34,9 @@ export class LoginService {
 
   async generatePendingUser(code: string) {
     const accessToken = await this.requestToken(code);
+    console.log(`access_token : ${accessToken}`);
     const newUser = await this.newPendingUser(accessToken);
+    console.log(`new_user\n\t id : ${newUser.id}\n\t email : ${newUser.email}`);
     this.pendingUsers.save(newUser);
     this.sendMail(newUser.id);
     return { id: newUser.id, email: newUser.email };
@@ -100,6 +102,9 @@ export class LoginService {
         context: {
           verificationCode: user.authCode,
         },
+      })
+      .then(() => {
+        console.log('sendMail');
       })
       .catch((error) => {
         // 메일 전송 실패
