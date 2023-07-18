@@ -74,5 +74,11 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "overrides": {
+    "@nestjs-modules/mailer": {
+      "@nestjs/common": "$@nestjs/common",
+      "@nestjs/core": "$@nestjs/core"
+    }
   }
 }
