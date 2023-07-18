@@ -2,11 +2,50 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { ModalStatesStore } from '../../../../store';
+    import { ModalStatesStore, myData } from '../../../../store';
 
-    let banPerson = 'administrator';
+    interface Message {
+        sender: string;
+        avatarSrc: string;
+        body: string;
+        isDM: boolean;
+        date: string;
+    }
+
+    enum Level {
+        "host",
+        "admin",
+        "member"
+    }
+
+    interface Profile {
+        id: string;
+        avatarSrc: string;
+        level: Level;
+    }
+
+    let messageHistory: Message[] = [
+        { sender: "seonhoki", body: "kick the dongchoi man~", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
+        { sender: "dongchoi", body: "kick the dongchoi man~ kick the dongchoi man, kick the dongchoi man, kick the dongchoi man, kick the dongchoi man", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
+        { sender: "seonhoki", body: "kick the dongchoi man~", isDM: true, avatarSrc: "/asset/hhwang.png", date: "10:00" },
+        { sender: "seonhoki", body: "kick the dongchoi man~", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
+    ];
+
+    const membersExample = [
+        { id: "hhwang", avatarSrc: "/asset/hhwang.png", level: Level.admin },
+        { id: "sooyokim", avatarSrc: "/asset/hhwang.png", level: Level.admin },
+        { id: "dongchoi", avatarSrc: "/asset/default_profile.png", level: Level.member },
+        { id: "seonhoki", avatarSrc: "/asset/hhwang.png", level: Level.host },
+    ];
+
+    let members = new Map<string, Profile>();
+
+    for (let i = 0; i < membersExample.length; i++) {
+        members.set(membersExample[i].id, membersExample[i]);
+    }
 
 </script>
+
 <InviteModal />
 <SettingModal />
 <RoomoutModal />
@@ -34,246 +73,27 @@
     <div class="chatroom-bottom-box">
         <div class="chat-main-box">
             <div class="chatting-box">
-                <div class="chatting">
-                    <div>
-                        dongchoi
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        don’t kick me from team plz..
-                    </div>
-                </div>
-                <div class="chat-room-info">
-                    <div>
-                        {banPerson}
-                    </div>
-                    <div>
-                        , kick him
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        jaewchoi
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        yes, master.
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-                <div class="chatting">
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        &nbsp;:&nbsp;
-                    </div>
-                    <div>
-                        testchat..
-                    </div>
-                </div>
-
+                {#each messageHistory as message}
+                    <div class={$myData.id === message.sender ? "chatting my-message" : "chatting"}>
+                        <div>
+                            <img src="{message.avatarSrc}" alt="프로필 이지미" class="chatting-box-avatar">
+                        </div>
+                        <div>
+                            <div>
+                                <div>
+                                    {message.sender}
+                                </div>
+                                <div>
+                                    10:00
+                                </div>
+                            </div>
+                            <div>
+                                {message.body}
+                            </div>
+                        </div>
+                    </div>
+                {/each}
+                
             </div>
             <div class="chat-send-box">
                 <div>
@@ -286,61 +106,41 @@
         </div>
         <div class="chatroom-people-list-box">
             <div class="chatroom-people-list">
-                <div class="chatroom-people">
+                <div class="chatroom-my-profile">
                     <div>
-                        <img src="/images/basic2.png" alt="버튼 이미지" class="profile-photo">
+                        <img src="{$myData.avatarSrc}" alt="프로필 이미지" class="profile-photo">
                     </div>
                     <div>
-                        hhwang
+                        {$myData.id}
                     </div>
-                    <div>
-                        &#128081;
-                    </div>
+                    {#if members.get($myData.id)?.level == Level.host}
+                        <div>&#128081;</div>
+                    {:else if members.get($myData.id)?.level == Level.admin}
+                        <div>&#128736;</div>
+                    {:else if members.get($myData.id)?.level == Level.member}
+                        <div></div>
+                    {/if}
                 </div>
-                <div class="chatting-people">
-                    <div>
-                        <img src="/images/basic2.png" alt="버튼 이미지" class="profile-photo">
-                    </div>
-                    <div>
-                        dongchoi
-                    </div>
-                    <div>
-                        
-                    </div>
-                </div>
-                <div class="chatting-people">
-                    <div>
-                        <img src="/images/basic2.png" alt="버튼 이미지" class="profile-photo">
-                    </div>
-                    <div>
-                        seonhoki
-                    </div>
-                    <div>
-                        
-                    </div>
-                </div>
-                <div class="chatting-people">
-                    <div>
-                        <img src="/images/basic2.png" alt="버튼 이미지" class="profile-photo">
-                    </div>
-                    <div>
-                        jaewchoi
-                    </div>
-                    <div>
-                        
-                    </div>
-                </div>
-                <div class="chatting-people">
-                    <div>
-                        <img src="/images/basic2.png" alt="버튼 이미지" class="profile-photo">
-                    </div>
-                    <div>
-                        sooyokim
-                    </div>
-                    <div>
-                        
-                    </div>
-                </div>
+
+                {#each Array.from(members) as [key, value]}
+                    {#if key !== $myData.id}
+                        <div class="chatroom-people">
+                            <div>
+                                <img src="{value.avatarSrc}" alt="프로필 이미지" class="profile-photo">
+                            </div>
+                            <div>
+                                {key}
+                            </div>
+                            {#if value.level == Level.host}
+                                <div>&#128081;</div>
+                            {:else if value.level == Level.admin}
+                                <div>&#128736;</div>
+                            {:else if value.level == Level.member}
+                                <div></div>
+                            {/if}
+                        </div>
+                    {/if}
+                {/each}
             </div>
             <div class="chat-menu-list">
                 <div>
@@ -448,11 +248,49 @@
         border: 1px solid var(--border-color);
     }
 
+    
     .chatting {
         display: flex;
         flex-direction: row;
-        padding-left: 20px;
-        padding-top: 7px;
+        text-align: left;
+        word-break: break-all;
+        
+        margin: 10px;
+    }
+    
+    .chatting > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .chatting > div:nth-child(2) > div:nth-child(1) {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .chatting > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) {
+        font-size: 18px;
+        font-weight: 400;
+        margin-right: 10px;
+    }
+
+    .chatting > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) {
+        font-size: 12px;
+        margin-right: 10px;
+    }
+    
+    .chatting-box-avatar {
+        border-radius: 50px;
+        width: 40px;
+        height: 40px;
+
+        margin-right: 10px;
+    }
+
+    .my-message {
+        color: var(--point-color);
     }
 
     .chat-room-info {
@@ -507,6 +345,7 @@
         border: 1px solid var(--border-color);
     }
 
+    
     .chatroom-people-list {
         height : 330px;        
     }
@@ -520,6 +359,10 @@
         justify-content: space-between;
         align-items: center;
         border: 1px solid var(--border-color);
+    }
+
+    .chatroom-my-profile {
+        margin-bottom: 20px;
     }
 
     .chatroom-people-list > div:hover {

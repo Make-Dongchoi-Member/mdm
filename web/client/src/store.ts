@@ -14,6 +14,16 @@ interface ModalStates {
 	isRoomCreateModal: boolean;
 }
 
+interface UserData {
+	id: string;
+	avatarSrc: string;
+}
+
+const myData: Writable<UserData> = writable({
+	id: "seonhoki",
+	avatarSrc: "/asset/hhwang.png",
+})
+
 const gameSettingStore: Writable<GameSetting> = writable({
 	gameMode: "basic",
 	barColor: "#FF6231",
@@ -30,5 +40,6 @@ const ModalStatesStore: Writable<ModalStates> = writable({
 
 export {
 	gameSettingStore,
-	ModalStatesStore
+	ModalStatesStore,
+	myData
 }
