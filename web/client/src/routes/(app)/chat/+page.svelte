@@ -1,5 +1,17 @@
 <script lang="ts">
     import Modal from './ChatRoomListModal.svelte';
+    
+    interface Room {
+        name: string;
+        isPrivate: boolean;
+        memberCount: number;
+    }
+
+    const roomList: Room[] = [
+		{name:'room name', isPrivate: true, memberCount: 4},
+        {name:'room name2', isPrivate: false, memberCount: 999},
+	];
+    
     let isModalOpen = false;
 
     function openModal() {
@@ -22,214 +34,22 @@
         </div>
     </div>
     <div class="room-list">
+        {#each roomList as room}
             <div>
                 <div>
-                    CHAT ROOM NAME 01
+                    {room.name}
                 </div>
+
+                {#if room.isPrivate}
+                    <div>&#x1F512</div>
+                {:else}
+                    <div></div>
+                {/if}
                 <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
+                    {room.memberCount}
                 </div>
             </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
+        {/each}
     </div>
 </div>
 
