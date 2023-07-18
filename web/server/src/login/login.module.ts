@@ -6,6 +6,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { JwtModule } from '@nestjs/jwt';
+import { PendingUserService } from './objects/pending-user.service';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
           },
         },
       }),
-      inject: [ConfigService, HandlebarsAdapter],
+      inject: [ConfigService],
     }),
     JwtModule.registerAsync({
       global: true,
@@ -42,6 +43,6 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [LoginController],
-  providers: [LoginService],
+  providers: [LoginService, PendingUserService],
 })
 export class LoginModule {}

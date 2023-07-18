@@ -1,10 +1,12 @@
 import {
+  Injectable,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PendingUser } from './pending-user.object';
 
+@Injectable()
 export class PendingUserService {
   private users = new Map<number, PendingUser>();
 
