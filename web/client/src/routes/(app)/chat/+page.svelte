@@ -2,14 +2,15 @@
     import Modal from './ChatRoomListModal.svelte';
     
     interface Room {
+        id: string;
         name: string;
         isPrivate: boolean;
         memberCount: number;
     }
 
     const roomList: Room[] = [
-		{name:'room name', isPrivate: true, memberCount: 4},
-        {name:'room name2', isPrivate: false, memberCount: 999},
+		{id: "123", name:'room name', isPrivate: true, memberCount: 4},
+        {id: "456", name:'room name2', isPrivate: false, memberCount: 999},
 	];
     
     let isModalOpen = false;
@@ -22,8 +23,8 @@
     }
 </script>
 
-
 <Modal {isModalOpen} {closeModal} />
+
 <div class="chatroom-box">
     <div class="chat-title">
         <div>
@@ -60,7 +61,6 @@
         align-items: center;
     }
 
-    /* 스크롤바 설정 */ 
     .room-list {
         width: 770px;
         height: 380px;
@@ -72,9 +72,7 @@
         flex-wrap: wrap;
         align-content: flex-start;
 
-
         margin-bottom: 20px;
-        /* border: 1px solid var(--border-color); */
     }
 
     .room-list::-webkit-scrollbar {
@@ -94,8 +92,6 @@
     .room-list::-webkit-scrollbar-thumb:hover {
         background-color: #555; /* 스크롤바 썸바 호버 배경색 설정 */
     }
-    /* 스크롤바 설정 */ 
-
 
     .chat-title {
         display: flex;
@@ -123,9 +119,6 @@
         border: none;
         outline: none;
     }
-
-
-
 
     .room-list > div {        
         display: flex;
@@ -157,6 +150,5 @@
     .room-list > div:hover {
         background-color: var(--hover-color);
     }
-
 
 </style>
