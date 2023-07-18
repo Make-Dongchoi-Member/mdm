@@ -9,9 +9,11 @@
         
         privateButton.addEventListener("click", (e: any) => {
             if (isPrivate) {
-                e.target.style.backgroundColor = "var(--bg-color)";        
+                e.target.style.backgroundColor = "var(--bg-color)";
+                e.target.style.border = "1px solid var(--border-color)";
             } else {
-                e.target.style.backgroundColor = "var(--hover-color)";  
+                e.target.style.backgroundColor = "var(--hover-color)";
+                e.target.style.border = "1px solid var(--point-color)";
             }
             isPrivate = !isPrivate;
         });

@@ -69,9 +69,9 @@
         border: 1px solid var(--border-color);
     }
 
-    /* :global(button:hover) {
+    :global(button:hover) {
         background-color: var(--hover-color);
-    } */
+    }
 
     .container {
         width: 800px;
