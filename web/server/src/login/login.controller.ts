@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { Request, Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('login')
 export class LoginController {
@@ -45,12 +47,18 @@ export class LoginController {
    */
   @Get('oauth42')
   @Redirect()
-  async oauth42(@Query('code') code: string) {
+  async oauth42(@Query('code') code: string, @Res() res: Response) {
+    const url = new ConfigService().get('APP_URL') + '/mailauth';
     if (!code) {
       // error
+      throw new BadRequestException();
     } else {
       // email 인증 url로 redirect
+      const user = await this.loginService.generatePendingUser(code);
+      res.header('user_id', `${user.id}`);
+      res.header('user_email', user.email);
     }
+    return url;
   }
 
   /**
