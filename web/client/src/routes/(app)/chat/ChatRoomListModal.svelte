@@ -8,27 +8,26 @@
     let isPrivate = false;  
 
     onMount(() => {
-    const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
-    
-    privateButton.addEventListener("click", (e: any) => {
-    if (isPrivate) {
-        e.target.style.backgroundColor = "var(--bg-color)";        
-    } else {
-        e.target.style.backgroundColor = "var(--hover-color)";  
-    }
-        isPrivate = !isPrivate;
-    });
-
-    privateButton.addEventListener("mouseover", (e: any) => {      
-        e.target.style.backgroundColor = "var(--hover-color)";        
-    });
-    
-    privateButton.addEventListener("mouseout", (e: any) => {
-    if (!isPrivate) {
-        e.target.style.backgroundColor = "var(--bg-color)";
-    }
-    });           
+        const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
         
+        privateButton.addEventListener("click", (e: any) => {
+            if (isPrivate) {
+                e.target.style.backgroundColor = "var(--bg-color)";        
+            } else {
+                e.target.style.backgroundColor = "var(--hover-color)";  
+            }
+            isPrivate = !isPrivate;
+        });
+
+        privateButton.addEventListener("mouseover", (e: any) => {      
+            e.target.style.backgroundColor = "var(--hover-color)";        
+        });
+        
+        privateButton.addEventListener("mouseout", (e: any) => {
+            if (!isPrivate) {
+                e.target.style.backgroundColor = "var(--bg-color)";
+            }
+        });
     });
 </script>
   
