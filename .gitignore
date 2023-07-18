@@ -1,9 +1,9 @@
 # compiled output
-dist
-node_modules
+dist/
+node_modules/
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -34,12 +34,13 @@ coverage
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# server client
+server/client/
 
-.DS_Store
-node_modules
-build
-.svelte-kit
-package
+# svelte
+build/
+.svelte-kit/
+package/
 .env
 .env.*
 !.env.example
