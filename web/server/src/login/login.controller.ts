@@ -72,5 +72,10 @@ export class LoginController {
     @Query('user_id') userId: string,
     @Body('email_code') code: string,
     @Res() res: Response,
-  ) {}
+  ) {
+    const accessToken = await this.loginService.verifyEmailCode(+userId, code);
+    res.cookie('access_token', accessToken);
+
+    return res.send();
+  }
 }

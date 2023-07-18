@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { PendingUser } from './objects/pending-user.object';
 import { PendingUserService } from './objects/pending-user.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class LoginService {
@@ -13,6 +14,7 @@ export class LoginService {
     private readonly config: ConfigService,
     private readonly pendingUsers: PendingUserService,
     private readonly mailerService: MailerService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async oAuth42AccessUrl() {
@@ -38,6 +40,22 @@ export class LoginService {
     return { id: newUser.id, email: newUser.email };
   }
 
+  async verifyEmailCode(userId: number, emailCode: string) {
+    const user = this.pendingUsers.verify(userId, emailCode);
+    const access_token = await this.generateJwtToken(user);
+    // DB 저장
+    return access_token;
+  }
+
+  private async generateJwtToken(user: PendingUser) {
+    const payload = {
+      sub: user.id,
+      username: user.login,
+      useremail: user.email,
+    };
+    return this.jwtService.signAsync(payload);
+  }
+
   private async requestToken(code: string): Promise<string> {
     const baseUrl = this.config.get('42OAUTH_BASE_URL');
     const oauthTokenUrl = baseUrl + this.config.get('OAUTH_TOKEN_PATH');
@@ -51,7 +69,7 @@ export class LoginService {
     const response = await firstValueFrom(
       this.httpService.post(oauthTokenUrl, data),
     );
-    return response.data.access_toekn;
+    return response.data.access_token;
   }
 
   private async newPendingUser(token: string): Promise<PendingUser> {
