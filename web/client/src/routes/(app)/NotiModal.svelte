@@ -1,17 +1,14 @@
 <script lang="ts">
-    export let isNotiModalOpen = false;
-    export let closeNotiModal = () => {
-
-    }; 
+    import { ModalStatesStore } from "../../store";
 </script>
 
-    <div class="modal-container {isNotiModalOpen ? 'flex-container' : 'hidden-container'}">
+    <div class="modal-container {$ModalStatesStore.isNotiModal ? 'flex-container' : 'hidden-container'}">
         <div class="modal-title">
             <div>
                 NOTIFICATION
             </div>
             <div class="alarm">
-                <button on:click={closeNotiModal} class="alarm-button">                    
+                <button on:click={() => { $ModalStatesStore.isNotiModal = false; }} class="alarm-button">
                     &#x1F4E2;
                 </button>
             </div>

@@ -1,10 +1,7 @@
 <script lang="ts">
-    import {onMount} from 'svelte'
+    import { onMount } from 'svelte';
+    import { ModalStatesStore } from '../../../store';
 
-    export let isModalOpen = false;
-    export let closeModal = () => {
-
-    };
     let isPrivate = false;  
 
     onMount(() => {
@@ -31,13 +28,13 @@
     });
 </script>
   
-    <div class="modal-container" style="{isModalOpen ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="{$ModalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
     <div class="modal-title">
         <div>
         NEW CHAT ROOM
         </div>
         <div class="close-button">
-            <button on:click={closeModal}>&#215;</button>
+            <button on:click={() => { $ModalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">

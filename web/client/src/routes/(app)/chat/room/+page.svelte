@@ -2,35 +2,14 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
+    import { ModalStatesStore } from '../../../../store';
 
-    let banPerson = 'administrator';    
-    let isInviteModal = false;
-    let isSettingModal = false;
-    let isRoomoutModal = false;
-
-    function openInviteModal() {
-        isInviteModal = true;
-    }
-    function closeInviteModal() {
-        isInviteModal = false;
-    }
-    function openSettingModal() {
-        isSettingModal = true;
-    }
-    function closeSettingModal() {
-        isSettingModal = false;
-    }
-    function openRoomoutModal() {
-        isRoomoutModal = true;
-    }
-    function closeRoomoutModal() {
-        isRoomoutModal = false;
-    }    
+    let banPerson = 'administrator';
 
 </script>
-<InviteModal {isInviteModal} {closeInviteModal} />
-<SettingModal {isSettingModal} {closeSettingModal} />
-<RoomoutModal {isRoomoutModal} {closeRoomoutModal} />
+<InviteModal />
+<SettingModal />
+<RoomoutModal />
 
 <div class="chat-box">
     <div class="chatroom-top-box">
@@ -42,14 +21,14 @@
                 CHAT ROOM NAME
             </div>
             <div class="chat-setting-button">
-                <button on:click={openSettingModal}>&#9881;</button>
+                <button on:click={() => { $ModalStatesStore.isSettingModal = true; }}>&#9881;</button>
             </div>
             <div class="invite-button">
-               <button on:click={openInviteModal}>+</button>
+               <button on:click={() => { $ModalStatesStore.isInviteModal = true; }}>+</button>
             </div>
         </div>            
         <div class="out-of-room-button">
-            <button on:click={openRoomoutModal}>&#128682;</button>
+            <button on:click={() => { $ModalStatesStore.isRoomoutModal = true; }}>&#128682;</button>
         </div>
     </div>
     <div class="chatroom-bottom-box">

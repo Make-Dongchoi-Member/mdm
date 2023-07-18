@@ -1,5 +1,6 @@
 <script lang="ts">
     import Modal from './ChatRoomListModal.svelte';
+    import { ModalStatesStore } from '../../../store';
     
     interface Room {
         id: string;
@@ -12,18 +13,14 @@
 		{id: "123", name:'room name', isPrivate: true, memberCount: 4},
         {id: "456", name:'room name2', isPrivate: false, memberCount: 999},
 	];
-    
-    let isModalOpen = false;
 
-    function openModal() {
-        isModalOpen = true;
+    const roomCreateButton = () => {
+        $ModalStatesStore.isRoomCreateModal = true;
     }
-    function closeModal() {
-        isModalOpen = false;
-    }
+
 </script>
 
-<Modal {isModalOpen} {closeModal} />
+<Modal />
 
 <div class="chatroom-box">
     <div class="chat-title">
@@ -31,7 +28,7 @@
             CHAT ROOM LIST
         </div>
         <div>
-            <button on:click={openModal}>+</button>
+            <button on:click={roomCreateButton}>+</button>
         </div>
     </div>
     <div class="room-list">
