@@ -52,12 +52,16 @@
             <div class="password-option">
                 <input type="password" placeholder="PASSWORD IF YOU NEED">
             </div>
-        <div>
-            IT DOESN"T SHOW YOUR ROOM ON LIST
-        </div>
-        <div>
-            MAKE
-        </div>
+            {#if isPrivate}
+                <div>
+                    IT DOESN'T SHOW YOUR ROOM ON LIST
+                </div>
+            {:else}
+                <div></div>
+            {/if}
+            <div>
+                MAKE
+            </div>
         </div>
     </div>
     </div>
@@ -158,6 +162,7 @@
         font-weight: 200;
 
         margin-left: 20px;
+        flex-basis: 250px;
     }
 
     .room-option > :nth-child(3) {
