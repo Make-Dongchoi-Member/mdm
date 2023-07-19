@@ -11,7 +11,7 @@
                 NOTIFICATION
             </div>
             <div class="alarm">
-                <button on:click={closeNotiModal} class="alarm-button">                    
+                <button on:click={closeNotiModal} class="alarm-button">
                     &#x1F4E2;
                 </button>
             </div>
@@ -217,9 +217,6 @@
         margin-top: 5px;
     }
 
-    .flex-container {
-    }
-
     .hidden-container {
         display: none;
     }
@@ -239,10 +236,9 @@
     }
 
     .alarm-button {
-        border: none;        
-        color: var(--point-color);
+        border: none;
+        background-color: var(--bg-color);
     }
-
 
     .modal-content {
         display: flex;
