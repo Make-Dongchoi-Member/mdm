@@ -20,7 +20,7 @@ interface UserData {
 }
 
 const myData: Writable<UserData> = writable({
-	id: "seonhoki",
+	id: "dongchoi",
 	avatarSrc: "/asset/hhwang.png",
 })
 
