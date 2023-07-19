@@ -18,10 +18,6 @@
         $ModalStatesStore.isRoomCreateModal = true;
     }
 
-    const joinRoom = (id: string) => {
-        
-    }
-
 </script>
 
 <Modal />
@@ -125,7 +121,7 @@
         text-decoration: none;
     }
 
-    .room-list > a {        
+    .room-list > a {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
