@@ -45,6 +45,7 @@
         --border-color: #848484;
         --point-color: #FF6231;
         --hover-color: rgba(255, 98, 49, 0.4);
+        --intra-color: #00BABC;
     }
 
     :global(body) {
@@ -76,9 +77,9 @@
         border: 1px solid var(--border-color);
     }
 
-    /* :global(button:hover) {
+    :global(button:hover) {
         background-color: var(--hover-color);
-    } */
+    }
 
     .container {
         width: 800px;
