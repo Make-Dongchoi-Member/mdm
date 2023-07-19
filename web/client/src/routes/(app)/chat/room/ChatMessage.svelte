@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
 	import { myData } from '../../../../store';
 
 	interface Message {
@@ -15,6 +16,42 @@
         { sender: "seonhoki", body: "kick the dongchoi man~", isDM: true, avatarSrc: "/asset/hhwang.png", date: "10:00" },
         { sender: "seonhoki", body: "kick the dongchoi man~", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
     ];
+
+    let inputValue: string = "";
+
+    onMount(() => {
+        document.body.addEventListener("keypress", enterKeyPressEvent);
+    });
+
+    const enterKeyPressEvent = (e: any) => {
+        if (e.code === "Enter") {
+            sendButtonEvent();
+        }
+    }
+
+    const sendButtonEvent = () => {
+        if (inputValue === "") {
+            return ;
+        }
+        
+        const newMessage: Message = {
+            sender: $myData.id,
+            body: inputValue,
+            isDM: false,
+            avatarSrc: $myData.avatarSrc,
+            date: "10:00"
+        };
+        messageHistory = [...messageHistory, newMessage];
+        inputValue = "";
+        
+        setTimeout(() => {
+            const chattingBox =  document.querySelector(".chatting-box") as HTMLDivElement;
+            chattingBox.scrollTop = chattingBox.scrollHeight;
+            
+            const inputTag =  document.querySelector("#chat-input") as HTMLInputElement;
+            inputTag.focus();
+        }, 1);
+    }
 
 </script>
 
@@ -44,11 +81,11 @@
 	</div>
 	<div class="chat-send-box">
 		<div>
-			<input type="text" placeholder="chat here">
+			<input bind:value={inputValue} id="chat-input" type="text" placeholder="chat here">
 		</div>
-		<div class="send-button">
+		<button on:click={sendButtonEvent} class="send-button">
 			&#9655;
-		</div>
+        </button>
 	</div>
 </div>
 
