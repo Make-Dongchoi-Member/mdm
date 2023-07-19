@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	const history = [
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'seonhoki'},

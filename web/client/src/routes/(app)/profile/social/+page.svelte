@@ -1,4 +1,27 @@
-<script></script>
+<script lang="ts">
+	interface Profile {
+		id: string;
+		avatarSrc: string;
+	}
+
+	let members = [
+		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },
+		{ id: "seonhoki", avatarSrc: "/asset/default_profile.png" },
+		{ id: "jaewchoi", avatarSrc: "/asset/hhwang.png" },
+		{ id: "sooyokim", avatarSrc: "/asset/hhwang.png" },
+		{ id: "jinhokim", avatarSrc: "/asset/hhwang.png" },
+		{ id: "chanhyle", avatarSrc: "/asset/hhwang.png" },
+		{ id: "gyyu", avatarSrc: "/asset/hhwang.png" },
+		{ id: "dongchoi2", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi3", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi4", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi5", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi6", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi7", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi8", avatarSrc: "/asset/default_profile.png" },
+		{ id: "dongchoi9", avatarSrc: "/asset/default_profile.png" },
+	]
+</script>
 
 <div class="info_box">
 		<div class="profile_image_circle">
@@ -20,150 +43,14 @@
 			</nav>
 		</div>
 		<div class="data">
+			{#each members as item}
 			<div>
+				<img src={item.avatarSrc} alt="profile_image">
 				<div>
-					test
-				</div>
-				<div>
-					hehe
+					{item.id}
 				</div>
 			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
-			<div>
-				<div>
-					test
-				</div>
-				<div>
-					hehe
-				</div>
-			</div>
+			{/each}
 		</div>
 	</div>
 
@@ -171,28 +58,28 @@
 	/* scroll bar */
 
 	.data {
-        height: 300px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
+		height: 300px;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 
-    .data::-webkit-scrollbar {
-        width: 6px;
-        height: 30px;
-    }
+	.data::-webkit-scrollbar {
+		width: 6px;
+		height: 30px;
+	}
 
-    .data::-webkit-scrollbar-track {
-        background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
-    }
+	.data::-webkit-scrollbar-track {
+		background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
+	}
 
-    .data::-webkit-scrollbar-thumb {
-        background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
-        border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
-    }
+	.data::-webkit-scrollbar-thumb {
+		background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
+		border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
+	}
 
-    .data::-webkit-scrollbar-thumb:hover {
-        background-color: var(--text-color) /* 스크롤바 썸바 호버 배경색 설정 */
-    }
+	.data::-webkit-scrollbar-thumb:hover {
+		background-color: var(--text-color) /* 스크롤바 썸바 호버 배경색 설정 */
+	}
 
 	/* scroll bar */
 
@@ -208,31 +95,36 @@
 	}
 
 	.data > div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
 
-        height: 45px;
-        width: 370px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        outline: none;
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-color);
-        color: var(--text-color);
-    }
+		height: 60px;
+		width: 370px;
+		margin-right: 10px;
+		margin-bottom: 10px;
+		outline: none;
+		border: 1px solid var(--border-color);
+		background-color: var(--bg-color);
+		color: var(--text-color);
+	}
+
+	.data > div > :nth-child(1) {
+		display: flex;
+
+		border-radius: 70%;
+		width: 40px;
+		height: 40px;
+		margin-left: 20px;
+		margin-right: 30px;
+	}
 
 	.data > div > :nth-child(2) {
-        display: flex;
-        padding-left: 5px;
-    }
-
-    .data > div > :nth-child(3) {
-        flex-grow: 10;
-        text-align: right;
-        padding-right: 10px;
-    }
+		flex-grow: 10;
+		padding-right: 10px;
+		font-size: 20px
+	}
 
 	.info_box {
 		border: 1px solid var(--border-color);
