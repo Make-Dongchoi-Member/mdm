@@ -18,6 +18,10 @@
         $ModalStatesStore.isRoomCreateModal = true;
     }
 
+    const joinRoom = (id: string) => {
+        
+    }
+
 </script>
 
 <Modal />
@@ -33,7 +37,7 @@
     </div>
     <div class="room-list">
         {#each roomList as room}
-            <div>
+            <a href="/chat/room?id={room.id}">
                 <div>
                     {room.name}
                 </div>
@@ -46,7 +50,7 @@
                 <div>
                     {room.memberCount}
                 </div>
-            </div>
+            </a>
         {/each}
     </div>
 </div>
@@ -117,7 +121,11 @@
         outline: none;
     }
 
-    .room-list > div {        
+    a {
+        text-decoration: none;
+    }
+
+    .room-list > a {        
         display: flex;
         flex-direction: row;
         justify-content: space-around;
@@ -133,18 +141,18 @@
         color: var(--text-color);         
     } 
 
-    .room-list > div > :nth-child(2) {
+    .room-list > a > :nth-child(2) {
         display: flex;
         padding-left: 5px;        
     }
 
-    .room-list > div > :nth-child(3) {
+    .room-list > a > :nth-child(3) {
         flex-grow: 10;
         text-align: right;
         padding-right: 10px;
     }
 
-    .room-list > div:hover {
+    .room-list > a:hover {
         background-color: var(--hover-color);
     }
 
