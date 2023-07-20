@@ -14,7 +14,7 @@
         {id: "456", name:'room name2', isPrivate: false, memberCount: 999},
 	];
 
-    const roomCreateButton = () => {
+    const roomCreateModalButton = () => {
         $ModalStatesStore.isRoomCreateModal = true;
     }
 
@@ -28,7 +28,7 @@
             CHAT ROOM LIST
         </div>
         <div>
-            <button on:click={roomCreateButton}>+</button>
+            <button on:click={roomCreateModalButton}>+</button>
         </div>
     </div>
     <div class="room-list">
