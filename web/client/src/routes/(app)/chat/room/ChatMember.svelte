@@ -26,7 +26,7 @@
         members.set(membersExample[i].id, membersExample[i]);
     }
 
-	const myLevel = members.get($myData.id)?.level;
+	const myLevel = (members.get($myData.id) as Profile).level;
 	
 </script>
 
