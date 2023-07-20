@@ -1,6 +1,6 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
-    import { ModalStatesStore } from '../../store';
+    import { modalStatesStore } from '../../store';
 </script>
 
 <div class="container">
@@ -14,7 +14,7 @@
     </div>
 </div>
 <div class="alarm">
-    <button on:click={() => { $ModalStatesStore.isNotiModal = true; }}>
+    <button on:click={() => { $modalStatesStore.isNotiModal = true; }}>
         &#x1F4E2;
     </button>
 </div>

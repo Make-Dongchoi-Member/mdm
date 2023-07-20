@@ -1,43 +1,58 @@
 <script lang="ts">
-    import {onMount} from 'svelte'
-    import { ModalStatesStore } from '../../../../store';
+    import { onMount } from 'svelte'
+    import { modalStatesStore } from '../../../../store';
 
     let isPrivate = false;  
 
     onMount(() => {
-    const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
-    
-    privateButton.addEventListener("click", (e: any) => {
-        if (isPrivate) {
-            e.target.style.backgroundColor = "var(--bg-color)";
-            e.target.style.border = "1px solid var(--border-color)";
-        } else {
-            e.target.style.backgroundColor = "var(--hover-color)";
-            e.target.style.border = "1px solid var(--point-color)";
-        }
-        isPrivate = !isPrivate;
+        const privateButton = document.querySelector(".private-button") as HTMLDivElement;
+        
+        /*
+            @TODO
+            방 설정 정보 API 요청
+            방 설정 값 input 채워넣기
+        */
+        
+        privateButton.addEventListener("click", (e: any) => {
+            if (isPrivate) {
+                e.target.style.backgroundColor = "var(--bg-color)";
+                e.target.style.border = "1px solid var(--border-color)";
+            } else {
+                e.target.style.backgroundColor = "var(--hover-color)";
+                e.target.style.border = "1px solid var(--point-color)";
+            }
+            isPrivate = !isPrivate;
+        });
+
+        privateButton.addEventListener("mouseover", (e: any) => {      
+            e.target.style.backgroundColor = "var(--hover-color)";        
+        });
+        
+        privateButton.addEventListener("mouseout", (e: any) => {
+            if (!isPrivate) {
+                e.target.style.backgroundColor = "var(--bg-color)";
+            }
+        });
     });
 
-    privateButton.addEventListener("mouseover", (e: any) => {      
-        e.target.style.backgroundColor = "var(--hover-color)";        
-    });
-    
-    privateButton.addEventListener("mouseout", (e: any) => {
-        if (!isPrivate) {
-            e.target.style.backgroundColor = "var(--bg-color)";
-        }
-    });           
-        
-    });
+    const changeButtonEvent = () => {
+        /*
+            @TODO
+            방 설정을 위해 필요한 입력 체크
+            방 설정 변경 API 요청
+        */
+        $modalStatesStore.isSettingModal = false;
+    }
+
 </script>
 
-    <div class="modal-container" style="{$ModalStatesStore.isSettingModal ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="{$modalStatesStore.isSettingModal ? 'display: block;' : 'display: none;'}">
     <div class="modal-title">
         <div>
-        YOUR CHAT ROOM
+            YOUR CHAT ROOM
         </div>
         <div class="close-button">
-            <button on:click={() => { $ModalStatesStore.isSettingModal = false; }}>&#215;</button>
+            <button on:click={() => { $modalStatesStore.isSettingModal = false; }}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">
@@ -60,9 +75,9 @@
             {:else}
                 <div></div>
             {/if}
-            <div>
+            <button on:click={changeButtonEvent}>
                 CHANGE
-            </div>
+            </button>
         </div>
     </div>
     </div>

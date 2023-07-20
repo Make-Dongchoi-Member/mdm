@@ -1,15 +1,6 @@
 <script lang="ts">
-	enum Level {
-        "host",
-        "admin",
-        "member"
-    }
-
-	interface Profile {
-        id: string;
-        avatarSrc: string;
-        level: Level;
-    }
+	import type { Profile } from '../../../../interfaces';
+	import { Level } from '../../../../enums';
 	
 	export let key: string;
 	export let value: Profile;
@@ -22,7 +13,31 @@
 	}
 
 	const profileClickEvent = () => {
-		console.log("ccc");
+		/*
+			@TODO
+			프로필 모달을 띄워줌
+		*/
+	}
+
+	const adminClickEvent = () => {
+		/*
+			@TODO
+			관리자 권한 SOCKET 요청
+		*/
+	}
+
+	const muteClickEvent = () => {
+		/*
+			@TODO
+			채팅금지 SOCKET 요청
+		*/
+	}
+
+	const kickClickEvent = () => {
+		/*
+			@TODO
+			강퇴 SOCKET 요청
+		*/
 	}
 
 </script>
@@ -47,11 +62,11 @@
 		<div class="menu-list">
 			<button on:click={profileClickEvent}>PROFILE</button>
 			{#if myLevel === Level.host}
-				<button on:click={profileClickEvent}>ADMIN</button>
+				<button on:click={adminClickEvent}>ADMIN</button>
 			{/if}
 			{#if myLevel === Level.host || myLevel === Level.admin}
-				<button on:click={profileClickEvent}>MUTE</button>
-				<button on:click={profileClickEvent}>KICK</button>
+				<button on:click={muteClickEvent}>MUTE</button>
+				<button on:click={kickClickEvent}>KICK</button>
 			{/if}
 		</div>
 	{/if}
