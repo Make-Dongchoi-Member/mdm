@@ -24,6 +24,13 @@
         $modalStatesStore.isRoomCreateModal = true;
     }
 
+    function truncateText(text: string, maxLength: number) {
+        if (text.length > maxLength) {
+            return text.slice(0, maxLength) + '...';
+        }
+        return text;
+    }
+
 </script>
 
 <Modal />
@@ -41,7 +48,7 @@
         {#each roomList as room}
             <a href="/chat/room?id={room.id}">
                 <div>
-                    {room.name}
+                    {truncateText(room.name, 30)}
                 </div>
                 {#if room.isLocked}
                     <div>&#x1F512</div>
@@ -140,7 +147,12 @@
         border: 1px solid var(--border-color);
         background-color: var(--bg-color);
         color: var(--text-color);         
-    } 
+    }
+
+    .room-list > a > :nth-child(1) {
+        
+        padding-left: 10px;        
+    }
 
     .room-list > a > :nth-child(2) {
         display: flex;
