@@ -122,7 +122,6 @@
 
 	.data > div > :nth-child(2) {
 		flex-grow: 10;
-		padding-right: 10px;
 		font-size: 20px
 	}
 
