@@ -5,13 +5,13 @@
     interface Room {
         id: string;
         name: string;
-        isPrivate: boolean;
+        isLocked: boolean;
         memberCount: number;
     }
 
     const roomList: Room[] = [
-		{id: "123", name:'room name', isPrivate: true, memberCount: 4},
-        {id: "456", name:'room name2', isPrivate: false, memberCount: 999},
+		{id: "123", name:'room name', isLocked: true, memberCount: 4},
+        {id: "456", name:'room name2', isLocked: false, memberCount: 999},
 	];
 
     const roomCreateModalButton = () => {
@@ -37,8 +37,7 @@
                 <div>
                     {room.name}
                 </div>
-
-                {#if room.isPrivate}
+                {#if room.isLocked}
                     <div>&#x1F512</div>
                 {:else}
                     <div></div>
