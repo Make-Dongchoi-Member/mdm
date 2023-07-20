@@ -12,6 +12,7 @@
 
     let inputValue: string = "";
 
+
     onMount(() => {
         document.body.addEventListener("keypress", enterKeyPressEvent);
 
