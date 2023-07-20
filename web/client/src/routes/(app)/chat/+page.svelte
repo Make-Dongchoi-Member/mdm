@@ -1,235 +1,53 @@
 <script lang="ts">
     import Modal from './ChatRoomListModal.svelte';
-    let isModalOpen = false;
+    import { ModalStatesStore } from '../../../store';
+    
+    interface Room {
+        id: string;
+        name: string;
+        isPrivate: boolean;
+        memberCount: number;
+    }
 
-    function openModal() {
-        isModalOpen = true;
+    const roomList: Room[] = [
+		{id: "123", name:'room name', isPrivate: true, memberCount: 4},
+        {id: "456", name:'room name2', isPrivate: false, memberCount: 999},
+	];
+
+    const roomCreateButton = () => {
+        $ModalStatesStore.isRoomCreateModal = true;
     }
-    function closeModal() {
-        isModalOpen = false;
-    }
+
 </script>
 
+<Modal />
 
-<Modal {isModalOpen} {closeModal} />
 <div class="chatroom-box">
     <div class="chat-title">
         <div>
             CHAT ROOM LIST
         </div>
         <div>
-            <button on:click={openModal}>+</button>
+            <button on:click={roomCreateButton}>+</button>
         </div>
     </div>
     <div class="room-list">
-            <div>
+        {#each roomList as room}
+            <a href="/chat/room?id={room.id}">
                 <div>
-                    CHAT ROOM NAME 01
+                    {room.name}
                 </div>
+
+                {#if room.isPrivate}
+                    <div>&#x1F512</div>
+                {:else}
+                    <div></div>
+                {/if}
                 <div>
-                    &#x1F512
+                    {room.memberCount}
                 </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
-            <div>
-                <div>
-                    CHAT ROOM NAME 01
-                </div>
-                <div>
-                    &#x1F512
-                </div>
-                <div>
-                    num
-                </div>
-            </div>
+            </a>
+        {/each}
     </div>
 </div>
 
@@ -240,7 +58,6 @@
         align-items: center;
     }
 
-    /* 스크롤바 설정 */ 
     .room-list {
         width: 770px;
         height: 380px;
@@ -252,9 +69,7 @@
         flex-wrap: wrap;
         align-content: flex-start;
 
-
         margin-bottom: 20px;
-        /* border: 1px solid var(--border-color); */
     }
 
     .room-list::-webkit-scrollbar {
@@ -267,15 +82,13 @@
     }
 
     .room-list::-webkit-scrollbar-thumb {
-        background-color: #D9D9D9; /* 스크롤바 썸바 배경색 설정 */
+        background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
         border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
     }
 
     .room-list::-webkit-scrollbar-thumb:hover {
-        background-color: #555; /* 스크롤바 썸바 호버 배경색 설정 */
+        background-color: var(--text-color); /* 스크롤바 썸바 호버 배경색 설정 */
     }
-    /* 스크롤바 설정 */ 
-
 
     .chat-title {
         display: flex;
@@ -304,10 +117,11 @@
         outline: none;
     }
 
+    a {
+        text-decoration: none;
+    }
 
-
-
-    .room-list > div {        
+    .room-list > a {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
@@ -323,20 +137,19 @@
         color: var(--text-color);         
     } 
 
-    .room-list > div > :nth-child(2) {
+    .room-list > a > :nth-child(2) {
         display: flex;
         padding-left: 5px;        
     }
 
-    .room-list > div > :nth-child(3) {
+    .room-list > a > :nth-child(3) {
         flex-grow: 10;
         text-align: right;
         padding-right: 10px;
     }
 
-    .room-list > div:hover {
+    .room-list > a:hover {
         background-color: var(--hover-color);
     }
-
 
 </style>

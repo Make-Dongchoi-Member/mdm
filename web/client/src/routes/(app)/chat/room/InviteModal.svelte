@@ -1,17 +1,14 @@
 <script lang="ts">
-    export let isInviteModal = false;
-    export let closeInviteModal = () => {
-
-    };
+    import { ModalStatesStore } from "../../../../store";
 </script>
 
-    <div class="modal-container" style="{isInviteModal ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="{$ModalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}">
     <div class="modal-title">
         <div>
         INVITE FRIEND
         </div>
         <div class="close-button">
-            <button on:click={closeInviteModal}>&#215;</button>
+            <button on:click={() => { $ModalStatesStore.isInviteModal = false; }}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">

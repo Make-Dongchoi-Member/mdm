@@ -1,34 +1,24 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
-    let isNotiModalOpen: boolean = false;
-
-    function notiModaltoggle() {
-        isNotiModalOpen = !isNotiModalOpen;
-    }
-    function closeNotiModal() {
-        isNotiModalOpen = false;
-    }
+    import { ModalStatesStore } from '../../store';
 </script>
-
-
 
 <div class="container">
     <nav class= "containerTop" >
-        <a href="/chat" >CHAT</a> 
         <a href="/" >GAME</a>
+        <a href="/chat" >CHAT</a> 
         <a href="/profile" >PROFILE</a>
     </nav>
-    <slot></slot>
+    <div class="containerBody">
+        <slot></slot>
+    </div>
 </div>
 <div class="alarm">
-    <button on:click={notiModaltoggle}>
+    <button on:click={() => { $ModalStatesStore.isNotiModal = true; }}>
         &#x1F4E2;
     </button>
 </div>
-<NotiModal {isNotiModalOpen} {closeNotiModal}/>
-
-
-
+<NotiModal />
 
 <style>
     @import url('https://rsms.me/inter/inter.css'); /* font */
@@ -37,7 +27,6 @@
         font-weight: 200;
         font-size: 16px;
     }
-    
 
     :root {
         --bg-color: #424242;
@@ -88,6 +77,13 @@
         flex-direction: column;
         justify-content: center;
     }
+
+    .containerBody {
+		width: 800px;
+		height: 650px;
+		margin-top: 80px;
+        border: 1px solid red;
+	}
 
     nav {
         border: 1px solid var(--border-color);
