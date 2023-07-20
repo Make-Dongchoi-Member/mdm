@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { ModalStatesStore } from "../../store";
+    import { modalStatesStore } from "../../store";
 </script>
 
-    <div class="modal-container {$ModalStatesStore.isNotiModal ? 'flex-container' : 'hidden-container'}">
+    <div class="modal-container {$modalStatesStore.isNotiModal ? 'flex-container' : 'hidden-container'}">
         <div class="modal-title">
             <div>
                 NOTIFICATION
             </div>
             <div class="alarm">
-                <button on:click={() => { $ModalStatesStore.isNotiModal = false; }} class="alarm-button">
+                <button on:click={() => { $modalStatesStore.isNotiModal = false; }} class="alarm-button">
                     &#x1F4E2;
                 </button>
             </div>

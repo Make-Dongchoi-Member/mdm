@@ -2,7 +2,7 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { ModalStatesStore, myData } from '../../../../store';
+    import { modalStatesStore } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
 
@@ -22,14 +22,14 @@
                 CHAT ROOM NAME
             </div>
             <div class="chat-setting-button">
-                <button on:click={() => { $ModalStatesStore.isSettingModal = true; }}>&#9881;</button>
+                <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
             </div>
             <div class="invite-button">
-               <button on:click={() => { $ModalStatesStore.isInviteModal = true; }}>+</button>
+               <button on:click={() => { $modalStatesStore.isInviteModal = true; }}>+</button>
             </div>
-        </div>            
+        </div>
         <div class="out-of-room-button">
-            <button on:click={() => { $ModalStatesStore.isRoomoutModal = true; }}>&#128682;</button>
+            <button on:click={() => { $modalStatesStore.isRoomoutModal = true; }}>&#128682;</button>
         </div>
     </div>
     <div class="chatroom-bottom-box">

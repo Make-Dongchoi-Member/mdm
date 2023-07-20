@@ -1,18 +1,9 @@
 <script lang="ts">
 	import { myData } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
-
-	enum Level {
-        "host",
-        "admin",
-        "member"
-    }
-
-    interface Profile {
-        id: string;
-        avatarSrc: string;
-        level: Level;
-    }
+	import type { Profile } from '../../../../interfaces';
+	import { Level } from '../../../../enums';
+    import { onMount } from 'svelte';
 
     const membersExample = [
 		{ id: "sooyokim", avatarSrc: "/asset/hhwang.png", level: Level.admin },
@@ -21,12 +12,18 @@
     ];
 
     let members = new Map<string, Profile>();
+	let myLevel: Level;
+
+	onMount(() => {
+		/*
+			@TODO
+			방에 속해있는 멤버 리스트 API 요청
+		*/
+	});
 
     for (let i = 0; i < membersExample.length; i++) {
         members.set(membersExample[i].id, membersExample[i]);
     }
-
-	const myLevel = (members.get($myData.id) as Profile).level;
 	
 </script>
 

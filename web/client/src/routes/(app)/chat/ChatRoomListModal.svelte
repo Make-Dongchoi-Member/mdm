@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { ModalStatesStore } from '../../../store';
+    import { modalStatesStore } from '../../../store';
     import { goto } from '$app/navigation';
 
     let isPrivate = false;  
@@ -38,17 +38,17 @@
             요청 콜백으로 라우터 이동.
         */
         goto(`/chat/room?id=http_result`);
-        $ModalStatesStore.isRoomCreateModal = false;
+        $modalStatesStore.isRoomCreateModal = false;
     }
 </script>
   
-    <div class="modal-container" style="{$ModalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="{$modalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
     <div class="modal-title">
         <div>
         NEW CHAT ROOM
         </div>
         <div class="close-button">
-            <button on:click={() => { $ModalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
+            <button on:click={() => { $modalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">

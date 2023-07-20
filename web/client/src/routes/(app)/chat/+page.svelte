@@ -1,21 +1,27 @@
 <script lang="ts">
     import Modal from './ChatRoomListModal.svelte';
-    import { ModalStatesStore } from '../../../store';
+    import { modalStatesStore } from '../../../store';
+    import { onMount } from 'svelte';
+    import type { Room } from '../../../interfaces';
     
-    interface Room {
-        id: string;
-        name: string;
-        isLocked: boolean;
-        memberCount: number;
-    }
-
     const roomList: Room[] = [
-		{id: "123", name:'room name', isLocked: true, memberCount: 4},
+        {id: "123", name:'room name', isLocked: true, memberCount: 4},
         {id: "456", name:'room name2', isLocked: false, memberCount: 999},
-	];
+    ];
+
+    onMount(() => {
+
+        /*
+            @TODO
+            private 제외한 방 리스트 API 요청
+            roomList 배열 채우기
+        */
+
+    });
+
 
     const roomCreateModalButton = () => {
-        $ModalStatesStore.isRoomCreateModal = true;
+        $modalStatesStore.isRoomCreateModal = true;
     }
 
 </script>

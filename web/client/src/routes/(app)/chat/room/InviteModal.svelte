@@ -1,34 +1,48 @@
 <script lang="ts">
-    import { ModalStatesStore } from "../../../../store";
+    import { modalStatesStore } from "../../../../store";
+
+    const inviteButtonEvent = () => {
+        /*
+            @TODO
+            유저 초대 API 요청
+        */
+
+        $modalStatesStore.isInviteModal = false;
+    }
+
+    /*
+        @TODO
+        유저 검색 입력이 들어올때마다 유저가 존재하는지 API 요청으로 확인하고
+        있으면 unavailable을 available로 변경.
+        초대 가능한 상태일때만 초대 버튼 활성화.
+    */
+
 </script>
 
-    <div class="modal-container" style="{$ModalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}">
-    <div class="modal-title">
-        <div>
-        INVITE FRIEND
-        </div>
-        <div class="close-button">
-            <button on:click={() => { $ModalStatesStore.isInviteModal = false; }}>&#215;</button>
-        </div>
-    </div>
-    <div class="modal-content">
-        <div class="find-friend">
-            <div class="find-friend-input">
-                <input type="text" placeholder="FIND FRIEND">
-            </div>
-            <div class="find-button">
-                <button>&#128269;</button>
-            </div>
-        </div>
-        <div class="bottom-line">
+    <div class="modal-container" style="{$modalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}">
+        <div class="modal-title">
             <div>
-                unavailable
-            </div>        
-            <div>
-                INVITE
+                INVITE FRIEND
+            </div>
+            <div class="close-button">
+                <button on:click={() => { $modalStatesStore.isInviteModal = false; }}>&#215;</button>
             </div>
         </div>
-    </div>
+        <div class="modal-content">
+            <div class="find-friend">
+                <div class="find-friend-input">
+                    <input type="text" placeholder="FIND FRIEND">
+                </div>
+            </div>
+            <div class="bottom-line">
+                <div>
+                    unavailable
+                </div>        
+                <button on:click={inviteButtonEvent}>
+                    INVITE
+                </button>
+            </div>
+        </div>
     </div>
   
 <style>
