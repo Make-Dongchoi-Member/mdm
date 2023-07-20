@@ -1,44 +1,42 @@
 <script lang="ts">
-    import {onMount} from 'svelte'
+    import { onMount } from 'svelte';
+    import { ModalStatesStore } from '../../../store';
 
-    export let isModalOpen = false;
-    export let closeModal = () => {
-
-    };
     let isPrivate = false;  
 
     onMount(() => {
-    const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
-    
-    privateButton.addEventListener("click", (e: any) => {
-    if (isPrivate) {
-        e.target.style.backgroundColor = "var(--bg-color)";        
-    } else {
-        e.target.style.backgroundColor = "var(--hover-color)";  
-    }
-        isPrivate = !isPrivate;
-    });
-
-    privateButton.addEventListener("mouseover", (e: any) => {      
-        e.target.style.backgroundColor = "var(--hover-color)";        
-    });
-    
-    privateButton.addEventListener("mouseout", (e: any) => {
-    if (!isPrivate) {
-        e.target.style.backgroundColor = "var(--bg-color)";
-    }
-    });           
+        const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
         
+        privateButton.addEventListener("click", (e: any) => {
+            if (isPrivate) {
+                e.target.style.backgroundColor = "var(--bg-color)";
+                e.target.style.border = "1px solid var(--border-color)";
+            } else {
+                e.target.style.backgroundColor = "var(--hover-color)";
+                e.target.style.border = "1px solid var(--point-color)";
+            }
+            isPrivate = !isPrivate;
+        });
+
+        privateButton.addEventListener("mouseover", (e: any) => {      
+            e.target.style.backgroundColor = "var(--hover-color)";        
+        });
+        
+        privateButton.addEventListener("mouseout", (e: any) => {
+            if (!isPrivate) {
+                e.target.style.backgroundColor = "var(--bg-color)";
+            }
+        });
     });
 </script>
   
-    <div class="modal-container" style="{isModalOpen ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="{$ModalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
     <div class="modal-title">
         <div>
         NEW CHAT ROOM
         </div>
         <div class="close-button">
-            <button on:click={closeModal}>&#215;</button>
+            <button on:click={() => { $ModalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">
@@ -54,12 +52,16 @@
             <div class="password-option">
                 <input type="password" placeholder="PASSWORD IF YOU NEED">
             </div>
-        <div>
-            IT DOESN"T SHOW YOUR ROOM ON LIST
-        </div>
-        <div>
-            MAKE
-        </div>
+            {#if isPrivate}
+                <div>
+                    IT DOESN'T SHOW YOUR ROOM ON LIST
+                </div>
+            {:else}
+                <div></div>
+            {/if}
+            <div>
+                MAKE
+            </div>
         </div>
     </div>
     </div>
@@ -160,6 +162,7 @@
         font-weight: 200;
 
         margin-left: 20px;
+        flex-basis: 250px;
     }
 
     .room-option > :nth-child(3) {

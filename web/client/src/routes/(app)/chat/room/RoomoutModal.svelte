@@ -1,11 +1,8 @@
 <script lang="ts">
-    export let isRoomoutModal = false;
-    export let closeRoomoutModal = () => {
-
-    }; 
+    import { ModalStatesStore } from "../../../../store";
 </script>
 
-    <div class="modal-container {isRoomoutModal ? 'flex-container' : 'hidden-container'}">
+    <div class="modal-container {$ModalStatesStore.isRoomoutModal ? 'flex-container' : 'hidden-container'}">
         <div class="modal-title">
             ARE YOU SURE?
         </div>
@@ -14,7 +11,7 @@
                 <button class="yes-button">YES</button>
             </div>
             <div>
-                <button on:click={closeRoomoutModal} class="no-button">NO</button>
+                <button on:click={() => { $ModalStatesStore.isRoomoutModal = false; }} class="no-button">NO</button>
             </div>
         </div>
     </div>

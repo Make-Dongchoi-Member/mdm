@@ -1,13 +1,6 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
-    let isNotiModalOpen: boolean = false;
-
-    function notiModaltoggle() {
-        isNotiModalOpen = !isNotiModalOpen;
-    }
-    function closeNotiModal() {
-        isNotiModalOpen = false;
-    }
+    import { ModalStatesStore } from '../../store';
 </script>
 
 
@@ -21,11 +14,11 @@
     <slot></slot>
 </div>
 <div class="alarm">
-    <button on:click={notiModaltoggle}>
+    <button on:click={() => { $ModalStatesStore.isNotiModal = true; }}>
         &#x1F4E2;
     </button>
 </div>
-<NotiModal {isNotiModalOpen} {closeNotiModal}/>
+<NotiModal />
 
 
 
@@ -76,9 +69,9 @@
         border: 1px solid var(--border-color);
     }
 
-    /* :global(button:hover) {
+    :global(button:hover) {
         background-color: var(--hover-color);
-    } */
+    }
 
     .container {
         width: 800px;
