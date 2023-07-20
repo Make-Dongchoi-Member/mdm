@@ -16,7 +16,6 @@
 		height: 200px;
 		border-radius: 70%;
 		border: 1px solid var(--border-color);
-		background-color: var(--bg-color);
 		color: var(--text-color);
 		box-sizing: border-box;
 		display: flex;

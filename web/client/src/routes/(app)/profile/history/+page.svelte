@@ -1,4 +1,6 @@
 <script lang="ts">
+    import MyInfo from "./MyInfo.svelte";
+
 	const history = [
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'seonhoki'},
@@ -17,18 +19,10 @@
 	];
 </script>
 
-<div class="info_box">
-		<div class="profile_image_circle"></div>
-		<div class="personal_info">
-			<button>
-				nickname
-			</button>
-			<button>
-				LOGOUT
-			</button>
-		</div>
+<div class="info_container">
+	<MyInfo />
 </div>
-<div class="data_box">
+<div class="data_container">
 	<div class="button_area">
 		<nav>
 			<a href="/profile">SOCIAL</a>
@@ -138,33 +132,14 @@
 		font-size: 20px;
 	}
 
-	.info_box {
+	.info_container {
+		display: flex;
+		flex-direction: row;
 		border: 1px solid var(--border-color);
 		height: 250px;
 	}
 
-	.profile_image_circle {
-		border: 1px solid var(--border-color);
-		border-radius: 50%;
-		width: 100px;
-		height: 100px;
-		margin: 30px 20px 20px 40px;
-	}
-
-	.personal_info {
-		width: 150px;
-		height: 80px;
-		display: flex;
-		flex-direction: column;
-		margin-left: 15px;
-	}
-
-	.personal_info > button {
-		width: 150px;
-		margin-bottom: 10px;
-	}
-
-	.data_box {
+	.data_container {
 		border: 1px solid var(--border-color);
 		height: 380px;
 		margin-top: 20px;

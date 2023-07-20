@@ -25,7 +25,7 @@
                 <button on:click={() => { $ModalStatesStore.isSettingModal = true; }}>&#9881;</button>
             </div>
             <div class="invite-button">
-               <button on:click={() => { $ModalStatesStore.isInviteModal = true; }}>+</button>
+                <button on:click={() => { $ModalStatesStore.isInviteModal = true; }}>+</button>
             </div>
         </div>            
         <div class="out-of-room-button">
