@@ -8,6 +8,8 @@ if [ "$NODE_ENV" == "production" ]; then
 	echo "############### PRODUCTION ###############"
 	echo ""
 	
+	npm i -g @nestjs/cli vite
+
 	cd $CLIENT_PATH 
 	npm install
 	npm run build
