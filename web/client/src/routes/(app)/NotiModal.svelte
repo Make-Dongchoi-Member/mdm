@@ -214,9 +214,6 @@
         margin-top: 5px;
     }
 
-    .flex-container {
-    }
-
     .hidden-container {
         display: none;
     }
@@ -236,10 +233,9 @@
     }
 
     .alarm-button {
-        border: none;        
-        color: var(--point-color);
+        border: none;
+        background-color: var(--bg-color);
     }
-
 
     .modal-content {
         display: flex;
@@ -322,6 +318,4 @@
         background-color: #555; /* 스크롤바 썸바 호버 배경색 설정 */
     }
     /* 스크롤바 설정 */ 
-  
 </style>
-  
