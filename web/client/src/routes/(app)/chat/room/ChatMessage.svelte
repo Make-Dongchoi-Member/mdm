@@ -135,7 +135,6 @@
         flex-direction: row;
         text-align: left;
         word-break: break-all;
-        
         margin: 10px;
     }
     
@@ -169,12 +168,11 @@
 	.chat-send-box {
         display: flex;
         flex-direction: row;
-        /* justify-content: space-between; */
+        justify-content: space-between;
         align-items: center;
         border: 1px solid var(--border-color);
         height: 30px;
         margin-top: 10px;
-        /* margin-bottom: 10px; */
         width: 500px;
         margin-left: 20px;
     }
@@ -184,7 +182,6 @@
         height: 27px;
         background-color: var(--bg-color);
         border: none;
-
         color: var(--font-color);  
     }
 
@@ -193,5 +190,7 @@
         background-color: var(--bg-color);
         color: var(--text-color);        
         text-align: center;
+        outline: none;
+        border: none;
     }
 </style>
