@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { ModalStatesStore } from '../../../store';
+    import { goto } from '$app/navigation';
 
     let isPrivate = false;  
 
@@ -19,7 +20,7 @@
         });
 
         privateButton.addEventListener("mouseover", (e: any) => {      
-            e.target.style.backgroundColor = "var(--hover-color)";        
+            e.target.style.backgroundColor = "var(--hover-color)";
         });
         
         privateButton.addEventListener("mouseout", (e: any) => {
@@ -28,6 +29,17 @@
             }
         });
     });
+
+    const makeButtonEvent = () => {
+        /*
+            @TODO
+            방 만들기에 필요한 입력값을 체크.
+            새로운 방 만들기 API 요청.
+            요청 콜백으로 라우터 이동.
+        */
+        goto(`/chat/room?id=http_result`);
+        $ModalStatesStore.isRoomCreateModal = false;
+    }
 </script>
   
     <div class="modal-container" style="{$ModalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
@@ -59,9 +71,9 @@
             {:else}
                 <div></div>
             {/if}
-            <div>
+            <button on:click={makeButtonEvent}>
                 MAKE
-            </div>
+            </button>
         </div>
     </div>
     </div>
