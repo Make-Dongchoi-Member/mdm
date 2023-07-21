@@ -1,13 +1,14 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
-    import { modalStatesStore } from '../../store';
+    import { modalStatesStore, myData } from '../../store';
+
 </script>
 
 <div class="container">
     <nav class= "containerTop" >
         <a href="/" >GAME</a>
         <a href="/chat" >CHAT</a> 
-        <a href="/profile" >PROFILE</a>
+        <a href="/profile" >{$myData.id}</a>
     </nav>
     <div class="containerBody">
         <slot></slot>
