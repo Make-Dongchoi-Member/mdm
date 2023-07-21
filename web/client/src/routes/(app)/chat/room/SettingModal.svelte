@@ -110,97 +110,97 @@
   
 <style>
     .modal-container {
-    position: absolute;
-    top: 100px;
-    left: 50%;
-    margin-left: -380px;
-    width: 775px;
-    height: 150px;
+        position: absolute;
+        top: 100px;
+        left: 50%;
+        margin-left: -380px;
+        width: 775px;
+        height: 150px;
 
-    display: flex;
+        display: flex;
 
-    justify-content: center;
-    align-items: center;
+        justify-content: center;
+        align-items: center;
 
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
     }
 
     .modal-title {      
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
-    margin-left: 20px;
-    margin-top: 10px;
+        margin-left: 20px;
+        margin-top: 10px;
     }
 
     .close-button > button {
-    font-size: 25px;
-    font-weight: 500;
-    flex-grow: 0;
-    text-align: right;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: none;
-    outline: none;
+        font-size: 25px;
+        font-weight: 500;
+        flex-grow: 0;
+        text-align: right;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border: none;
+        outline: none;
 
-    margin-right: 20px;
+        margin-right: 20px;
     }
 
     .room-name {
-    display: flex;
-    flex-direction: row;
-    /* justify-content: space-between; */
+        display: flex;
+        flex-direction: row;
+        /* justify-content: space-between; */
 
-    margin-left: 20px;      
+        margin-left: 20px;      
     }
 
     .room-name-input > input {
-    width: 320px;
-    height: 35px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        width: 320px;
+        height: 35px;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
 
-    color: var(--font-color);  
+        color: var(--font-color);  
     }
 
     .private-button {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
 
-    width: 100px;
+        width: 100px;
 
-    border: 1px solid var(--border-color);
-    margin-left: 20px;
+        border: 1px solid var(--border-color);
+        margin-left: 20px;
     }
     
     .room-option {
-    display: flex;
-    flex-direction: row;
-    margin-left: 20px;
-    margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        margin-left: 20px;
+        margin-top: 10px;
     }
 
     .room-option > :nth-child(1) > input {
-    width: 320px;
-    height: 35px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        width: 320px;
+        height: 35px;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
 
-    color: var(--font-color);      
+        color: var(--font-color);      
     }
 
     .room-option > :nth-child(2) {
-    color: #848484;
-    font-size: small;
-    font-weight: 200;
+        color: #848484;
+        font-size: small;
+        font-weight: 200;
 
-    margin-left: 20px;
-    flex-basis: 250px;
+        margin-left: 20px;
+        flex-basis: 250px;
     }
 
     .make-button {
