@@ -7,8 +7,6 @@
 
         /*
             @TODO
-            private 제외한 방 리스트 API 요청
-            roomList 배열 채우기
         */
 
     });

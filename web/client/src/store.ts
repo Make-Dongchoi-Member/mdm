@@ -45,10 +45,17 @@ const openedRoom: Writable<RoomDetail> = writable({
 
 /*
 
-	@TODO
+	@API
+
 	내 정보 API 요청
-	내가 참여한 방 목록
-	현재 보고있는 방에서 나의 상태
+	GET
+	>> id: string
+	<< mydata: MyData
+
+	들어간 방의 정보 API 요청
+	POST
+	>> userId: string, roomID: string
+	<< openedRoom: RoomDetail
 	
 */
 
