@@ -1,11 +1,19 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { ModalStatesStore } from '../../../store';
+    import { modalStatesStore } from '../../../store';
+    import { goto } from '$app/navigation';
 
-    let isPrivate = false;  
+    let isPrivate: boolean = false;  
+    let isMakeButtonActivation: boolean = false;
 
     onMount(() => {
         const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
+        const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
+        const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
+        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
+        const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
+        
+        makeButton.disabled = !isMakeButtonActivation;
         
         privateButton.addEventListener("click", (e: any) => {
             if (isPrivate) {
@@ -19,7 +27,7 @@
         });
 
         privateButton.addEventListener("mouseover", (e: any) => {      
-            e.target.style.backgroundColor = "var(--hover-color)";        
+            e.target.style.backgroundColor = "var(--hover-color)";
         });
         
         privateButton.addEventListener("mouseout", (e: any) => {
@@ -27,43 +35,82 @@
                 e.target.style.backgroundColor = "var(--bg-color)";
             }
         });
+
+        closeButton.addEventListener("click", () => {
+            roomnameInputBox.value = "";
+            passwordInputBox.value = "";
+            isMakeButtonActivation = false;
+            privateButton.style.backgroundColor = "var(--bg-color)";
+            privateButton.style.border = "1px solid var(--border-color)";
+        });
+
+        roomnameInputBox.addEventListener("keydown", roomnameInputBoxEvent);
     });
+
+    const makeButtonEvent = () => {
+        /*
+            @TODO
+            방 만들기에 필요한 입력값을 체크.
+            새로운 방 만들기 API 요청.
+            요청 콜백으로 라우터 이동.
+            */
+        // const roomID = createRoom();
+        const roomID = "room0001";
+        goto(`/chat/room?id=${roomID}`);
+        $modalStatesStore.isRoomCreateModal = false;
+    }
+
+    const roomnameInputBoxEvent = (e: any) => {
+        const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
+
+        setTimeout(() => {
+            if (e.target.value !== "") {
+                isMakeButtonActivation = true;                
+                makeButton.disabled = false;
+            } else {
+                isMakeButtonActivation = false;
+                makeButton.disabled = true;
+            }            
+        }, 100);
+    }
+    
+
 </script>
   
-    <div class="modal-container" style="{$ModalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
-    <div class="modal-title">
-        <div>
-        NEW CHAT ROOM
-        </div>
-        <div class="close-button">
-            <button on:click={() => { $ModalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
-        </div>
-    </div>
-    <div class="modal-content">
-        <div class="room-name">
-            <div class="room-name-input">
-                <input type="text" placeholder="ROOM NAME">
+    <div class="modal-container" style="{$modalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
+        <div class="modal-title">
+            <div>
+            NEW CHAT ROOM
             </div>
-            <div class="private-button">
-                PRIVATE
+            <div class="close-button">
+                <button on:click={() => { $modalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
             </div>
         </div>
-        <div class="room-option">
-            <div class="password-option">
-                <input type="password" placeholder="PASSWORD IF YOU NEED">
+        <div class="modal-content">
+            <div class="room-name">
+                <div class="room-name-input">
+                    <input class="roomname-inputbox" type="text" placeholder="ROOM NAME">
+                </div>
+                <div class="private-button">
+                    PRIVATE
+                </div>
             </div>
-            {#if isPrivate}
+            <div class="room-option">
+                <div class="password-option">
+                    <input class="password-inputbox" type="password" placeholder="PASSWORD IF YOU NEED">
+                </div>
+                {#if isPrivate}
                 <div>
                     IT DOESN'T SHOW YOUR ROOM ON LIST
                 </div>
-            {:else}
+                {:else}
                 <div></div>
-            {/if}
-            <div>
-                MAKE
+                {/if}                
+                <button class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'} on:click={makeButtonEvent} >
+                    MAKE
+                </button>                
             </div>
         </div>
-    </div>
     </div>
   
 <style>
@@ -165,21 +212,28 @@
         flex-basis: 250px;
     }
 
-    .room-option > :nth-child(3) {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        text-align: center;
-
+    .make-button {
         width: 100px;
-        border: 1px solid var(--border-color);
-
+        height: 35px;
+        border: 1px solid var(--border-color);        
+        
+        text-align: center;
         margin-left: 30px;
-    }
+    }    
 
-    .room-option > :nth-child(3):hover {
+    .make-button.able:hover {
         background-color: var(--hover-color);
     }
-  
+
+    .make-button.disable {
+        color: var(--border-color);
+    }
+
+    .make-button.disable:hover {
+        background-color: var(--bg-color);
+    }
+
+    
+
 </style>
   

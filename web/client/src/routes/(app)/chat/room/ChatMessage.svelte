@@ -1,14 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 	import { myData } from '../../../../store';
-
-	interface Message {
-        sender: string;
-        avatarSrc: string;
-        body: string;
-        isDM: boolean;
-        date: string;
-    }
+    import type { Message } from '../../../../interfaces';
 
 	let messageHistory: Message[] = [
         { sender: "seonhoki", body: "kick the dongchoi man~", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
@@ -19,8 +12,16 @@
 
     let inputValue: string = "";
 
+
     onMount(() => {
         document.body.addEventListener("keypress", enterKeyPressEvent);
+
+        /*
+            @TODO
+            메시지 기록 API 요청
+            나의 상태 API 요청
+            나의 상태에 따라서 채팅 막혀야함.
+        */
     });
 
     const enterKeyPressEvent = (e: any) => {
@@ -41,6 +42,12 @@
             avatarSrc: $myData.avatarSrc,
             date: "10:00"
         };
+
+        /*
+            @TODO
+            메시지 SOCKET 요청
+        */
+
         messageHistory = [...messageHistory, newMessage];
         inputValue = "";
         

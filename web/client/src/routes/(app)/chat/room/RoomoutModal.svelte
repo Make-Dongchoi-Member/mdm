@@ -1,17 +1,27 @@
 <script lang="ts">
-    import { ModalStatesStore } from "../../../../store";
+    import { goto } from "$app/navigation";
+    import { modalStatesStore } from "../../../../store";
+
+    const outButtonEvent = () => {
+        /*
+            @TODO
+            방에서 나가는 API 요청
+        */
+        
+        goto("/chat");
+    }
 </script>
 
-    <div class="modal-container {$ModalStatesStore.isRoomoutModal ? 'flex-container' : 'hidden-container'}">
+    <div class="modal-container {$modalStatesStore.isRoomoutModal ? 'flex-container' : 'hidden-container'}">
         <div class="modal-title">
             ARE YOU SURE?
         </div>
         <div class="modal-content">
             <div>
-                <button class="yes-button">YES</button>
+                <button on:click={outButtonEvent} class="yes-button">YES</button>
             </div>
             <div>
-                <button on:click={() => { $ModalStatesStore.isRoomoutModal = false; }} class="no-button">NO</button>
+                <button on:click={() => { $modalStatesStore.isRoomoutModal = false; }} class="no-button">NO</button>
             </div>
         </div>
     </div>

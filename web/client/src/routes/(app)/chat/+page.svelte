@@ -1,21 +1,34 @@
 <script lang="ts">
     import Modal from './ChatRoomListModal.svelte';
-    import { ModalStatesStore } from '../../../store';
+    import { modalStatesStore } from '../../../store';
+    import { onMount } from 'svelte';
+    import type { Room } from '../../../interfaces';
     
-    interface Room {
-        id: string;
-        name: string;
-        isPrivate: boolean;
-        memberCount: number;
+    const roomList: Room[] = [
+        {id: "123", name:'room name', isLocked: true, memberCount: 4},
+        {id: "456", name:'room name2', isLocked: false, memberCount: 999},
+    ];
+
+    onMount(() => {
+
+        /*
+            @TODO
+            private 제외한 방 리스트 API 요청
+            roomList 배열 채우기
+        */
+
+    });
+
+
+    const roomCreateModalButton = () => {
+        $modalStatesStore.isRoomCreateModal = true;
     }
 
-    const roomList: Room[] = [
-		{id: "123", name:'room name', isPrivate: true, memberCount: 4},
-        {id: "456", name:'room name2', isPrivate: false, memberCount: 999},
-	];
-
-    const roomCreateButton = () => {
-        $ModalStatesStore.isRoomCreateModal = true;
+    function truncateText(text: string, maxLength: number) {
+        if (text.length > maxLength) {
+            return text.slice(0, maxLength) + '...';
+        }
+        return text;
     }
 
 </script>
@@ -28,17 +41,16 @@
             CHAT ROOM LIST
         </div>
         <div>
-            <button on:click={roomCreateButton}>+</button>
+            <button on:click={roomCreateModalButton}>+</button>
         </div>
     </div>
     <div class="room-list">
         {#each roomList as room}
             <a href="/chat/room?id={room.id}">
                 <div>
-                    {room.name}
+                    {truncateText(room.name, 30)}
                 </div>
-
-                {#if room.isPrivate}
+                {#if room.isLocked}
                     <div>&#x1F512</div>
                 {:else}
                     <div></div>
@@ -135,7 +147,12 @@
         border: 1px solid var(--border-color);
         background-color: var(--bg-color);
         color: var(--text-color);         
-    } 
+    }
+
+    .room-list > a > :nth-child(1) {
+        
+        padding-left: 10px;        
+    }
 
     .room-list > a > :nth-child(2) {
         display: flex;
