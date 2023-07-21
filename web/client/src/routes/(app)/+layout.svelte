@@ -49,30 +49,31 @@
         justify-content: center;
     }
 
-    .alarm {
-        position: absolute;
-        top: 5px;
-        left: 50%;
-        margin-left: 595px;
-    }
-
-    .alarm > button {
-        border: none;
-    }
-
-    .alarm > button:hover {
-        background-color: var(--bg-color);
-    }
-
+    
     :global(button) {
         height: 30px;
         background-color: var(--bg-color);
         color: var(--text-color);
         border: 1px solid var(--border-color);
     }
-
+    
     :global(button:hover) {
         background-color: var(--hover-color);
+    }
+    
+    .alarm {
+        position: absolute;
+        top: 5px;
+        right: 10%;
+    }
+
+    .alarm > button {
+        padding-right: 10px;
+        border: none;
+    }
+
+    .alarm > button:hover {
+        background-color: var(--bg-color);
     }
 
     .container {
