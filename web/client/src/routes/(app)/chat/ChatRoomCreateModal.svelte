@@ -125,20 +125,20 @@
   
 <style>
     .modal-container {
-    position: absolute;
-    top: 100px;
-    left: 50%;
-    margin-left: -380px;
-    width: 775px;
-    height: 150px;
+        position: absolute;
+        top: 100px;
+        left: 50%;
+        margin-left: -380px;
+        width: 775px;
+        height: 150px;
 
-    display: flex;
+        display: flex;
 
-    justify-content: center;
-    align-items: center;
+        justify-content: center;
+        align-items: center;
 
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
     }
 
     .modal-title {      
@@ -165,11 +165,11 @@
     }
 
     .room-name {
-    display: flex;
-    flex-direction: row;
-    /* justify-content: space-between; */
+        display: flex;
+        flex-direction: row;
+        /* justify-content: space-between; */
 
-    margin-left: 20px;      
+        margin-left: 20px;      
     }
 
     .room-name-input > input {

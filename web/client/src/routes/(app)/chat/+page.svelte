@@ -1,13 +1,7 @@
 <script lang="ts">
     import Modal from './ChatRoomCreateModal.svelte';
-    import { modalStatesStore } from '../../../store';
+    import { modalStatesStore, myData } from '../../../store';
     import { onMount } from 'svelte';
-    import type { Room } from '../../../interfaces';
-    
-    const roomList: Room[] = [
-        {id: "123", name:'room name', isLocked: true, memberCount: 4},
-        {id: "456", name:'room name2', isLocked: false, memberCount: 999},
-    ];
 
     onMount(() => {
 
@@ -45,7 +39,7 @@
         </div>
     </div>
     <div class="room-list">
-        {#each roomList as room}
+        {#each $myData.rooms as room}
             <a href="/chat/room?id={room.id}">
                 <div>
                     {truncateText(room.name, 30)}

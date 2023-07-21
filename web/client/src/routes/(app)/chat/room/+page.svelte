@@ -5,6 +5,22 @@
     import { modalStatesStore } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
+    import { onMount } from 'svelte';
+
+    onMount(() => {
+        /*
+            @TODO
+            URI에서 id 추출해서 방 정보 API 요청하고
+            받은 데이터를 store에 있는 openedRoom에 저장
+
+            필요한 데이터:
+                메시지 기록
+                멤버 리스트(멤버별 상태)
+                멤버 리스트에서 나의 상태 가져오기
+                
+        */
+
+    });
 
 </script>
 

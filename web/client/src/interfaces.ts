@@ -1,17 +1,21 @@
 import type { Level } from "./enums";
 
-export interface Message {
-	sender: string;
+export interface UserData {
+	id: string;
 	avatarSrc: string;
+}
+
+export interface Message {
+	sender: UserData;
 	body: string;
 	isDM: boolean;
 	date: string;
 }
 
 export interface Profile {
-	id: string;
-	avatarSrc: string;
+	user: UserData;
 	level: Level;
+	isMuted: boolean;
 }
 
 export interface Room {
@@ -19,6 +23,11 @@ export interface Room {
 	name: string;
 	isLocked: boolean;
 	memberCount: number;
+}
+
+export interface RoomDetail extends Room {
+	members: Map<string, Profile>;
+	history: Message[];
 }
 
 export interface GameSetting {
@@ -33,11 +42,6 @@ export interface ModalStates {
 	isSettingModal: boolean;
 	isRoomoutModal: boolean;
 	isRoomCreateModal: boolean;
-}
-
-export interface UserData {
-	id: string;
-	avatarSrc: string;
 }
 
 export interface MyData extends UserData {

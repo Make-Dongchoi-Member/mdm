@@ -1,27 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-	import { myData } from '../../../../store';
+	import { myData, openedRoom } from '../../../../store';
     import type { Message } from '../../../../interfaces';
-
-	let messageHistory: Message[] = [
-        { sender: "seonhoki", body: "kick the dongchoi man~", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
-        { sender: "dongchoi", body: "kick the dongchoi man~ kick the dongchoi man, kick the dongchoi man, kick the dongchoi man, kick the dongchoi man", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
-        { sender: "seonhoki", body: "kick the dongchoi man~", isDM: true, avatarSrc: "/asset/hhwang.png", date: "10:00" },
-        { sender: "seonhoki", body: "kick the dongchoi man~", isDM: false, avatarSrc: "/asset/hhwang.png", date: "10:00" },
-    ];
 
     let inputValue: string = "";
 
-
     onMount(() => {
         document.body.addEventListener("keypress", enterKeyPressEvent);
-
-        /*
-            @TODO
-            메시지 기록 API 요청
-            나의 상태 API 요청
-            나의 상태에 따라서 채팅 막혀야함.
-        */
     });
 
     const enterKeyPressEvent = (e: any) => {
@@ -36,11 +21,10 @@
         }
         
         const newMessage: Message = {
-            sender: $myData.id,
+            sender: {id: $myData.id, avatarSrc: $myData.avatarSrc},
             body: inputValue,
             isDM: false,
-            avatarSrc: $myData.avatarSrc,
-            date: "10:00"
+            date: "10:00",
         };
 
         /*
@@ -48,7 +32,7 @@
             메시지 SOCKET 요청
         */
 
-        messageHistory = [...messageHistory, newMessage];
+        $openedRoom.history = [...$openedRoom.history, newMessage];
         inputValue = "";
         
         setTimeout(() => {
@@ -64,15 +48,15 @@
 
 <div class="chat-main-box">
 	<div class="chatting-box">
-		{#each messageHistory as message}
-			<div class={$myData.id === message.sender ? "chatting my-message" : "chatting"}>
+		{#each $openedRoom.history as message}
+			<div class={$myData.id === message.sender.id ? "chatting my-message" : "chatting"}>
 				<div>
-					<img src="{message.avatarSrc}" alt="프로필 이지미" class="chatting-box-avatar">
+					<img src="{message.sender.avatarSrc}" alt="프로필 이지미" class="chatting-box-avatar">
 				</div>
 				<div>
 					<div>
 						<div>
-							{message.sender}
+							{message.sender.id}
 						</div>
 						<div>
 							10:00
