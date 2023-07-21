@@ -28,6 +28,10 @@
         font-size: 16px;
     }
 
+    :global(img) {
+        -webkit-user-drag: none;
+    }
+
     :root {
         --bg-color: #424242;
         --text-color: #d2d2d2;
