@@ -34,6 +34,7 @@ export class LoginController {
     } else {
       // 로그인 url
       // url = 로그인 url
+      url = new ConfigService().get('APP_URL');
     }
     return { url };
   }
@@ -50,7 +51,7 @@ export class LoginController {
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
     // const url = new ConfigService().get('APP_URL') + '/mailauth';
-    const url = new ConfigService().get('APP_URL');
+    const url = new ConfigService().get('APP_URL') + '/verify';
     if (!code) {
       // error
       throw new BadRequestException();
