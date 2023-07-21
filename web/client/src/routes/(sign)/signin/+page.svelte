@@ -5,7 +5,9 @@
 <div class="logo">
 	LOGO
 </div>
-<button>LOGIN WITH 42</button>
+<a href="http://localhost:3000/login">
+	<button>LOGIN WITH 42</button>
+</a>
 
 
 <style>
