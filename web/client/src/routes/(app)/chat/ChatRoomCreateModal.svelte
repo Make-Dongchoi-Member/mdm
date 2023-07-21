@@ -5,6 +5,7 @@
 
     let isPrivate: boolean = false;  
     let isMakeButtonActivation: boolean = false;
+    let roomNameInputValue: string = ""
 
     onMount(() => {
         const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
@@ -43,8 +44,6 @@
             privateButton.style.backgroundColor = "var(--bg-color)";
             privateButton.style.border = "1px solid var(--border-color)";
         });
-
-        roomnameInputBox.addEventListener("keydown", roomnameInputBoxEvent);
     });
 
     const makeButtonEvent = () => {
@@ -60,14 +59,12 @@
         $modalStatesStore.isRoomCreateModal = false;
     }
 
-    const roomnameInputBoxEvent = (e: any) => {
-        setTimeout(() => {
-            if (e.target.value !== "") {
-                isMakeButtonActivation = true;                
-            } else {
-                isMakeButtonActivation = false;
-            }            
-        }, 100);
+    const roomnameInputBoxEvent = (e: any) => {    
+        if (e.target.value !== "") {
+            isMakeButtonActivation = true;                
+        } else {
+            isMakeButtonActivation = false;
+        }
     }
     
 
@@ -85,7 +82,14 @@
         <div class="modal-content">
             <div class="room-name">
                 <div class="room-name-input">
-                    <input class="roomname-inputbox" type="text" placeholder="ROOM NAME" maxlength=20>
+                    <input 
+                        on:input={roomnameInputBoxEvent}
+                        bind:value={roomNameInputValue}
+                        class="roomname-inputbox" 
+                        type="text" 
+                        placeholder="ROOM NAME" 
+                        maxlength=20
+                        >
                 </div>
                 <div class="private-button">
                     PRIVATE
