@@ -3,7 +3,7 @@
 CLIENT_PATH=/usr/src/app/client
 SERVER_PATH=/usr/src/app/server
 
-if [ "$NODE_ENV" == "production" ]; then
+if [ "$NODE_ENV" == "prod" ]; then
 	echo ""
 	echo "############### PRODUCTION ###############"
 	echo ""
@@ -16,21 +16,21 @@ if [ "$NODE_ENV" == "production" ]; then
 
 	cd $SERVER_PATH
 	npm install
-	npm run build
-	npm run start:prod
+	# npm run build
+	npm run start:dev
 
 else
 	echo ""
 	echo "############### DEVELOPMENT ###############"
 	echo ""
 
-	cd $SERVER_PATH
-	npm install
-	npm run build
-	npm run start &
+	# cd $SERVER_PATH
+	# npm install
+	# npm run build
+	# npm run start &
 
 	cd $CLIENT_PATH
 	npm install
-	npm run dev
+	# npm run dev
 
 fi

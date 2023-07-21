@@ -2,10 +2,8 @@ version: "3"
 
 services:
   web:
-    build: 
+    build:
       context: ./web
-      args:
-        NODE_ENV: development
     image: web
     container_name: web
     restart: always
@@ -13,7 +11,7 @@ services:
       - "5173:5173"
       - "3000:3000"
     environment:
-      NODE_ENV: development
+      NODE_ENV: dev
     networks:
       - net
     volumes:
@@ -23,7 +21,7 @@ services:
     build: ./database
     image: database
     environment:
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: example
       POSTGRES_USER: postgres
       POSTGRES_DB: mydatabase
     container_name: database
