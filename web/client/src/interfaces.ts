@@ -8,12 +8,6 @@ export interface Message {
 	date: string;
 }
 
-export interface Profile {
-	id: string;
-	avatarSrc: string;
-	level: Level;
-}
-
 export interface Room {
 	id: string;
 	name: string;
@@ -42,4 +36,8 @@ export interface UserData {
 
 export interface MyData extends UserData {
 	rooms: Room[];
+}
+
+export interface Profile extends UserData {
+	level: Level;
 }
