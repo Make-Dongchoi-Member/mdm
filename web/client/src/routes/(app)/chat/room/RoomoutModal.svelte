@@ -9,6 +9,7 @@
         */
         
         goto("/chat");
+        $modalStatesStore.isRoomoutModal = false;
     }
 </script>
 

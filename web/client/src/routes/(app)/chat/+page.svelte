@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Modal from './ChatRoomListModal.svelte';
+    import Modal from './ChatRoomCreateModal.svelte';
     import { modalStatesStore } from '../../../store';
     import { onMount } from 'svelte';
     import type { Room } from '../../../interfaces';
