@@ -62,9 +62,11 @@
     }
     
     .alarm {
+        display: flex;
+        justify-content: flex-end;
+        width: 900px;
         position: absolute;
-        top: 5px;
-        right: 10%;
+        top: 7px;
     }
 
     .alarm > button {

@@ -28,47 +28,60 @@
 </script>
 
 <div class="modal-container {$modalStatesStore.isNotiModal ? 'flex-container' : 'hidden-container'}">
-    <div class="modal-title">
-        <div>
-            NOTIFICATION
-        </div>
-        <div class="alarm">
-            <button on:click={() => { $modalStatesStore.isNotiModal = false; }}>
-                &#x1F4E2;
-            </button>
-        </div>
-    </div>
-    <div class="modal-content-box">
-        {#each myNoti as item}
-            <div class="modal-content">
-                <div>
-                    {item.body}
-                </div>
-                <div>
-                    <span class="simple-text">from</span>
-                    <span>{item.sender}</span>
-                </div>
-                <div class="button-area">
-                    <button class="yes-button">&#x2713;</button>
-                    <button class="no-button">&#x2715;</button>
-                </div>
+    <div class="modal-box">
+        <div class="modal-title">
+            <div>
+                NOTIFICATION
             </div>
-        {/each}
+            <div class="alarm">
+                <button on:click={() => { $modalStatesStore.isNotiModal = false; }}>
+                    &#x1F4E2;
+                </button>
+            </div>
+        </div>
+        <div class="modal-content-box">
+            {#each myNoti as item}
+                <div class="modal-content">
+                    <div>
+                        {item.body}
+                    </div>
+                    <div>
+                        <span class="simple-text">from</span>
+                        <span>{item.sender}</span>
+                    </div>
+                    <div class="button-area">
+                        <button class="yes-button">&#x2713;</button>
+                        <button class="no-button">&#x2715;</button>
+                    </div>
+                </div>
+            {/each}
+        </div>
     </div>
 </div>
 
 <style>
     .modal-container {
+        width: 900px;
+
+        border: 1px solid transparent;
+        box-sizing: border-box;
+
+        position: absolute;
+    }
+
+    .modal-box {
         width: 500px;
         display: flex;
         flex-direction: column;
 
         background-color: var(--bg-color);
         border: 1px solid var(--border-color);
+
+        box-sizing: border-box;
         
         position: absolute;
         top: 5px;
-        right: 10%;
+        margin-left: 400px;
     }
 
     .hidden-container {
