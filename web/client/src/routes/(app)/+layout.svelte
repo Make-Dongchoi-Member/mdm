@@ -94,9 +94,11 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        text-align: center;
     }
 
     nav > a {
+        width: 100px;
         color: var(--text-color);
         padding: 10px 10px 10px 10px;
         text-decoration: none;
