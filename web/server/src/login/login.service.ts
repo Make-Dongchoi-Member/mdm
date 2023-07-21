@@ -47,9 +47,7 @@ export class LoginService {
 
   async generatePendingUser(code: string) {
     const accessToken = await this.requestToken(code);
-    // console.log(`access_token : ${accessToken}`);
     const newUser = await this.newPendingUser(accessToken);
-    // console.log(`new_user\n\t id : ${newUser.id}\n\t email : ${newUser.email}`);
     this.pendingUsers.save(newUser);
     this.sendMail(newUser.id);
     return { id: newUser.id, email: newUser.email };
@@ -59,32 +57,22 @@ export class LoginService {
     console.log(`verifyEmailCode start`);
     const user = this.pendingUsers.verify(userId, emailCode);
     const access_token = await this.generateJwtToken(user);
-    // DB 저장
-
-    console.log(`token : ${access_token}`);
-    const savedUser = await this.saveUserToDatabase(user);
-    console.log(`savedUser : ${savedUser}`);
+    await this.saveUserToDatabase(user);
     return access_token;
   }
 
   private async saveUserToDatabase(user: PendingUser) {
-    console.log('save start');
     const newUserEntity = this.userRepository.create({
       id: user.id,
       userName: user.login,
       email: user.email,
     });
-    console.log(`newEntity : ${newUserEntity}`);
     const savedUser = this.userRepository.save(newUserEntity);
     return savedUser;
   }
 
   private async generateJwtToken(user: PendingUser) {
-    const payload = {
-      sub: user.id,
-      username: user.login,
-      useremail: user.email,
-    };
+    const payload = { sub: user.id };
     return this.jwtService.signAsync(payload);
   }
 
