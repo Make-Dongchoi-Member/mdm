@@ -52,12 +52,6 @@
 <style>
 	/* scroll bar */
 
-	.data {
-		height: 300px;
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
-
 	.data::-webkit-scrollbar {
 		width: 6px;
 		height: 30px;
@@ -83,9 +77,12 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		align-content: flex-start;
-		/* border: 1px solid white; */
 		width: 775px;
-		/* height: 300px; */
+		height: 300px;
+
+		overflow-y: auto;
+		/* overflow-x: hidden; */
+
 		margin: 10px 10px 10px 15px;
 	}
 
