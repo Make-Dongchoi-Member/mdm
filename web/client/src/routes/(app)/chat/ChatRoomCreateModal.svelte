@@ -61,8 +61,6 @@
     }
 
     const roomnameInputBoxEvent = (e: any) => {
-        const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
-
         setTimeout(() => {
             if (e.target.value !== "") {
                 isMakeButtonActivation = true;                
