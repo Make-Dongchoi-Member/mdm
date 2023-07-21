@@ -2,6 +2,7 @@
     import Modal from './ChatRoomCreateModal.svelte';
     import { modalStatesStore, myData } from '../../../store';
     import { onMount } from 'svelte';
+    import { RoomType } from '../../../enums';
 
     onMount(() => {
 
@@ -36,7 +37,7 @@
                 <div>
                     room.name
                 </div>
-                {#if room.isLocked}
+                {#if room.roomtype === RoomType.lock}
                     <div>&#x1F512</div>
                 {:else}
                     <div></div>

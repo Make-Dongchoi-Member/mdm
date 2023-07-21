@@ -6,7 +6,7 @@ const myData: Writable<MyData> = writable({
 	id: "seonhoki",
 	avatarSrc: "/asset/hhwang.png",
 	rooms: [
-        {id: "123", name:'room name', roomtype: RoomType.normal, memberCount: 4},
+        {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
         {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
     ],
 });
@@ -57,7 +57,7 @@ const openedRoom: Writable<RoomDetail> = writable({
 	* Chatting방 생성 요청
 	POST
 	>> roomInfoDTO: RoomInfoDTO
-	<< result: boolean
+	<< id: string
 	
 	Chatroom 내부 ("/chat/room") ============================================
 	* 들어간 방의 정보 API 요청

@@ -34,7 +34,7 @@ export interface RoomInfoDTO {
 	id: string;
 	roomname: string;
 	password: string;
-	isPrivate: boolean;
+	roomtype: RoomType;
 }
 
 export interface GameSetting {
