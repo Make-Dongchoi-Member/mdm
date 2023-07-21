@@ -87,7 +87,7 @@
         <div class="modal-content">
             <div class="room-name">
                 <div class="room-name-input">
-                    <input class="roomname-inputbox" type="text" placeholder="ROOM NAME">
+                    <input class="roomname-inputbox" type="text" placeholder="ROOM NAME" maxlength=20>
                 </div>
                 <div class="private-button">
                     PRIVATE
@@ -100,7 +100,9 @@
                         style="visibility: {isPrivate ? 'hidden' : 'visible'};"
                         class="password-inputbox" 
                         type="password" 
-                        placeholder="PASSWORD IF YOU NEED">
+                        placeholder="PASSWORD IF YOU NEED"
+                        maxlength=10
+                        >
                 </div>
                 {#if isPrivate}
                 <div>
