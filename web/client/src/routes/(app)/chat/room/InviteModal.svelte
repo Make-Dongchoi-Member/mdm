@@ -1,6 +1,6 @@
 <script lang="ts">
     import { modalStatesStore } from "../../../../store";
-
+    
     let isInviteButtonActivated: boolean = false;
     let inputValue: string = "";
 
@@ -21,12 +21,30 @@
     */
 
     const inputEvent = (e: any) => {
-        if (e.target.value !== "") {
+        const isInviteAvalable = document.querySelector(".invite-avalable") as HTMLDivElement;
+        const id: string = (e.target.value).trim();
+
+        if (id !== "" && isUserExist(id)) {
             isInviteButtonActivated = true;
+            isInviteAvalable.textContent = "available";
         } else {
             isInviteButtonActivated = false;
-        }
+            isInviteAvalable.textContent = "unavailable";
+        }        
     }
+
+    const isUserExist = (id: string) => {
+
+        if (id === "") {            
+            return false;
+        }
+        
+        /* 유저 존재하는지 API 요청 */       
+        
+        return false;
+    }
+
+    
 
 </script>
 
@@ -46,7 +64,7 @@
                 </div>
             </div>
             <div class="bottom-line">
-                <div>
+                <div class="invite-avalable">
                     unavailable
                 </div>        
                 <button 
