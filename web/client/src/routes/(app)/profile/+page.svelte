@@ -2,11 +2,6 @@
     import MyInfo from "./history/MyInfo.svelte";
     import OtherInfo from "./history/OtherInfo.svelte";
 
-	interface Profile {
-		id: string;
-		avatarSrc: string;
-	}
-
 	let members = [
 		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },
 		{ id: "seonhoki", avatarSrc: "/asset/default_profile.png" },
