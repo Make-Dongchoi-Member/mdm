@@ -1,5 +1,14 @@
 import type { Level } from "./enums";
 
+export interface Notification {
+	sender: string;
+	body: string;
+}
+
+export interface RequestNoti extends Notification {
+	pageUrl: string;
+}
+
 export interface Message {
 	sender: string;
 	avatarSrc: string;
