@@ -1,4 +1,7 @@
 <script lang="ts">
+    import MyInfo from "./history/MyInfo.svelte";
+    import OtherInfo from "./history/OtherInfo.svelte";
+
 	interface Profile {
 		id: string;
 		avatarSrc: string;
@@ -23,45 +26,31 @@
 	]
 </script>
 
-<div class="info_box">
-		<div class="profile_image_circle">
-		</div>
-		<div class="personal_info">
-			<button>
-				nickname
-			</button>
-			<button>
-				LOGOUT
-			</button>
-		</div>
+<div class="info_container">
+	<!-- <MyInfo /> -->
+	<OtherInfo />
+</div>
+<div class="data_container">
+	<div class="button_area">
+		<nav>
+			<a href="/profile">SOCIAL</a>
+			<a href="/profile/history">HISTORY</a>
+		</nav>
 	</div>
-	<div class="data_box">
-		<div class="button_area">
-			<nav>
-				<a href="/profile">SOCIAL</a>
-				<a href="/profile/history">HISTORY</a>
-			</nav>
-		</div>
-		<div class="data">
-			{#each members as item}
+	<div class="data">
+		{#each members as item}
+		<div>
+			<img src={item.avatarSrc} alt="profile_image">
 			<div>
-				<img src={item.avatarSrc} alt="profile_image">
-				<div>
-					{item.id}
-				</div>
+				{item.id}
 			</div>
-			{/each}
 		</div>
+		{/each}
 	</div>
+</div>
 
 <style>
 	/* scroll bar */
-
-	.data {
-		height: 300px;
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
 
 	.data::-webkit-scrollbar {
 		width: 6px;
@@ -88,9 +77,12 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		align-content: flex-start;
-		/* border: 1px solid white; */
 		width: 775px;
-		/* height: 300px; */
+		height: 300px;
+
+		overflow-y: auto;
+		/* overflow-x: hidden; */
+
 		margin: 10px 10px 10px 15px;
 	}
 
@@ -125,39 +117,14 @@
 		font-size: 20px
 	}
 
-	.info_box {
+	.info_container {
+		display: flex;
+		flex-direction: row;
 		border: 1px solid var(--border-color);
 		height: 250px;
 	}
 
-	.profile_image_circle {
-		border: 1px solid var(--border-color);
-		border-radius: 50%;
-		width: 100px;
-		height: 100px;
-		margin: 30px 20px 20px 40px;
-	}
-
-	.personal_info {
-		width: 150px;
-		height: 80px;
-		display: flex;
-		flex-direction: column;
-		/* align-items: center; */
-		margin-left: 15px;
-	}
-
-	.personal_info > button {
-		width: 150px;
-		/* height: 30px; */
-		/* border: 1px solid var(--border-color); */
-		/* background-color: var(--bg-color); */
-		/* color: var(--text-color); */
-		/* text-align: center; */
-		margin-bottom: 10px;
-	}
-
-	.data_box {
+	.data_container {
 		border: 1px solid var(--border-color);
 		height: 380px;
 		margin-top: 20px;

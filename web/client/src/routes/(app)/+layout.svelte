@@ -59,6 +59,10 @@
         border: none;
     }
 
+    .alarm > button:hover {
+        background-color: var(--bg-color);
+    }
+
     :global(button) {
         height: 30px;
         background-color: var(--bg-color);
