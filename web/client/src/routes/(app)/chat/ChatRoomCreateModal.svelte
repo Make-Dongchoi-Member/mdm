@@ -66,10 +66,8 @@
         setTimeout(() => {
             if (e.target.value !== "") {
                 isMakeButtonActivation = true;                
-                makeButton.disabled = false;
             } else {
                 isMakeButtonActivation = false;
-                makeButton.disabled = true;
             }            
         }, 100);
     }
@@ -97,7 +95,12 @@
             </div>
             <div class="room-option">
                 <div class="password-option">
-                    <input class="password-inputbox" type="password" placeholder="PASSWORD IF YOU NEED">
+                    <input 
+                        disabled={isPrivate ? true : false}
+                        style="visibility: {isPrivate ? 'hidden' : 'visible'};"
+                        class="password-inputbox" 
+                        type="password" 
+                        placeholder="PASSWORD IF YOU NEED">
                 </div>
                 {#if isPrivate}
                 <div>
@@ -106,7 +109,10 @@
                 {:else}
                 <div></div>
                 {/if}                
-                <button class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'} on:click={makeButtonEvent} >
+                <button 
+                    class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
+                    disabled={isMakeButtonActivation ? false : true}
+                    on:click={makeButtonEvent} >
                     MAKE
                 </button>                
             </div>
@@ -192,6 +198,11 @@
         flex-direction: row;
         margin-left: 20px;
         margin-top: 10px;
+    }
+
+    .room-option > :nth-child(1) {
+        width: 320px;
+        height: 35px;
     }
 
     .room-option > :nth-child(1) > input {
