@@ -5,7 +5,7 @@
 
     let isPrivate: boolean = false;  
     let isMakeButtonActivation: boolean = false;
-    let roomNameInputValue: string = ""
+    let roomNameInputValue: string = "";
 
     onMount(() => {
         const privateButton = document.querySelector(".private-button") as HTMLDivElement;       

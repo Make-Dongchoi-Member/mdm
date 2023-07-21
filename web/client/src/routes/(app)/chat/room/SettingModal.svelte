@@ -2,7 +2,9 @@
     import { onMount } from 'svelte'
     import { modalStatesStore } from '../../../../store';
 
-    let isPrivate = false;  
+    let isPrivate = false;
+    let isMakeButtonActivation: boolean = false;
+    let roomNameInputValue: string = "";
 
     onMount(() => {
         const privateButton = document.querySelector(".private-button") as HTMLDivElement;
@@ -44,6 +46,14 @@
         $modalStatesStore.isSettingModal = false;
     }
 
+    const roomnameInputBoxEvent = (e: any) => {    
+        if (e.target.value !== "") {
+            isMakeButtonActivation = true;                
+        } else {
+            isMakeButtonActivation = false;
+        }
+    }
+
 </script>
 
     <div class="modal-container" style="{$modalStatesStore.isSettingModal ? 'display: block;' : 'display: none;'}">
@@ -58,7 +68,13 @@
     <div class="modal-content">
         <div class="room-name">
             <div class="room-name-input">
-                <input type="text" placeholder="ROOM NAME">
+                <input 
+                    on:input={roomnameInputBoxEvent}
+                    bind:value={roomNameInputValue}
+                    type="text" 
+                    placeholder="ROOM NAME" 
+                    maxlength=20
+                    >
             </div>
             <div class="private-button">
                 PRIVATE
@@ -66,7 +82,13 @@
         </div>
         <div class="room-option">
             <div class="password-option">
-                <input type="password" placeholder="PASSWORD IF YOU NEED">
+                <input 
+                    disabled={isPrivate ? true : false}
+                    style="visibility: {isPrivate ? 'hidden' : 'visible'};"
+                    type="password" 
+                    placeholder="PASSWORD IF YOU NEED" 
+                    maxlength=10
+                    >
             </div>
             {#if isPrivate}
                 <div>
@@ -75,7 +97,11 @@
             {:else}
                 <div></div>
             {/if}
-            <button on:click={changeButtonEvent}>
+            <button 
+                class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
+                disabled={isMakeButtonActivation ? false : true}
+                on:click={changeButtonEvent}
+                >
                 CHANGE
             </button>
         </div>
@@ -177,20 +203,25 @@
     flex-basis: 250px;
     }
 
-    .room-option > :nth-child(3) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    .make-button {
+        width: 100px;
+        height: 35px;
+        border: 1px solid var(--border-color);        
+        
+        text-align: center;
+        margin-left: 30px;
+    }    
 
-    width: 100px;
-    border: 1px solid var(--border-color);
-
-    margin-left: 30px;
+    .make-button.able:hover {
+        background-color: var(--hover-color);
     }
 
-    .room-option > :nth-child(3):hover {
-    background-color: var(--hover-color);
+    .make-button.disable {
+        color: var(--border-color);
+    }
+
+    .make-button.disable:hover {
+        background-color: var(--bg-color);
     }
   
 </style>
