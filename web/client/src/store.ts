@@ -50,21 +50,40 @@ const openedRoom: Writable<RoomDetail> = writable({
 	Login 이후 ("/") ============================================
 	* 내 정보 API 요청
 	GET
-	>> id: string
+	>> userID: string
 	<< mydata: MyData
 
 	Chatroom List ("/chat") ============================================
-	* Chatting방 생성 요청
+	* Chatting방 생성 API 요청
 	POST
 	>> roomInfoDTO: RoomInfoDTO
-	<< id: string
+	<< roomID: string
 	
 	Chatroom 내부 ("/chat/room") ============================================
 	* 들어간 방의 정보 API 요청
 	POST
-	>> userId: string, roomID: string
+	>> userID: string, roomID: string
 	<< openedRoom: RoomDetail
 
+	* 방 정보 수정 API 요청
+	POST
+	>> roomInfoDTO: RoomInfoDTO
+	<< result: boolean
+
+	* 초대할 대상 존재 여부 확인 API 요청
+	GET
+	>> userID
+	<< result: boolean
+
+	* 방 나가기 API 요청
+	POST
+	>> userID: string, roomID: string
+	<< result: boolean
+
+	* profile 정보 API 요청
+	GET
+	>> userID: string
+	<< result: profile 관련 interface(아직 미 생성함)
 
 	
 */
