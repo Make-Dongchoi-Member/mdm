@@ -6,7 +6,7 @@
 	<img class="image" src="/asset/hhwang.png" alt="sample">
 </button>
 <form>
-	<input type="text" maxlength="20" placeholder="put your nickname" required>
+	<input type="text" maxlength="10" placeholder="put your nickname" required>
 	<button type="submit"></button>
 </form>
 
