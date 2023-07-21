@@ -1,13 +1,13 @@
 import {writable, type Writable} from 'svelte/store';
 import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
-import { Level } from './enums';
+import { Level, RoomType } from './enums';
 
 const myData: Writable<MyData> = writable({
 	id: "seonhoki",
 	avatarSrc: "/asset/hhwang.png",
 	rooms: [
-        {id: "123", name:'room name', isLocked: true, memberCount: 4},
-        {id: "456", name:'room name2', isLocked: false, memberCount: 999},
+        {id: "123", name:'room name', roomtype: RoomType.normal, memberCount: 4},
+        {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
     ],
 });
 
@@ -28,7 +28,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 const openedRoom: Writable<RoomDetail> = writable({
 	id: "tesroomid123",
 	name: "testroomname",
-	isLocked: false,
+	roomtype: RoomType.normal,
 	memberCount: 4,
 	members: new Map([
 		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.admin, isMuted: false }],
@@ -46,16 +46,26 @@ const openedRoom: Writable<RoomDetail> = writable({
 /*
 
 	@API
-
-	내 정보 API 요청
+	
+	Login 이후 ("/") ============================================
+	* 내 정보 API 요청
 	GET
 	>> id: string
 	<< mydata: MyData
 
-	들어간 방의 정보 API 요청
+	Chatroom List ("/chat") ============================================
+	* Chatting방 생성 요청
+	POST
+	>> roomInfoDTO: RoomInfoDTO
+	<< result: boolean
+	
+	Chatroom 내부 ("/chat/room") ============================================
+	* 들어간 방의 정보 API 요청
 	POST
 	>> userId: string, roomID: string
 	<< openedRoom: RoomDetail
+
+
 	
 */
 

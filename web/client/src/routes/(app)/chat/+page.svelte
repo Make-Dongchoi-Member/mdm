@@ -15,13 +15,7 @@
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
     }
-
-    function truncateText(text: string, maxLength: number) {
-        if (text.length > maxLength) {
-            return text.slice(0, maxLength) + '...';
-        }
-        return text;
-    }
+ 
 
 </script>
 
@@ -40,7 +34,7 @@
         {#each $myData.rooms as room}
             <a href="/chat/room?id={room.id}">
                 <div>
-                    {truncateText(room.name, 30)}
+                    room.name
                 </div>
                 {#if room.isLocked}
                     <div>&#x1F512</div>

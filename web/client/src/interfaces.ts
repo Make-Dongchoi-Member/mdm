@@ -1,4 +1,4 @@
-import type { Level } from "./enums";
+import type { Level, RoomType } from "./enums";
 
 export interface UserData {
 	id: string;
@@ -21,13 +21,20 @@ export interface Profile {
 export interface Room {
 	id: string;
 	name: string;
-	isLocked: boolean;
+	roomtype: RoomType;
 	memberCount: number;
 }
 
 export interface RoomDetail extends Room {
 	members: Map<string, Profile>;
 	history: Message[];
+}
+
+export interface RoomInfoDTO {
+	id: string;
+	roomname: string;
+	password: string;
+	isPrivate: boolean;
 }
 
 export interface GameSetting {
