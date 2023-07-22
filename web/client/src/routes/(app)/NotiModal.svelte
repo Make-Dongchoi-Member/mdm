@@ -67,6 +67,7 @@
         box-sizing: border-box;
 
         position: absolute;
+		z-index: 2;
     }
 
     .modal-box {

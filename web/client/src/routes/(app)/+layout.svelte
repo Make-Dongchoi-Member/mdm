@@ -67,6 +67,7 @@
         width: 900px;
         position: absolute;
         top: 7px;
+		z-index: 0;
     }
 
     .alarm > button {
@@ -84,6 +85,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+		z-index: 1;
     }
 
     .containerBody {
