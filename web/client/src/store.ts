@@ -54,6 +54,11 @@ const openedRoom: Writable<RoomDetail> = writable({
 	<< mydata: MyData
 
 	Chatroom List ("/chat") ============================================
+	* room List 목록 가져오기 API 요청
+	GET
+	>> userID: string
+	<< rooms: Room[]
+
 	* Chatting방 생성 API 요청
 	POST
 	>> roomInfoDTO: RoomInfoDTO
