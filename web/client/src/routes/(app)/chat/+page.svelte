@@ -3,9 +3,20 @@
     import { modalStatesStore, myData } from '../../../store';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
+    import type { Room } from '../../../interfaces';
 
+    const roomlist: Room[] = [
+            {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
+            {id: "456", name: 'room2(not enter)', roomtype: RoomType.normal, memberCount: 3},
+            {id: "7777", name: 'room3(not enter)', roomtype: RoomType.normal, memberCount: 121},
+            {id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
+            {id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
+            {id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
+        ]
+    
     onMount(() => {
-
+    
+        
         /*
             @TODO
         */
@@ -31,11 +42,11 @@
             <button on:click={roomCreateModalButton}>+</button>
         </div>
     </div>
-    <div class="room-list">
+    <div class="room-list">        
         {#each $myData.rooms as room}
             <a href="/chat/room?id={room.id}">
                 <div>
-                    room.name
+                    {room.name}
                 </div>
                 {#if room.roomtype === RoomType.lock}
                     <div>&#x1F512</div>
@@ -46,6 +57,23 @@
                     {room.memberCount}
                 </div>
             </a>
+        {/each}
+        {#each roomlist as room}
+            {#if (!$myData.rooms.includes(room))}                            
+                <a href="/chat/room?id={room.id}">
+                    <div>
+                        {room.name}
+                    </div>
+                    {#if room.roomtype === RoomType.lock}
+                        <div>&#x1F512</div>
+                    {:else}
+                        <div></div>
+                    {/if}
+                    <div>
+                        {room.memberCount}
+                    </div>
+                </a>
+            {/if}
         {/each}
     </div>
 </div>
