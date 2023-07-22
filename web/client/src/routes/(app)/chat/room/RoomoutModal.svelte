@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { modalStatesStore } from "../../../../store";
+    import { modalStatesStore, myData, openedRoom } from "../../../../store";
 
     const outButtonEvent = () => {
         /*
@@ -8,9 +8,15 @@
             방에서 나가는 API 요청
         */
         
+        deleteRoomId($openedRoom.id);
         goto("/chat");
         $modalStatesStore.isRoomoutModal = false;
     }
+
+    function deleteRoomId(deleteID: string) {
+        $myData.rooms = $myData.rooms.filter((room) => room.id !== deleteID);
+    }
+
 </script>
 
     <div class="modal-container {$modalStatesStore.isRoomoutModal ? 'flex-container' : 'hidden-container'}">
