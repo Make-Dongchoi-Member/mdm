@@ -1,5 +1,9 @@
-<script>
-
+<script lang="ts">
+	async function logJSONData() {
+		const response = await fetch("http://localhost:3000/login");
+		const jsonData = await response.json();
+		console.log(jsonData);
+	}
 </script>
 
 <div class="logo">
