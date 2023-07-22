@@ -1,10 +1,11 @@
 <script lang="ts">
     import { onMount } from 'svelte'
-    import { modalStatesStore } from '../../../../store';
+    import { modalStatesStore, openedRoom } from '../../../../store';
+    import { RoomType } from '../../../../enums';
 
-    let isPrivate = false;
+    let isPrivate = $openedRoom.roomtype === RoomType.private ? true : false;
     let isMakeButtonActivation: boolean = false;
-    let roomNameInputValue: string = "";
+    let roomNameInputValue: string = $openedRoom.name;
 
     onMount(() => {
         const privateButton = document.querySelector(".private-button") as HTMLDivElement;
@@ -54,6 +55,20 @@
         }
     }
 
+    const passwordInputBoxEvent = (e: any) => {    
+        if (e.target.value !== "") {
+            isMakeButtonActivation = true;                
+        } else {
+            isMakeButtonActivation = false;
+        }
+    }
+
+    const passwordInitialEvent = (e: any) => {
+        if (e.target.value === "initialpw") {
+            e.target.value = "";
+        } 
+    }
+
 </script>
 
     <div class="modal-container" style="{$modalStatesStore.isSettingModal ? 'display: block;' : 'display: none;'}">
@@ -83,7 +98,10 @@
         <div class="room-option">
             <div class="password-option">
                 <input 
+                    value="initialpw"
                     disabled={isPrivate ? true : false}
+                    on:input={passwordInputBoxEvent}
+                    on:click={passwordInitialEvent}
                     style="visibility: {isPrivate ? 'hidden' : 'visible'};"
                     type="password" 
                     placeholder="PASSWORD IF YOU NEED" 
