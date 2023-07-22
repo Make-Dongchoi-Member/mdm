@@ -9,9 +9,7 @@
 <div class="logo">
 	LOGO
 </div>
-<a href="http://localhost:3000/login">
-	<button>LOGIN WITH 42</button>
-</a>
+<button on:click={ logJSONData }>LOGIN WITH 42</button>
 
 
 <style>
