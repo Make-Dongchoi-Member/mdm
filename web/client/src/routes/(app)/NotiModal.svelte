@@ -3,26 +3,26 @@
     import type { Notification } from "../../interfaces";
 
     let myNoti: Notification[] = [
-        {sender: 'dongchoi', body: 'JOIN MATCH'},
-        {sender: 'hhwang', body: 'JOIN CHAT'},
-        {sender: 'seonhoki', body: 'ADD FRIEND'},
-        {sender: 'jaewchoi', body: 'JOIN MATCH'},
-        {sender: 'sooyokim', body: 'JOIN MATCH'},
-        {sender: 'dongchoi', body: 'JOIN MATCH'},
-        {sender: 'hhwang', body: 'JOIN CHAT'},
-        {sender: 'seonhoki', body: 'ADD FRIEND'},
-        {sender: 'jaewchoi', body: 'JOIN MATCH'},
-        {sender: 'sooyokim', body: 'JOIN MATCH'},
-        {sender: 'dongchoi', body: 'JOIN MATCH'},
-        {sender: 'hhwang', body: 'JOIN CHAT'},
-        {sender: 'seonhoki', body: 'ADD FRIEND'},
-        {sender: 'jaewchoi', body: 'JOIN MATCH'},
-        {sender: 'sooyokim', body: 'JOIN MATCH'},
-        {sender: 'dongchoi', body: 'JOIN MATCH'},
-        {sender: 'hhwang', body: 'JOIN CHAT'},
-        {sender: 'seonhoki', body: 'ADD FRIEND'},
-        {sender: 'jaewchoi', body: 'JOIN MATCH'},
-        {sender: 'sooyokim', body: 'JOIN MATCH'},
+        {sender: 'dongchoi', body: 'GO TO MATCH'},
+        {sender: 'hhwang', body: 'GO TO PRIVATE CHATTING ROOM'},
+        {sender: 'seonhoki', body: 'GET RELATIONSHIP'},
+        {sender: 'jaewchoi', body: 'GO TO MATCH'},
+        {sender: 'sooyokim', body: 'GO TO MATCH'},
+        {sender: 'dongchoi', body: 'GO TO MATCH'},
+        {sender: 'hhwang', body: 'GO TO PRIVATE CHATTING ROOM'},
+        {sender: 'seonhoki', body: 'GET RELATIONSHIP'},
+        {sender: 'jaewchoi', body: 'GO TO MATCH'},
+        {sender: 'sooyokim', body: 'GO TO MATCH'},
+        {sender: 'dongchoi', body: 'GO TO MATCH'},
+        {sender: 'hhwang', body: 'GO TO PRIVATE CHATTING ROOM'},
+        {sender: 'seonhoki', body: 'GET RELATIONSHIP'},
+        {sender: 'jaewchoi', body: 'GO TO MATCH'},
+        {sender: 'sooyokim', body: 'GO TO MATCH'},
+        {sender: 'dongchoi', body: 'GO TO MATCH'},
+        {sender: 'hhwang', body: 'GO TO PRIVATE CHATTING ROOM'},
+        {sender: 'seonhoki', body: 'GET RELATIONSHIP'},
+        {sender: 'jaewchoi', body: 'GO TO MATCH'},
+        {sender: 'sooyokim', body: 'GO TO MATCH'},
         
     ]
 </script>
@@ -46,7 +46,7 @@
                         {item.body}
                     </div>
                     <div>
-                        <span class="simple-text">from</span>
+                        <span class="simple-text">with</span>
                         <span>{item.sender}</span>
                     </div>
                     <div class="button-area">
@@ -90,6 +90,7 @@
     }
     
     .modal-title {
+        color: var(--point-color);
         display:flex;
         flex-direction: row;
         justify-content: space-between;
@@ -115,6 +116,7 @@
     .modal-content {
         display: flex;
         flex-direction: row;
+        justify-content: flex-end;
         align-items: center;
 
         position: relative;
@@ -128,29 +130,32 @@
     }
     
     .modal-content > :nth-child(1) {
+        position: absolute;
         font-size: 13px;
         margin-left: 10px;
+
+        left: 10px;
     }
     
     .modal-content > :nth-child(2) {
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        align-items: center;
+        align-items: end;
         text-align: right;
-        font-size: 13px;
-        flex-grow: 1;
+        font-size: 12px;
     }
     
     .simple-text {
+        color: var(--border-color);
         font-size: 10px;
         padding-right: 5px;
-        text-align: right;
+        padding-bottom: 2px;
     }
 
     .button-area {
         display: flex;
         text-align: center;
+        margin-left: 10px;
     }
 
     .yes-button {
