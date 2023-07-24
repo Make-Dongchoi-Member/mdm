@@ -35,7 +35,7 @@ coverage
 !.vscode/extensions.json
 
 # server client
-server/client/
+web/server/client/
 
 # svelte
 build/
