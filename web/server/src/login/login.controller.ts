@@ -12,8 +12,10 @@ import {
 import { LoginService } from './login.service';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Public } from './guards/login.jwt.public.decorator';
 
 @Controller('login')
+@Public()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
@@ -79,6 +81,9 @@ export class LoginController {
     @Res() res: Response,
   ) {
     const userId = req.cookies['user_id'];
+    if (!userId) {
+      throw new BadRequestException();
+    }
     const accessToken = await this.loginService.verifyEmailCode(+userId, code);
     res.cookie('access_token', accessToken);
 

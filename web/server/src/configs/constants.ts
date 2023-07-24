@@ -1,5 +1,6 @@
 export const USER_REPOSITORY = 'USER_REPOSITORY';
 export const DATA_SOURCE = 'DATA_SOURCE';
+export const IS_PUBLIC_KEY = 'IS_PUBLIC';
 
 // .env value
 export const APP_URL = 'APP_URL';

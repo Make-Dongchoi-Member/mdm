@@ -32,6 +32,7 @@ export class PendingUserService {
       throw new UnauthorizedException('WorngCode');
     }
     this.delete(userId);
+    this.deleteExpireUser();
     return findUser;
   }
 
