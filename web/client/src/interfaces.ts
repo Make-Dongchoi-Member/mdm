@@ -1,17 +1,20 @@
 import type { Level } from "./enums";
 
+export interface Notification {
+	sender: string;
+	body: string;
+}
+
+export interface RequestNoti extends Notification {
+	pageUrl: string;
+}
+
 export interface Message {
 	sender: string;
 	avatarSrc: string;
 	body: string;
 	isDM: boolean;
 	date: string;
-}
-
-export interface Profile {
-	id: string;
-	avatarSrc: string;
-	level: Level;
 }
 
 export interface Room {
@@ -42,4 +45,8 @@ export interface UserData {
 
 export interface MyData extends UserData {
 	rooms: Room[];
+}
+
+export interface Profile extends UserData {
+	level: Level;
 }

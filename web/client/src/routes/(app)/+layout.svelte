@@ -1,13 +1,14 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
-    import { modalStatesStore } from '../../store';
+    import { modalStatesStore, myData } from '../../store';
+
 </script>
 
 <div class="container">
     <nav class= "containerTop" >
         <a href="/" >GAME</a>
         <a href="/chat" >CHAT</a> 
-        <a href="/profile" >PROFILE</a>
+        <a href="/profile" >{$myData.id}</a>
     </nav>
     <div class="containerBody">
         <slot></slot>
@@ -48,30 +49,34 @@
         justify-content: center;
     }
 
-    .alarm {
-        position: absolute;
-        top: 5px;
-        left: 50%;
-        margin-left: 595px;
-    }
-
-    .alarm > button {
-        border: none;
-    }
-
-    .alarm > button:hover {
-        background-color: var(--bg-color);
-    }
-
+    
     :global(button) {
         height: 30px;
         background-color: var(--bg-color);
         color: var(--text-color);
         border: 1px solid var(--border-color);
     }
-
+    
     :global(button:hover) {
         background-color: var(--hover-color);
+    }
+    
+    .alarm {
+        display: flex;
+        justify-content: flex-end;
+        width: 900px;
+        position: absolute;
+        top: 7px;
+		z-index: 0;
+    }
+
+    .alarm > button {
+        padding-right: 10px;
+        border: none;
+    }
+
+    .alarm > button:hover {
+        background-color: var(--bg-color);
     }
 
     .container {
@@ -80,6 +85,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+		z-index: 1;
     }
 
     .containerBody {
@@ -94,9 +100,11 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        text-align: center;
     }
 
     nav > a {
+        width: 100px;
         color: var(--text-color);
         padding: 10px 10px 10px 10px;
         text-decoration: none;
