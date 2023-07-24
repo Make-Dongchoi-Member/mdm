@@ -31,7 +31,7 @@ export interface RoomDetail extends Room {
 }
 
 export interface RoomInfoDTO {
-	id: string;
+	hostId: string;
 	roomname: string;
 	password: string;
 	roomtype: RoomType;

@@ -47,44 +47,42 @@ const openedRoom: Writable<RoomDetail> = writable({
 
 	@API
 	
-	Login 이후 ("/") ============================================
 	* 내 정보 API 요청
-	GET
+	GET("/api/user?id=[userid]")
 	>> userID: string
 	<< mydata: MyData
 
-	Chatroom List ("/chat") ============================================
-	* room List 목록 가져오기 API 요청
-	GET
+	* room List 목록 요청
+	GET("/api/chat/list")
 	>> userID: string
 	<< rooms: Room[]
 
 	* Chatting방 생성 API 요청
-	POST
+	POST("/api/chat/create")
 	>> roomInfoDTO: RoomInfoDTO
 	<< roomID: string
 	
-	Chatroom 내부 ("/chat/room") ============================================
 	* 들어간 방의 정보 API 요청
-	POST
+	POST("/api/chat/room")
 	>> userID: string, roomID: string
 	<< openedRoom: RoomDetail
 
 	* 방 정보 수정 API 요청
-	POST
+	POST(/api/chat/room/update)
 	>> roomInfoDTO: RoomInfoDTO
 	<< result: boolean
 
 	* 초대할 대상 존재 여부 확인 API 요청
-	GET
+	GET(/api/user/check?id=[userid])
 	>> userID
 	<< result: boolean
 
 	* 방 나가기 API 요청
-	POST
+	POST(/api/chat/room/out)
 	>> userID: string, roomID: string
 	<< result: boolean
 
+	(나중에)
 	* profile 정보 API 요청
 	GET
 	>> userID: string
