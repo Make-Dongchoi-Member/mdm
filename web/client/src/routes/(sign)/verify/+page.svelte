@@ -9,6 +9,7 @@
 		try {
 			const response = await fetch("http://localhost:3000/login/mailauth", {
 				method: "POST",
+				credentials: 'include',
 				headers: {
 					"Content-Type": "application/json",
 				},
