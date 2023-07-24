@@ -27,7 +27,7 @@ else
 	cd $SERVER_PATH
 	npm install
 	npm run build
-	npm run start &
+	npm run start:dev &
 
 	cd $CLIENT_PATH
 	npm install
