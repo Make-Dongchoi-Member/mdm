@@ -28,7 +28,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 const openedRoom: Writable<RoomDetail> = writable({
 	id: "tesroomid123",
 	name: "testroomname",
-	roomtype: RoomType.normal,
+	roomtype: RoomType.lock,
 	memberCount: 4,
 	members: new Map([
 		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.admin, isMuted: false }],

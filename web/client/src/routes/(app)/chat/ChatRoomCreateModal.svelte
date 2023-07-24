@@ -4,45 +4,24 @@
     import { goto } from '$app/navigation';
 
     let isPrivate: boolean = false;  
+    let isPassword: boolean = false;  
     let isMakeButtonActivation: boolean = false;
     let roomNameInputValue: string = "";
 
-    onMount(() => {
-        const privateButton = document.querySelector(".private-button") as HTMLDivElement;       
+    onMount(() => {     
         const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
         const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
         const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
         const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
         
-        makeButton.disabled = !isMakeButtonActivation;
-        
-        privateButton.addEventListener("click", (e: any) => {
-            if (isPrivate) {
-                e.target.style.backgroundColor = "var(--bg-color)";
-                e.target.style.border = "1px solid var(--border-color)";
-            } else {
-                e.target.style.backgroundColor = "var(--hover-color)";
-                e.target.style.border = "1px solid var(--point-color)";
-            }
-            isPrivate = !isPrivate;
-        });
-
-        privateButton.addEventListener("mouseover", (e: any) => {      
-            e.target.style.backgroundColor = "var(--hover-color)";
-        });
-        
-        privateButton.addEventListener("mouseout", (e: any) => {
-            if (!isPrivate) {
-                e.target.style.backgroundColor = "var(--bg-color)";
-            }
-        });
+        makeButton.disabled = !isMakeButtonActivation;        
 
         closeButton.addEventListener("click", () => {
             roomnameInputBox.value = "";
             passwordInputBox.value = "";
             isMakeButtonActivation = false;
-            privateButton.style.backgroundColor = "var(--bg-color)";
-            privateButton.style.border = "1px solid var(--border-color)";
+            isPrivate = false;
+            isPassword = false;
         });
     });
 
@@ -66,6 +45,39 @@
             isMakeButtonActivation = false;
         }
     }
+
+    const passwordInputBoxEvent = (e: any) => {
+        e.target.value = e.target.value.replace(/\s/g, '');
+        if (e.target.value == "") {
+            isMakeButtonActivation = false;
+        } else {
+            isMakeButtonActivation = true;
+        }
+
+    }
+
+    const privateButtonToggle = () => {
+        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
+        isPrivate = !isPrivate;
+        if (isPrivate) {
+            passwordInputBox.value = "";
+        }
+        isPassword = false;
+    }
+
+    const passwordButtonToggle = () => {
+        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
+        isPassword = !isPassword;
+        if (isPassword) {
+            isMakeButtonActivation = false;
+        }
+        if (!isPassword) {
+            passwordInputBox.value = "";
+        }
+        isPrivate = false;         
+    }
+
+    
     
 
 </script>
@@ -91,34 +103,42 @@
                         maxlength=20
                         >
                 </div>
-                <div class="private-button">
-                    PRIVATE
+                <div>
+                    <button 
+                        on:click={privateButtonToggle}
+                        class={isPrivate ? "private-button able" : "private-button disable"}
+                        >
+                        PRIVATE
+                    </button>
                 </div>
             </div>
             <div class="room-option">
                 <div class="password-option">
                     <input 
-                        disabled={isPrivate ? true : false}
-                        style="visibility: {isPrivate ? 'hidden' : 'visible'};"
-                        class="password-inputbox" 
+                        disabled={isPrivate || !isPassword ? true : false}
+                        class="password-inputbox"
+                        on:input={passwordInputBoxEvent}
                         type="password" 
                         placeholder="PASSWORD IF YOU NEED"
                         maxlength=10
                         >
                 </div>
-                {#if isPrivate}
                 <div>
-                    IT DOESN'T SHOW YOUR ROOM ON LIST
+                    <button 
+                        on:click={passwordButtonToggle}
+                        class={isPassword ? "password-button able" : "password-button disable"}
+                        >
+                        PASSWORD
+                    </button>
                 </div>
-                {:else}
-                <div></div>
-                {/if}                
-                <button 
-                    class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
-                    disabled={isMakeButtonActivation ? false : true}
-                    on:click={makeButtonEvent} >
-                    MAKE
-                </button>                
+                <div>
+                    <button 
+                        class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
+                        disabled={isMakeButtonActivation ? false : true}
+                        on:click={makeButtonEvent} >
+                        MAKE
+                    </button>                
+                </div>                            
             </div>
         </div>
     </div>
@@ -167,7 +187,7 @@
     .room-name {
         display: flex;
         flex-direction: row;
-        /* justify-content: space-between; */
+        align-items: center;
 
         margin-left: 20px;      
     }
@@ -182,31 +202,34 @@
     }
 
     .private-button {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
         text-align: center;
 
         width: 100px;
-
+        height: 39px;
         border: 1px solid var(--border-color);
         margin-left: 20px;
     }
 
-    /* .private-button:hover {
-    background-color: var(--hover-color);
-    } */
+    .private-button.able {
+        background-color: var(--hover-color);
+        border: 1px solid var(--point-color);
+    }
+
+    .private-button.disable {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color); 
+    }
+
+    .private-button.disable:hover {
+        background-color: var(--hover-color);
+    }
 
     .room-option {
         display: flex;
         flex-direction: row;
+        align-items: center;         
         margin-left: 20px;
         margin-top: 10px;
-    }
-
-    .room-option > :nth-child(1) {
-        width: 320px;
-        height: 35px;
     }
 
     .room-option > :nth-child(1) > input {
@@ -218,22 +241,37 @@
         color: var(--font-color);      
     }
 
-    .room-option > :nth-child(2) {
-        color: #848484;
-        font-size: small;
-        font-weight: 200;
+    .password-button {
+        width: 100px;
+        height: 39px;
 
+        text-align: center;        
+        border: 1px solid var(--border-color);
         margin-left: 20px;
-        flex-basis: 250px;
+    }
+
+
+    .password-button.able {
+        background-color: var(--hover-color);
+        border: 1px solid var(--point-color);
+    }
+
+    .password-button.disable {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color); 
+    }
+
+    .password-button.disable:hover {
+        background-color: var(--hover-color);
     }
 
     .make-button {
         width: 100px;
-        height: 35px;
+        height: 39px;
         border: 1px solid var(--border-color);        
         
         text-align: center;
-        margin-left: 30px;
+        margin-left: 175px;
     }    
 
     .make-button.able:hover {
