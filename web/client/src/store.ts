@@ -1,10 +1,14 @@
 import {writable, type Writable} from 'svelte/store';
-import type { MyData, GameSetting, ModalStates } from "./interfaces";
+import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
+import { Level, RoomType } from './enums';
 
 const myData: Writable<MyData> = writable({
-	id: "dongchoi",
+	id: "seonhoki",
 	avatarSrc: "/asset/hhwang.png",
-	rooms: []
+	rooms: [
+        {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
+        {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
+    ],
 });
 
 const gameSettingStore: Writable<GameSetting> = writable({
@@ -21,17 +25,75 @@ const modalStatesStore: Writable<ModalStates> = writable({
 	isRoomCreateModal: false,
 });
 
+const openedRoom: Writable<RoomDetail> = writable({
+	id: "tesroomid123",
+	name: "testroomname",
+	roomtype: RoomType.lock,
+	memberCount: 4,
+	members: new Map([
+		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.admin, isMuted: false }],
+		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
+		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
+	]),
+	history: [
+        { sender: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
+        { sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~ kick the dongchoi man, kick the dongchoi man, kick the dongchoi man, kick the dongchoi man", isDM: false, date: "10:00" },
+        { sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: true, date: "10:00" },
+        { sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
+    ],
+});
+
 /*
 
-	@TODO
-	내 정보 API 요청
-	내가 참여한 방 목록
-	현재 보고있는 방에서 나의 상태
+	@API
+	
+	* 내 정보 API 요청
+	GET("/api/user?id=[userid]")
+	>> userID: string
+	<< mydata: MyData
+
+	* room List 목록 요청
+	GET("/api/chat/list")
+	>> userID: string
+	<< rooms: Room[]
+
+	* Chatting방 생성 API 요청
+	POST("/api/chat/create")
+	>> roomInfoDTO: RoomInfoDTO
+	<< roomID: string
+	
+	* 들어간 방의 정보 API 요청
+	POST("/api/chat/room")
+	>> userID: string, roomID: string
+	<< openedRoom: RoomDetail
+
+	* 방 정보 수정 API 요청
+	POST(/api/chat/room/update)
+	>> roomInfoDTO: RoomInfoDTO
+	<< result: boolean
+
+	* 초대할 대상 존재 여부 확인 API 요청
+	GET(/api/user/check?id=[userid])
+	>> userID
+	<< result: boolean
+
+	* 방 나가기 API 요청
+	POST(/api/chat/room/out)
+	>> userID: string, roomID: string
+	<< result: boolean
+
+	(나중에)
+	* profile 정보 API 요청
+	GET
+	>> userID: string
+	<< result: profile 관련 interface(아직 미 생성함)
+
 	
 */
 
 export {
 	gameSettingStore,
 	modalStatesStore,
-	myData
+	myData,
+	openedRoom
 }

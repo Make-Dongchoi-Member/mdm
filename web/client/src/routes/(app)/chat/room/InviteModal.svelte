@@ -1,12 +1,15 @@
 <script lang="ts">
     import { modalStatesStore } from "../../../../store";
+    
+    let isInviteButtonActivated: boolean = false;
+    let inputValue: string = "";
 
     const inviteButtonEvent = () => {
         /*
             @TODO
             유저 초대 API 요청
         */
-
+        inputValue = "";        
         $modalStatesStore.isInviteModal = false;
     }
 
@@ -16,6 +19,32 @@
         있으면 unavailable을 available로 변경.
         초대 가능한 상태일때만 초대 버튼 활성화.
     */
+
+    const inputEvent = (e: any) => {
+        const isInviteAvalable = document.querySelector(".invite-avalable") as HTMLDivElement;
+        const id: string = (e.target.value).trim();
+
+        if (id !== "" && isUserExist(id)) {
+            isInviteButtonActivated = true;
+            isInviteAvalable.textContent = "available";
+        } else {
+            isInviteButtonActivated = false;
+            isInviteAvalable.textContent = "unavailable";
+        }        
+    }
+
+    const isUserExist = (id: string) => {
+
+        if (id === "") {            
+            return false;
+        }
+        
+        /* 유저 존재하는지 API 요청 */       
+        
+        return false;
+    }
+
+    
 
 </script>
 
@@ -31,14 +60,18 @@
         <div class="modal-content">
             <div class="find-friend">
                 <div class="find-friend-input">
-                    <input type="text" placeholder="FIND FRIEND">
+                    <input type="text" placeholder="FIND FRIEND" bind:value={inputValue} on:input={inputEvent} maxlength=10>
                 </div>
             </div>
             <div class="bottom-line">
-                <div>
+                <div class="invite-avalable">
                     unavailable
                 </div>        
-                <button on:click={inviteButtonEvent}>
+                <button 
+                    class={isInviteButtonActivated ? 'make-button able' : 'make-button disable'}
+                    on:click={inviteButtonEvent} 
+                    disabled={isInviteButtonActivated ? false : true}
+                    >
                     INVITE
                 </button>
             </div>
@@ -142,7 +175,7 @@
         color: var(--border-color);      
     }
 
-    .bottom-line > :nth-child(2) {
+    /* .bottom-line > :nth-child(2) {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -156,6 +189,27 @@
 
     .bottom-line > :nth-child(2):hover {
         background-color: var(--hover-color);
+    } */
+
+    .make-button {
+        text-align: center;
+
+        width: 100px;
+        border: 1px solid var(--border-color);
+
+        margin-right: 20px;
+    }    
+
+    .make-button.able:hover {
+        background-color: var(--hover-color);
+    }
+
+    .make-button.disable {
+        color: var(--border-color);
+    }
+
+    .make-button.disable:hover {
+        background-color: var(--bg-color);
     }
   
 </style>

@@ -1,39 +1,37 @@
 <script lang="ts">
     import { onMount } from 'svelte'
-    import { modalStatesStore } from '../../../../store';
-
-    let isPrivate = false;  
-
+    import { modalStatesStore, myData, openedRoom } from '../../../../store';
+    import { RoomType } from '../../../../enums';
+    import type { RoomInfoDTO } from '../../../../interfaces';
+    
+    
+    let isPrivate:boolean = $openedRoom.roomtype === RoomType.private ? true : false;
+    let isPassword: boolean = $openedRoom.roomtype === RoomType.lock ? true : false;  
+    let isMakeButtonActivation: boolean = false;
+    let roomNameInputValue: string = $openedRoom.name;
+    const initialRoomInfo:RoomInfoDTO = { hostId:$myData.id, roomname:$openedRoom.name, password:"initialpw", roomtype:$openedRoom.roomtype};    
+    
     onMount(() => {
-        const privateButton = document.querySelector(".private-button") as HTMLDivElement;
-        
+        const makeButton = document.querySelector(".make-button") as HTMLButtonElement;        
+        makeButton.disabled = !isMakeButtonActivation;                
         /*
             @TODO
             방 설정 정보 API 요청
             방 설정 값 input 채워넣기
-        */
-        
-        privateButton.addEventListener("click", (e: any) => {
-            if (isPrivate) {
-                e.target.style.backgroundColor = "var(--bg-color)";
-                e.target.style.border = "1px solid var(--border-color)";
-            } else {
-                e.target.style.backgroundColor = "var(--hover-color)";
-                e.target.style.border = "1px solid var(--point-color)";
-            }
-            isPrivate = !isPrivate;
-        });
-
-        privateButton.addEventListener("mouseover", (e: any) => {      
-            e.target.style.backgroundColor = "var(--hover-color)";        
-        });
-        
-        privateButton.addEventListener("mouseout", (e: any) => {
-            if (!isPrivate) {
-                e.target.style.backgroundColor = "var(--bg-color)";
-            }
-        });
+        */      
     });
+
+    const closeButtonEvent = () => {        
+        const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
+        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
+
+        $modalStatesStore.isSettingModal = false;
+        roomnameInputBox.value = initialRoomInfo.roomname;
+        passwordInputBox.value = $openedRoom.roomtype === RoomType.lock ? initialRoomInfo.password : "";
+        isMakeButtonActivation = false;
+        isPrivate = $openedRoom.roomtype === RoomType.private ? true : false;
+        isPassword = $openedRoom.roomtype === RoomType.lock ? true : false;
+    }
 
     const changeButtonEvent = () => {
         /*
@@ -44,6 +42,57 @@
         $modalStatesStore.isSettingModal = false;
     }
 
+    const roomnameInputBoxEvent = (e: any) => {    
+        if (e.target.value !== "" && e.target.value !== initialRoomInfo.roomname) {            
+            isMakeButtonActivation = true;                
+        } else {
+            isMakeButtonActivation = false;
+        }
+    }
+
+    const passwordInputBoxEvent = (e: any) => {    
+        e.target.value = e.target.value.replace(/\s/g, '');
+        if (e.target.value !== "") {
+            isMakeButtonActivation = true;                
+        } else {
+            isMakeButtonActivation = false;
+        }        
+    }
+
+    const passwordInitialEvent = (e: any) => {
+        if (e.target.value === "initialpw") {
+            e.target.value = "";
+        } 
+    }
+
+    const privateButtonToggle = () => {
+        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
+
+        isPrivate = !isPrivate;
+        if (isPrivate) {
+            passwordInputBox.value = "";
+        }
+        isPassword = false;
+        if ((initialRoomInfo.roomtype === RoomType.private && !isPrivate)
+                || (initialRoomInfo.roomtype !== RoomType.private && isPrivate)) {
+            isMakeButtonActivation = true;
+        }
+            
+    }
+
+    const passwordButtonToggle = () => {
+        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
+        isPassword = !isPassword;
+        if (!isPassword) {
+            passwordInputBox.value = "";
+        }
+        isPrivate = false;         
+        if ((initialRoomInfo.roomtype === RoomType.lock && !isPassword)
+                || (initialRoomInfo.roomtype !== RoomType.lock && isPassword && passwordInputBox.value !== "")) {
+            isMakeButtonActivation = true;
+        }
+    }
+
 </script>
 
     <div class="modal-container" style="{$modalStatesStore.isSettingModal ? 'display: block;' : 'display: none;'}">
@@ -52,30 +101,56 @@
             YOUR CHAT ROOM
         </div>
         <div class="close-button">
-            <button on:click={() => { $modalStatesStore.isSettingModal = false; }}>&#215;</button>
+            <button on:click={closeButtonEvent}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">
         <div class="room-name">
             <div class="room-name-input">
-                <input type="text" placeholder="ROOM NAME">
+                <input 
+                    class="roomname-inputbox"
+                    on:input={roomnameInputBoxEvent}
+                    bind:value={roomNameInputValue}
+                    type="text" 
+                    placeholder="ROOM NAME" 
+                    maxlength=20
+                    >
             </div>
-            <div class="private-button">
-                PRIVATE
+            <div>
+                <button 
+                    on:click={privateButtonToggle}
+                    class={isPrivate ? "private-button able" : "private-button disable"}
+                    >
+                    PRIVATE
+                </button>
             </div>
         </div>
         <div class="room-option">
             <div class="password-option">
-                <input type="password" placeholder="PASSWORD IF YOU NEED">
+                <input 
+                    class="password-inputbox"
+                    value={$openedRoom.roomtype === RoomType.lock ? "initialpw" : "" }
+                    disabled={isPrivate || !isPassword ? true : false}
+                    on:input={passwordInputBoxEvent}
+                    on:click={passwordInitialEvent}                    
+                    type="password" 
+                    placeholder="PASSWORD IF YOU NEED" 
+                    maxlength=10                    
+                    >
             </div>
-            {#if isPrivate}
-                <div>
-                    IT DOESN'T SHOW YOUR ROOM ON LIST
-                </div>
-            {:else}
-                <div></div>
-            {/if}
-            <button on:click={changeButtonEvent}>
+            <div>
+                <button 
+                    on:click={passwordButtonToggle}
+                    class={isPassword ? "password-button able" : "password-button disable"}
+                    >
+                    PASSWORD
+                </button>
+            </div>
+            <button 
+                class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
+                disabled={isMakeButtonActivation ? false : true}
+                on:click={changeButtonEvent}
+                >
                 CHANGE
             </button>
         </div>
@@ -84,113 +159,145 @@
   
 <style>
     .modal-container {
-    position: absolute;
-    top: 100px;
-    left: 50%;
-    margin-left: -380px;
-    width: 775px;
-    height: 150px;
+        position: absolute;
+        top: 100px;
+        left: 50%;
+        margin-left: -380px;
+        width: 775px;
+        height: 150px;
 
-    display: flex;
+        display: flex;
 
-    justify-content: center;
-    align-items: center;
+        justify-content: center;
+        align-items: center;
 
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
     }
 
     .modal-title {      
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
-    margin-left: 20px;
-    margin-top: 10px;
+        margin-left: 20px;
+        margin-top: 10px;
     }
 
     .close-button > button {
-    font-size: 25px;
-    font-weight: 500;
-    flex-grow: 0;
-    text-align: right;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: none;
-    outline: none;
+        font-size: 25px;
+        font-weight: 500;
+        flex-grow: 0;
+        text-align: right;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border: none;
+        outline: none;
 
-    margin-right: 20px;
+        margin-right: 20px;
     }
 
     .room-name {
-    display: flex;
-    flex-direction: row;
-    /* justify-content: space-between; */
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-    margin-left: 20px;      
+        margin-left: 20px;       
     }
 
     .room-name-input > input {
-    width: 320px;
-    height: 35px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        width: 320px;
+        height: 35px;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
 
-    color: var(--font-color);  
+        color: var(--font-color);  
     }
 
     .private-button {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
+        text-align: center;
 
-    width: 100px;
+        width: 100px;
+        height: 39px;
+        border: 1px solid var(--border-color);
+        margin-left: 20px;
+    }
 
-    border: 1px solid var(--border-color);
-    margin-left: 20px;
+    .private-button.able {
+        background-color: var(--hover-color);
+        border: 1px solid var(--point-color);
+    }
+
+    .private-button.disable {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color); 
+    }
+
+    .private-button.disable:hover {
+        background-color: var(--hover-color);
     }
     
     .room-option {
-    display: flex;
-    flex-direction: row;
-    margin-left: 20px;
-    margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;         
+        margin-left: 20px;
+        margin-top: 10px;
     }
 
     .room-option > :nth-child(1) > input {
-    width: 320px;
-    height: 35px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
+        width: 320px;
+        height: 35px;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
 
-    color: var(--font-color);      
+        color: var(--font-color);      
     }
 
-    .room-option > :nth-child(2) {
-    color: #848484;
-    font-size: small;
-    font-weight: 200;
+    .password-button {
+        width: 100px;
+        height: 39px;
 
-    margin-left: 20px;
-    flex-basis: 250px;
+        text-align: center;        
+        border: 1px solid var(--border-color);
+        margin-left: 20px;
     }
 
-    .room-option > :nth-child(3) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
 
-    width: 100px;
-    border: 1px solid var(--border-color);
-
-    margin-left: 30px;
+    .password-button.able {
+        background-color: var(--hover-color);
+        border: 1px solid var(--point-color);
     }
 
-    .room-option > :nth-child(3):hover {
-    background-color: var(--hover-color);
+    .password-button.disable {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color); 
+    }
+
+    .password-button.disable:hover {
+        background-color: var(--hover-color);
+    }
+
+    .make-button {
+        width: 100px;
+        height: 39px;
+        border: 1px solid var(--border-color);        
+        
+        text-align: center;
+        margin-left: 175px;
+    }    
+
+    .make-button.able:hover {
+        background-color: var(--hover-color);
+    }
+
+    .make-button.disable {
+        color: var(--border-color);
+    }
+
+    .make-button.disable:hover {
+        background-color: var(--bg-color);
     }
   
 </style>

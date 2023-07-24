@@ -5,6 +5,16 @@
     import { modalStatesStore } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
+    import { onMount } from 'svelte';
+
+    onMount(() => {
+        /*
+            @TODO
+            URI에서 id 추출해서 방 정보 API 요청하고
+            받은 데이터를 store에 있는 openedRoom에 저장
+        */
+
+    });
 
 </script>
 

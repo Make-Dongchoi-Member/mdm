@@ -1,20 +1,24 @@
 <script lang="ts">
-    import Modal from './ChatRoomListModal.svelte';
-    import { modalStatesStore } from '../../../store';
+    import Modal from './ChatRoomCreateModal.svelte';
+    import { modalStatesStore, myData } from '../../../store';
     import { onMount } from 'svelte';
+    import { RoomType } from '../../../enums';
     import type { Room } from '../../../interfaces';
+
+    const roomlist: Room[] = [
+            {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
+            {id: "456", name: 'room2(not enter)', roomtype: RoomType.normal, memberCount: 3},
+            {id: "7777", name: 'room3(not enter)', roomtype: RoomType.normal, memberCount: 121},
+            {id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
+            {id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
+            {id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
+        ]
     
-    const roomList: Room[] = [
-        {id: "123", name:'room name', isLocked: true, memberCount: 4},
-        {id: "456", name:'room name2', isLocked: false, memberCount: 999},
-    ];
-
     onMount(() => {
-
+    
+        
         /*
             @TODO
-            private 제외한 방 리스트 API 요청
-            roomList 배열 채우기
         */
 
     });
@@ -23,13 +27,7 @@
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
     }
-
-    function truncateText(text: string, maxLength: number) {
-        if (text.length > maxLength) {
-            return text.slice(0, maxLength) + '...';
-        }
-        return text;
-    }
+ 
 
 </script>
 
@@ -44,13 +42,13 @@
             <button on:click={roomCreateModalButton}>+</button>
         </div>
     </div>
-    <div class="room-list">
-        {#each roomList as room}
+    <div class="room-list">        
+        {#each $myData.rooms as room}
             <a href="/chat/room?id={room.id}">
                 <div>
-                    {truncateText(room.name, 30)}
+                    {room.name}
                 </div>
-                {#if room.isLocked}
+                {#if room.roomtype === RoomType.lock}
                     <div>&#x1F512</div>
                 {:else}
                     <div></div>
@@ -59,6 +57,23 @@
                     {room.memberCount}
                 </div>
             </a>
+        {/each}
+        {#each roomlist as room}
+            {#if (!$myData.rooms.includes(room))}                            
+                <a href="/chat/room?id={room.id}">
+                    <div>
+                        {room.name}
+                    </div>
+                    {#if room.roomtype === RoomType.lock}
+                        <div>&#x1F512</div>
+                    {:else}
+                        <div></div>
+                    {/if}
+                    <div>
+                        {room.memberCount}
+                    </div>
+                </a>
+            {/if}
         {/each}
     </div>
 </div>

@@ -1,30 +1,11 @@
 <script lang="ts">
-	import { myData } from '../../../../store';
+	import { myData, openedRoom } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
 	import type { Profile } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { onMount } from 'svelte';
 
-    const membersExample = [
-		{ id: "sooyokim", avatarSrc: "/asset/hhwang.png", level: Level.admin },
-        { id: "seonhoki", avatarSrc: "/asset/hhwang.png", level: Level.host },
-        { id: "dongchoi", avatarSrc: "/asset/default_profile.png", level: Level.member },
-    ];
+	let myLevel: Level = ($openedRoom.members.get($myData.id) as Profile).level;
 
-    let members = new Map<string, Profile>();
-	let myLevel: Level;
-
-	onMount(() => {
-		/*
-			@TODO
-			방에 속해있는 멤버 리스트 API 요청
-		*/
-	});
-
-    for (let i = 0; i < membersExample.length; i++) {
-        members.set(membersExample[i].id, membersExample[i]);
-    }
-	
 </script>
 
 <div class="members">
@@ -36,17 +17,17 @@
 			<div class="profile-id">
 				{$myData.id}
 			</div>
-			{#if members.get($myData.id)?.level == Level.host}
+			{#if $openedRoom.members.get($myData.id)?.level == Level.host}
 				<div>&#128081;</div>
-			{:else if members.get($myData.id)?.level == Level.admin}
+			{:else if $openedRoom.members.get($myData.id)?.level == Level.admin}
 				<div>&#128736;</div>
-			{:else if members.get($myData.id)?.level == Level.member}
+			{:else if $openedRoom.members.get($myData.id)?.level == Level.member}
 				<div></div>
 			{/if}
 		</div>
 	</div>
 	<div class="other-profile-container">
-		{#each Array.from(members) as [key, value]}
+		{#each Array.from($openedRoom.members) as [key, value]}
 			{#if key !== $myData.id}
 				<ProfileButton {key} {value} {myLevel} />
 			{/if}
