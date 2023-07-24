@@ -12,8 +12,10 @@ import {
 import { LoginService } from './login.service';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Public } from './guards/login.jwt.public.decorator';
 
 @Controller('login')
+@Public()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
@@ -34,6 +36,7 @@ export class LoginController {
     } else {
       // 로그인 url
       // url = 로그인 url
+      url = new ConfigService().get('APP_URL');
     }
     return { url };
   }
@@ -50,15 +53,16 @@ export class LoginController {
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
     // const url = new ConfigService().get('APP_URL') + '/mailauth';
-    const url = new ConfigService().get('APP_URL');
+    const url = new ConfigService().get('APP_URL') + '/verify';
     if (!code) {
       // error
       throw new BadRequestException();
     } else {
       // email 인증 url로 redirect
       const user = await this.loginService.generatePendingUser(code);
-      res.header('user_id', `${user.id}`);
-      res.header('user_email', user.email);
+      res.cookie('user_id', user.id);
+      // res.header('user_id', `${user.id}`);
+      // res.header('user_email', user.email);
     }
     return { url };
   }
@@ -71,10 +75,15 @@ export class LoginController {
    */
   @Post('mailauth')
   async mailAuth(
-    @Query('user_id') userId: string,
+    // @Query('user_id') userId: string,
     @Body('email_code') code: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    const userId = req.cookies['user_id'];
+    if (!userId) {
+      throw new BadRequestException();
+    }
     const accessToken = await this.loginService.verifyEmailCode(+userId, code);
     res.cookie('access_token', accessToken);
 
