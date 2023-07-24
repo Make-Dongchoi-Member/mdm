@@ -58,8 +58,9 @@ export class LoginController {
     } else {
       // email 인증 url로 redirect
       const user = await this.loginService.generatePendingUser(code);
-      res.header('user_id', `${user.id}`);
-      res.header('user_email', user.email);
+      res.cookie('user_id', user.id);
+      // res.header('user_id', `${user.id}`);
+      // res.header('user_email', user.email);
     }
     return { url };
   }
@@ -72,10 +73,12 @@ export class LoginController {
    */
   @Post('mailauth')
   async mailAuth(
-    @Query('user_id') userId: string,
+    // @Query('user_id') userId: string,
     @Body('email_code') code: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    const userId = req.cookies['user_id'];
     const accessToken = await this.loginService.verifyEmailCode(+userId, code);
     res.cookie('access_token', accessToken);
 
