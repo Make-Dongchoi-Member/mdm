@@ -13,6 +13,7 @@ import { LoginService } from './login.service';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Public } from './guards/login.jwt.public.decorator';
+import { APP_URL, DEV_URL } from 'src/configs/constants';
 
 @Controller('login')
 @Public()
@@ -53,7 +54,12 @@ export class LoginController {
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
     // const url = new ConfigService().get('APP_URL') + '/mailauth';
-    const url = new ConfigService().get('APP_URL') + '/verify';
+    let url;
+    if (new ConfigService().get('NODE_ENV') === 'prod') {
+      url = new ConfigService().get(APP_URL) + '/verify';
+    } else {
+      url = new ConfigService().get(DEV_URL) + '/verify';
+    }
     if (!code) {
       // error
       throw new BadRequestException();

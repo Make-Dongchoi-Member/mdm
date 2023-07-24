@@ -24,13 +24,13 @@ else
 	echo "############### DEVELOPMENT ###############"
 	echo ""
 
-	# cd $SERVER_PATH
-	# npm install
-	# npm run build
-	# npm run start &
+	cd $SERVER_PATH
+	npm install
+	npm run build
+	npm run start &
 
 	cd $CLIENT_PATH
 	npm install
-	# npm run dev
+	npm run dev
 
 fi

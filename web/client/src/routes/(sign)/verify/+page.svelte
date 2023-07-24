@@ -3,18 +3,18 @@
 
 	let email: string = 'hhwang@student.42seoul.kr';
 	let isInvalid: boolean = false;
+	let block: boolean = false;
 
 	async function emailCodeValidation(data: any) {
 		try {
-			const response = await fetch("http://localhost:3000/login/emainauth", {
+			const response = await fetch("http://localhost:3000/login/mailauth", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(data),
 			});
-			const result = await response.json();
-			return result;
+			return response;
 		} catch (error) {
 			console.error("실패:", error);
 		}
@@ -22,15 +22,24 @@
 
 	function emailCodeCheckEvent(e: any) {
 		let code = e.target.value;
-		if (code.length === 6) {
-			emailCodeValidation(code).then((res) => {
-				if (res.status === 201) {
-					goto('/join');
-				} else if (res.status === 500) {
-					alert('server error');
-				} else {
-					isInvalid = true;
-				}
+		if (code.length === 6 && !block) { 
+			block = true;
+			emailCodeValidation({email_code : code})
+			.then((res) => {
+				setTimeout(() => {
+					if (res) {
+						const status = res.status;
+						if (status === 201) {
+							goto('/join');
+						} else if (status === 500) {
+							alert('server error');
+							block = false;
+						} else {
+							isInvalid = true;
+							block = false;
+						}
+					}
+				}, 500)
 			});
 		} else {
 			isInvalid = false;
@@ -47,7 +56,8 @@
 <input type="text"
 	maxlength="6"
 	placeholder="put your verification code"
-	class:invalid={isInvalid}
+	class:invalid={isInvalid} class:block={block}
+	disabled={block ? true : false}
 	on:input={emailCodeCheckEvent}
 	required>
 
@@ -103,6 +113,20 @@
 		color: var(--text-color);
 		caret-color: var(--intra-color);
 		border: 2px solid red;
+		box-sizing: border-box;
+		background: none;
+		font-weight: 400;
+		text-align: center;
+	}
+
+	.block {
+		width: 300px;
+		height: 45px;
+		margin: 0;
+		padding: 0;
+		color: var(--text-color);
+		caret-color: var(--intra-color);
+		border: 2px solid grey;
 		box-sizing: border-box;
 		background: none;
 		font-weight: 400;

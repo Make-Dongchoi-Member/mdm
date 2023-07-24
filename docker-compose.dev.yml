@@ -17,7 +17,7 @@ services:
     volumes:
       - ./web:/usr/src/app
     tty: true
-  database:
+  db:
     build: ./database
     image: database
     environment:

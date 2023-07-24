@@ -4,6 +4,7 @@ export const IS_PUBLIC_KEY = 'IS_PUBLIC';
 
 // .env value
 export const APP_URL = 'APP_URL';
+export const DEV_URL = 'DEV_URL'
 export const OAUTH42_BASE_URL = '42OAUTH_BASE_URL';
 export const AUTHORIZE_PATH = 'AUTHORIZE_PATH';
 export const OAUTH_TOKEN_PATH = 'OAUTH_TOKEN_PATH';

@@ -1,15 +1,12 @@
 <script lang="ts">
-	async function logJSONData() {
-		const response = await fetch("http://localhost:3000/login");
-		const jsonData = await response.json();
-		console.log(jsonData);
-	}
 </script>
 
 <div class="logo">
 	LOGO
 </div>
-<button on:click={ logJSONData }>LOGIN WITH 42</button>
+<a href="http://localhost:3000/login">
+	<button>LOGIN WITH 42</button>
+</a>
 
 
 <style>
