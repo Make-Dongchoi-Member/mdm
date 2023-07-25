@@ -8,18 +8,21 @@ export class Users extends BaseEntity {
   @Column()
   userName: string;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   nickName: string | null;
 
   @Column()
   email: string | null;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   status: string | null;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   avatar: string | null;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   skin: number | null;
+
+  @Column()
+  rooms: number[];
 }
