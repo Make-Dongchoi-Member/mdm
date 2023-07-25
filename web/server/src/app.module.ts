@@ -8,6 +8,7 @@ import { LoginModule } from './login/login.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './login/guards/login.jwt.guard';
 import { UserModule } from './user/user.module';
+import { ChatModule } from './chat/chat.module';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === 'prod') {
     }),
     LoginModule,
     UserModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [
