@@ -1,11 +1,7 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Controller, Get, Headers, Query, Req } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Request } from 'express';
-
-// * room List 목록 요청
-// GET("/api/chat/list?user_id=[userID]")
-// >> userID: string
-// << rooms: Room[]
+import { UserId } from 'src/decorators/user-id.decorator';
 
 // * Chatting방 생성 API 요청
 // POST("/api/chat/create")
@@ -38,8 +34,19 @@ export class ChatController {
    * << rooms: Room[]
    */
   @Get('list')
-  async list(@Req() req: Request) {
-    const userId = req['user_id'];
+  async list(@UserId('user_id') userId: string) {
     return await this.chatService.getRoomListByUserID(+userId);
   }
+
+  /**
+   * 들어간 방의 정보 API 요청
+   * Get("/api/room?room_id=[roomID]")
+   * >> roomID: string
+   * << openedRoom: RoomDetail
+   */
+  @Get('room')
+  async room(
+    @UserId('user_id') userId: string,
+    @Query('room_id') roomId: string,
+  ) {}
 }

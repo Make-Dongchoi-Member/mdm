@@ -1,6 +1,6 @@
-import { Controller, Get, Query, Req, Res } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, Headers, Query, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
+import { UserId } from 'src/decorators/user-id.decorator';
 
 @Controller('user')
 export class UserController {
@@ -13,8 +13,7 @@ export class UserController {
    * << mydata: MyData
    */
   @Get('me')
-  async me(@Req() req: Request) {
-    const userId = req['user_id'];
+  async me(@UserId() userId: string) {
     return await this.userService.getInfoById(+userId);
   }
 
