@@ -1,5 +1,5 @@
 import {writable, type Writable} from 'svelte/store';
-import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
+import type { MyData, GameSetting, ModalStates, Room, RoomDetail, Profile } from "./interfaces";
 import { Level, RoomType } from './enums';
 
 const myData: Writable<MyData> = writable({

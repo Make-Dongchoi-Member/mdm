@@ -62,7 +62,3 @@ export interface ModalStates {
 export interface MyData extends UserData {
 	rooms: Room[];
 }
-
-export interface Profile extends UserData {
-	level: Level;
-}
