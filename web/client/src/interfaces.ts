@@ -2,7 +2,7 @@ import type { Level, RoomType } from "./enums";
 
 export interface UserData {
 	id: string;
-  avatarSrc: string;
+	avatarSrc: string;
 }
 
 export interface Notification {
@@ -16,6 +16,7 @@ export interface RequestNoti extends Notification {
 
 export interface Message {
 	sender: UserData;
+	roomId: string;
 	body: string;
 	isDM: boolean;
 	date: string;
@@ -26,6 +27,7 @@ export interface Profile {
 	level: Level;
 	isMuted: boolean;
 }
+
 export interface Room {
 	id: string;
 	name: string;
@@ -61,8 +63,4 @@ export interface ModalStates {
 
 export interface MyData extends UserData {
 	rooms: Room[];
-}
-
-export interface Profile extends UserData {
-	level: Level;
 }

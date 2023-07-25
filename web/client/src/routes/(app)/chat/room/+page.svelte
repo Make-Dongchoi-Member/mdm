@@ -2,10 +2,11 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore } from '../../../../store';
+    import { modalStatesStore, socketStore, myData } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
 
     onMount(() => {
         /*
@@ -13,6 +14,12 @@
             URI에서 id 추출해서 방 정보 API 요청하고
             받은 데이터를 store에 있는 openedRoom에 저장
         */
+       
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id")})
+        
+        $socketStore.on("chat/join", (data: any) => {
+            console.log("join:", data);
+        });
 
     });
 

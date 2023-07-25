@@ -1,12 +1,17 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-	import { myData, openedRoom } from '../../../../store';
+	import { myData, openedRoom, socketStore } from '../../../../store';
     import type { Message } from '../../../../interfaces';
+    import { page } from '$app/stores';
 
     let inputValue: string = "";
 
     onMount(() => {
         document.body.addEventListener("keypress", enterKeyPressEvent);
+
+        $socketStore.on("chat/message", (data: Message) => {
+            pushNewMessage(data);
+        });
     });
 
     const enterKeyPressEvent = (e: any) => {
@@ -22,6 +27,7 @@
         
         const newMessage: Message = {
             sender: {id: $myData.id, avatarSrc: $myData.avatarSrc},
+            roomId: $page.url.searchParams.get("id") as string,
             body: inputValue,
             isDM: false,
             date: "10:00",
@@ -31,9 +37,14 @@
             @TODO
             메시지 SOCKET 요청
         */
+        $socketStore.emit("chat/message", newMessage);
 
-        $openedRoom.history = [...$openedRoom.history, newMessage];
         inputValue = "";
+        pushNewMessage(newMessage);
+    }
+
+    const pushNewMessage = (message: Message) => {
+        $openedRoom.history = [...$openedRoom.history, message];
         
         setTimeout(() => {
             const chattingBox =  document.querySelector(".chatting-box") as HTMLDivElement;

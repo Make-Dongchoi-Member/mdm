@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { modalStatesStore } from '../../../store';
     import { goto } from '$app/navigation';
+    import { page } from "$app/stores";
 
     let isPrivate: boolean = false;  
     let isPassword: boolean = false;  
