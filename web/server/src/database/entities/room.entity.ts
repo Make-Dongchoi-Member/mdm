@@ -1,23 +1,38 @@
 import { RoomType } from 'src/types/enums';
-import { chatting } from 'src/types/interfaces';
-import { BaseEntity, Column, PrimaryColumn } from 'typeorm';
+import { Message } from 'src/types/interfaces';
+import { BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export class Rooms extends BaseEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  password: string | null;
+
   @Column()
   roomtype: RoomType;
 
-  @Column()
+  @Column({ default: 1 })
   memberCount: number;
 
   @Column()
-  users: number[];
+  host: number;
 
-  @Column()
-  chattings: chatting[];
+  @Column({ default: Array<number>() })
+  admin: number[];
+
+  @Column({ default: Array<number>() })
+  members: number[];
+
+  @Column({ default: Array<number>() })
+  ban: number[];
+
+  @Column({ default: Array<number>() })
+  mute: number[];
+
+  @Column({ default: Array<Message>() })
+  messages: Message[];
 }

@@ -1,27 +1,7 @@
-import { Controller, Get, Headers, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { Request } from 'express';
 import { UserId } from 'src/decorators/user-id.decorator';
-
-// * Chatting방 생성 API 요청
-// POST("/api/chat/create")
-// >> roomInfoDTO: RoomInfoDTO
-// << roomID: string
-
-// * 들어간 방의 정보 API 요청
-// POST("/api/chat/room")
-// >> userID: string, roomID: string
-// << openedRoom: RoomDetail
-
-// * 방 정보 수정 API 요청
-// POST(/api/chat/room/update)
-// >> roomInfoDTO: RoomInfoDTO
-// << result: boolean
-
-// * 방 나가기 API 요청
-// POST(/api/chat/room/out)
-// >> userID: string, roomID: string
-// << result: boolean
+import { RoomInfoDto } from './dto/chat.room-info.dto';
 
 @Controller('chat')
 export class ChatController {
@@ -34,8 +14,9 @@ export class ChatController {
    * << rooms: Room[]
    */
   @Get('list')
-  async list(@UserId('user_id') userId: string) {
-    return await this.chatService.getRoomListByUserID(+userId);
+  async list(@UserId() userId: string) {
+    const rooms = await this.chatService.getRoomListByUserID(+userId);
+    return { rooms };
   }
 
   /**
@@ -45,8 +26,41 @@ export class ChatController {
    * << openedRoom: RoomDetail
    */
   @Get('room')
-  async room(
-    @UserId('user_id') userId: string,
-    @Query('room_id') roomId: string,
-  ) {}
+  async room(@Query('room_id') roomId: string) {
+    const openedRoom = await this.chatService.getRoomDetail(+roomId);
+    return { openedRoom };
+  }
+
+  /**
+   * room 생성 API 요청
+   * POST("/api/chat/create")
+   * >> roomInfoDTO: RoomInfoDTO
+   * << roomID: string
+   */
+  @Post('create')
+  async create(@Body('room_info') roomInfo: RoomInfoDto) {
+    const roomID = await this.chatService.createRoom(roomInfo);
+    return { roomID };
+  }
+
+  /**
+   * 방 정보 수정 API 요청
+   * POST(/api/chat/room/update)
+   * >> roomInfoDTO: RoomInfoDTO
+   * <<
+   */
+  @Post('room/update')
+  async roomUpdate(@Body('room_info') roomInfo: RoomInfoDto) {
+    // 요청 userID와 roomInfo의 hostID 비교 로직 필요
+    this.chatService.updateRoom(roomInfo);
+  }
+
+  /**
+   * 방 나가기 API 요청
+   * POST(/api/chat/room/out)
+   * >> roomID: string
+   * <<
+   */
+  @Post('room/out')
+  async roomOut(@UserId() userId: string, @Body('room_id') roomId: string) {}
 }

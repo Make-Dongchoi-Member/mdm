@@ -16,3 +16,4 @@ export const SMTP_HOST = 'SMTP_HOST';
 export const MAILER_USER = 'MAILER_USER';
 export const MAILER_PASS = 'MAILER_PASS';
 export const JWT_SECRET = 'JWT_SECRET';
+export const SALT_ROUNDS = 'SALT_ROUNDS';

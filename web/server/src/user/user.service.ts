@@ -10,12 +10,12 @@ export class UserService {
   ) {}
 
   async getInfoById(id: number) {
-    const findUser = await this.userRepository.findOneBy({ id });
+    const findUser = await this.userRepository.findOneByOrFail({ id });
     return findUser;
   }
 
   async getInfoByNickName(nickName: string) {
-    const findUser = await this.userRepository.findOneBy({ nickName });
+    const findUser = await this.userRepository.findOneByOrFail({ nickName });
     return findUser;
   }
 }
