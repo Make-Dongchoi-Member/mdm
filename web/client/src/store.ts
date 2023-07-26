@@ -6,9 +6,9 @@ const myData: Writable<MyData> = writable({
 	id: "seonhoki",
 	avatarSrc: "/asset/hhwang.png",
 	rooms: [
-        {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
-        {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
-    ],
+		{id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
+		{id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
+	],
 });
 
 const gameSettingStore: Writable<GameSetting> = writable({
@@ -23,6 +23,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 	isSettingModal: false,
 	isRoomoutModal: false,
 	isRoomCreateModal: false,
+	isProfileModal: false,
 });
 
 const openedRoom: Writable<RoomDetail> = writable({
@@ -36,11 +37,11 @@ const openedRoom: Writable<RoomDetail> = writable({
 		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
 	]),
 	history: [
-        { sender: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
-        { sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~ kick the dongchoi man, kick the dongchoi man, kick the dongchoi man, kick the dongchoi man", isDM: false, date: "10:00" },
-        { sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: true, date: "10:00" },
-        { sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
-    ],
+		{ sender: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
+		{ sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~ kick the dongchoi man, kick the dongchoi man, kick the dongchoi man, kick the dongchoi man", isDM: false, date: "10:00" },
+		{ sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: true, date: "10:00" },
+		{ sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
+	],
 });
 
 /*
