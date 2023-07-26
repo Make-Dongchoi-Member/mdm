@@ -39,7 +39,7 @@ export class ChatGateway {
             룸 아이디가 맞는지 확인
             방 참가 권한 체크
         */
-        client.to(data.roomId).emit('chat/message', data);
+        client.broadcast.to(data.roomId).emit('chat/message', data);
     }
 
     @SubscribeMessage('chat/set-admin')
