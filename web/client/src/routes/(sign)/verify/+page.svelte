@@ -40,13 +40,11 @@
 							block = false;
 						}
 					}
-				}, 500)
+				}, 1000)
 			});
 		} else {
 			isInvalid = false;
 		}
-
-
 	}
 </script>
 
@@ -57,7 +55,7 @@
 <input type="text"
 	maxlength="6"
 	placeholder="put your verification code"
-	class:invalid={isInvalid} class:block={block}
+	class={isInvalid ? "invalid" : "valid"}
 	disabled={block ? true : false}
 	on:input={emailCodeCheckEvent}
 	required>
@@ -66,12 +64,10 @@
 	.inform {
 		width: 400px;
 		height: 200px;
-		/* border: 1px solid var(--border-color); */
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		/* align-items: center; */
 		margin-bottom: 30px;
 	}
 
@@ -91,8 +87,8 @@
 		color: var(--intra-color);
 		cursor: pointer;
 	}
-
-	input[type=text] {
+	
+	.valid {
 		width: 300px;
 		height: 45px;
 		margin: 0;
@@ -113,21 +109,21 @@
 		padding: 0;
 		color: var(--text-color);
 		caret-color: var(--intra-color);
-		border: 2px solid red;
+		border: 2px solid rgb(200, 0, 0);
 		box-sizing: border-box;
 		background: none;
 		font-weight: 400;
 		text-align: center;
 	}
 
-	.block {
+	input[type=text]:disabled {
 		width: 300px;
 		height: 45px;
 		margin: 0;
 		padding: 0;
-		color: var(--text-color);
-		caret-color: var(--intra-color);
-		border: 2px solid grey;
+		color: var(--border-color);
+		caret-color: var(--border-color);
+		border: 2px solid var(--border-color);
 		box-sizing: border-box;
 		background: none;
 		font-weight: 400;
@@ -140,15 +136,6 @@
 	}
 
 	input:focus::placeholder {
-		color: transparent;
-	}
-
-	.invalid:focus {
-		outline: none;
-		border: 2px solid red;
-	}
-
-	.invalid:focus::placeholder {
 		color: transparent;
 	}
 </style>

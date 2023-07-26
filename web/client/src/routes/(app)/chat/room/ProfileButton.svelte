@@ -1,12 +1,20 @@
 <script lang="ts">
-	import type { Profile } from '../../../../interfaces';
+	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
+    import { myData, socketStore } from '../../../../store';
+    import { page } from '$app/stores';
 	
 	export let key: string;
 	export let value: Profile;
 	export let myLevel: Level;
 	
 	let isClicked: boolean = false;
+
+	const requestData: SetRequestDTO = {
+		roomId: $page.url.searchParams.get("id") as string,
+		userId: $myData.id,
+		targetId: value.user.id
+	}
 
 	const menuShowEvent = () => {
 		isClicked = !isClicked;
@@ -24,6 +32,11 @@
 			@TODO
 			관리자 권한 SOCKET 요청
 		*/
+		if (value.level === Level.member) {
+			$socketStore.emit("chat/set-admin", requestData);
+		} else if (value.level === Level.admin) {
+			$socketStore.emit("chat/unset-admin", requestData);
+		}
 	}
 
 	const muteClickEvent = () => {
@@ -31,6 +44,13 @@
 			@TODO
 			채팅금지 SOCKET 요청
 		*/
+		if (myLevel === Level.member) return ;
+		if (myLevel === Level.admin && value.level !== Level.member) return ;
+		if (!value.isMuted) {
+			$socketStore.emit("chat/set-mute", requestData);
+		} else {
+			$socketStore.emit("chat/unset-mute", requestData);
+		}
 	}
 
 	const kickClickEvent = () => {
@@ -38,6 +58,9 @@
 			@TODO
 			강퇴 SOCKET 요청
 		*/
+		if (myLevel === Level.member) return ;
+		if (myLevel === Level.admin && value.level !== Level.member) return ;
+		$socketStore.emit("chat/set-kick", requestData);
 	}
 
 </script>
@@ -64,7 +87,7 @@
 			{#if myLevel === Level.host}
 				<button on:click={adminClickEvent}>ADMIN</button>
 			{/if}
-			{#if myLevel === Level.host || myLevel === Level.admin}
+			{#if (myLevel === Level.host || (myLevel === Level.admin && value.level === Level.member))}
 				<button on:click={muteClickEvent}>MUTE</button>
 				<button on:click={kickClickEvent}>KICK</button>
 			{/if}

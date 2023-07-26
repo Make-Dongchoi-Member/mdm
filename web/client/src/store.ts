@@ -1,6 +1,10 @@
-import {writable, type Writable} from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
 import { Level, RoomType } from './enums';
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3000');
+const socketStore = writable(socket);
 
 const myData: Writable<MyData> = writable({
 	id: "seonhoki",
@@ -32,16 +36,11 @@ const openedRoom: Writable<RoomDetail> = writable({
 	roomtype: RoomType.lock,
 	memberCount: 4,
 	members: new Map([
-		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.admin, isMuted: false }],
+		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
 		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
-		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
+		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
 	]),
-	history: [
-		{ sender: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
-		{ sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~ kick the dongchoi man, kick the dongchoi man, kick the dongchoi man, kick the dongchoi man", isDM: false, date: "10:00" },
-		{ sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: true, date: "10:00" },
-		{ sender: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, body: "kick the dongchoi man~", isDM: false, date: "10:00" },
-	],
+	history: [],
 });
 
 /*
@@ -96,5 +95,6 @@ export {
 	gameSettingStore,
 	modalStatesStore,
 	myData,
-	openedRoom
+	openedRoom,
+	socketStore
 }

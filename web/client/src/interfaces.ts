@@ -16,6 +16,7 @@ export interface RequestNoti extends Notification {
 
 export interface Message {
 	sender: UserData;
+	roomId: string;
 	body: string;
 	isDM: boolean;
 	date: string;
@@ -26,6 +27,7 @@ export interface Profile {
 	level: Level;
 	isMuted: boolean;
 }
+
 export interface Room {
 	id: string;
 	name: string;
@@ -64,6 +66,9 @@ export interface MyData extends UserData {
 	rooms: Room[];
 }
 
-export interface Profile extends UserData {
-	level: Level;
+export interface SetRequestDTO {
+	roomId: string;
+	userId: string;
+	targetId: string;
 }
+
