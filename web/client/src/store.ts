@@ -35,9 +35,9 @@ const openedRoom: Writable<RoomDetail> = writable({
 	roomtype: RoomType.lock,
 	memberCount: 4,
 	members: new Map([
-		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.admin, isMuted: false }],
+		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
 		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
-		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
+		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
 	]),
 	history: [],
 });

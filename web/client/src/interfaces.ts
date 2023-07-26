@@ -64,3 +64,9 @@ export interface ModalStates {
 export interface MyData extends UserData {
 	rooms: Room[];
 }
+
+export interface SetRequestDTO {
+	roomId: string;
+	userId: string;
+	targetId: string;
+}
