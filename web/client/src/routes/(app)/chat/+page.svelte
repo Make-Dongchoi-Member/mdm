@@ -58,6 +58,11 @@
                 </div>
             </a>
         {/each}
+        {#if $myData.rooms.length > 0}
+            <div class="divider">
+                
+            </div>
+        {/if}
         {#each roomlist as room}
             {#if (!$myData.rooms.includes(room))}                            
                 <a href="/chat/room?id={room.id}">
@@ -183,5 +188,11 @@
     .room-list > a:hover {
         background-color: var(--hover-color);
     }
+
+    .divider {
+        width: 770px;
+        height: 20px;
+    }
+
 
 </style>
