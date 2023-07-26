@@ -10,9 +10,9 @@ const myData: Writable<MyData> = writable({
 	id: "seonhoki",
 	avatarSrc: "/asset/hhwang.png",
 	rooms: [
-        {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
-        {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
-    ],
+		{id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
+		{id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
+	],
 });
 
 const gameSettingStore: Writable<GameSetting> = writable({
@@ -27,6 +27,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 	isSettingModal: false,
 	isRoomoutModal: false,
 	isRoomCreateModal: false,
+	isProfileModal: false,
 });
 
 const openedRoom: Writable<RoomDetail> = writable({
