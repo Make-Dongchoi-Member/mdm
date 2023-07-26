@@ -27,7 +27,8 @@ const modalStatesStore: Writable<ModalStates> = writable({
 	isSettingModal: false,
 	isRoomoutModal: false,
 	isRoomCreateModal: false,
-	isProfileModal: false,
+	isProfileSocialModal: true,
+	isProfileHistoryModal: false,
 });
 
 const openedRoom: Writable<RoomDetail> = writable({

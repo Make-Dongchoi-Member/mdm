@@ -1,6 +1,6 @@
 <script lang="ts">
-import ProfileSocialModal from "./ProfileSocialModal.svelte";
-import MyInfo from "./history/MyInfo.svelte";
+	import { modalStatesStore } from "../../../store";
+    import OtherInfo from "./history/OtherInfo.svelte";
 
 	let members = [
 		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },
@@ -21,31 +21,48 @@ import MyInfo from "./history/MyInfo.svelte";
 	]
 </script>
 
-<ProfileSocialModal />
-
-<div class="info_container">
-	<MyInfo />
-</div>
-<div class="data_container">
-	<div class="button_area">
-		<nav>
-			<a href="/profile">SOCIAL</a>
-			<a href="/profile/history">HISTORY</a>
-		</nav>
+<div class="modal-container {$modalStatesStore.isProfileSocialModal ? 'flex-container' : 'hidden-container'}">
+	<div class="info_container">
+		<OtherInfo />
 	</div>
-	<div class="data">
-		{#each members as item}
-		<div>
-			<img src={item.avatarSrc} alt="profile_image">
-			<div>
-				{item.id}
-			</div>
+	<div class="data_container">
+		<div class="button_area">
+			<nav>
+				<a href="/profile">SOCIAL</a>
+				<a href="/profile/history">HISTORY</a>
+			</nav>
 		</div>
-		{/each}
+		<div class="data">
+			{#each members as item}
+			<div>
+				<img src={item.avatarSrc} alt="profile_image">
+				<div>
+					{item.id}
+				</div>
+			</div>
+			{/each}
+		</div>
 	</div>
 </div>
 
 <style>
+	.modal-container {
+		width: 900px;
+
+		background-color: var(--bg-color);
+		border: 1px solid var(--border-color);
+		box-sizing: border-box;
+
+		position: absolute;
+
+		margin-top: -30px;
+		margin-left: -50px;
+	}
+
+	.hidden-container {
+		display: none;
+	}
+
 	/* scroll bar */
 
 	.data::-webkit-scrollbar {
@@ -77,7 +94,6 @@ import MyInfo from "./history/MyInfo.svelte";
 		height: 300px;
 
 		overflow-y: auto;
-		/* overflow-x: hidden; */
 
 		margin: 10px 10px 10px 15px;
 	}
@@ -129,7 +145,6 @@ import MyInfo from "./history/MyInfo.svelte";
 	.button_area {
 		display: flex;
 		flex-direction: row;
-		/*border: 1px solid black;*/
 		width: 750px;
 		height: 30px;
 		margin: 20px 10px 10px 15px;
@@ -137,12 +152,10 @@ import MyInfo from "./history/MyInfo.svelte";
 
 	nav {
 		display: flex;
-		/* align-items: center; */
 	}
 
 	nav > a {
 		width: 150px;
-		/* height: 30px; */
 		border: 1px solid var(--border-color);
 		text-align: center;
 		color: var(--text-color);
