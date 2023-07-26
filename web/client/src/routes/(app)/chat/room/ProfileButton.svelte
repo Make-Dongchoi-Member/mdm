@@ -73,6 +73,11 @@
 		<div class="profile-id">
 			{key}
 		</div>
+		{#if value.isMuted}
+			<div>&#128263;</div>
+		{:else}
+			<div></div>
+		{/if}
 		{#if value.level == Level.host}
 			<div>&#128081;</div>
 		{:else if value.level == Level.admin}
@@ -114,9 +119,20 @@
 	}
 
 	.profile-button > :nth-child(2) {
-		width: 100%;
+		/* width: 100%; */
+		flex-basis: 120px;
 		padding-left: 10px;
 		text-align: left;
+	}
+
+	.profile-button > :nth-child(3) {
+		flex-basis: 20px;
+		text-align: center;
+		padding-right: 3px;
+	}
+
+	.profile-button > :nth-child(4) {
+		flex-basis: 20px;
 	}
 
 	.menu-list {
