@@ -70,3 +70,4 @@ export interface SetRequestDTO {
 	userId: string;
 	targetId: string;
 }
+

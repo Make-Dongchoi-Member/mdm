@@ -39,22 +39,13 @@
         $modalStatesStore.isRoomCreateModal = false;
     }
 
-    const roomnameInputBoxEvent = (e: any) => {    
-        if (e.target.value !== "") {
-            isMakeButtonActivation = true;                
-        } else {
-            isMakeButtonActivation = false;
-        }
+    const roomnameInputBoxEvent = (e: any) => {
+        isMakeButtonActivation = makeButtonActivationEvent();
     }
 
     const passwordInputBoxEvent = (e: any) => {
         e.target.value = e.target.value.replace(/\s/g, '');
-        if (e.target.value == "") {
-            isMakeButtonActivation = false;
-        } else {
-            isMakeButtonActivation = true;
-        }
-
+        isMakeButtonActivation = makeButtonActivationEvent();
     }
 
     const privateButtonToggle = () => {
@@ -64,18 +55,29 @@
             passwordInputBox.value = "";
         }
         isPassword = false;
+        isMakeButtonActivation = makeButtonActivationEvent();
     }
 
     const passwordButtonToggle = () => {
         const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
         isPassword = !isPassword;
-        if (isPassword) {
-            isMakeButtonActivation = false;
-        }
         if (!isPassword) {
             passwordInputBox.value = "";
         }
-        isPrivate = false;         
+        isPrivate = false;
+        isMakeButtonActivation = makeButtonActivationEvent();  
+    }
+
+    const makeButtonActivationEvent = () => {
+        const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();
+        const password: string = (document.querySelector(".password-inputbox") as HTMLInputElement).value;
+        if (roomname === "") {
+            return false;
+        }
+        if (isPassword && password === "") {
+            return false;
+        }
+        return true;            
     }
 
     
