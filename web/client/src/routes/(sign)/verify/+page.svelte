@@ -64,12 +64,10 @@
 	.inform {
 		width: 400px;
 		height: 200px;
-		/* border: 1px solid var(--border-color); */
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		/* align-items: center; */
 		margin-bottom: 30px;
 	}
 
@@ -140,13 +138,4 @@
 	input:focus::placeholder {
 		color: transparent;
 	}
-
-	/* .invalid:focus {
-		outline: none;
-		border: 2px solid red;
-	}
-
-	.invalid:focus::placeholder {
-		color: transparent;
-	} */
 </style>
