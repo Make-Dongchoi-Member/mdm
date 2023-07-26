@@ -1,6 +1,5 @@
 <script lang="ts">
     import MyInfo from "./MyInfo.svelte";
-	import OtherInfoModal from "./OtherInfoModal.svelte";
 
 	const history = [
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
@@ -22,7 +21,6 @@
 
 <div class="info_container">
 	<MyInfo />
-	<OtherInfoModal />
 </div>
 <div class="data_container">
 	<div class="button_area">

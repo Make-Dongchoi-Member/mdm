@@ -1,6 +1,5 @@
 <script lang="ts">
 	import MyInfo from "./history/MyInfo.svelte";
-	import OtherInfoModal from "./history/OtherInfoModal.svelte";
 
 	let members = [
 		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },
@@ -23,7 +22,6 @@
 
 <div class="info_container">
 	<MyInfo />
-	<OtherInfoModal />
 </div>
 <div class="data_container">
 	<div class="button_area">
