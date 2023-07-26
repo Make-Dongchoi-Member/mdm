@@ -1,10 +1,12 @@
 <script lang="ts">
     import MatchStat from "./MatchStat.svelte";
+	import { modalStatesStore } from "../../../../store";
+    import type { Notification } from "../../../../interfaces";
 
 	
 </script>
 
-<div class="personal_box">
+<div class="personal_box {$modalStatesStore.isProfileModal ? "flex-container" : "hidden-container"}">
 	<button type="button" class="profile_image_circle">
 		<img class="image" src="/asset/hhwang.png" alt="profile_image">
 	</button>
@@ -38,6 +40,10 @@
 		flex-direction: column;
 		align-items: center;
 		width: 25%
+	}
+
+	.hidden-container {
+		display: none;
 	}
 
 	.stat_box {
