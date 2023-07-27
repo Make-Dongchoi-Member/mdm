@@ -1,6 +1,5 @@
 <script lang="ts">
-    import MyInfo from "./history/MyInfo.svelte";
-    import OtherInfo from "./history/OtherInfo.svelte";
+	import MyInfo from "./history/MyInfo.svelte";
 
 	let members = [
 		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },
@@ -22,8 +21,7 @@
 </script>
 
 <div class="info_container">
-	<!-- <MyInfo /> -->
-	<OtherInfo />
+	<MyInfo />
 </div>
 <div class="data_container">
 	<div class="button_area">

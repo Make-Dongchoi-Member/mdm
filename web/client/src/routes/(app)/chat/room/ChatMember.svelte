@@ -1,11 +1,48 @@
 <script lang="ts">
-	import { myData, openedRoom } from '../../../../store';
+	import { myData, openedRoom, socketStore } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
-	import type { Profile } from '../../../../interfaces';
+	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
+    import { onMount } from 'svelte';
 
 	let myLevel: Level = ($openedRoom.members.get($myData.id) as Profile).level;
 
+	onMount(() => {
+		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
+			console.log("chat/set-admin", data);
+			
+			($openedRoom.members.get(data.targetId) as Profile).level = Level.admin;
+			$openedRoom = $openedRoom;
+		});
+
+		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
+			console.log("chat/unset-admin", data);
+
+			($openedRoom.members.get(data.targetId) as Profile).level = Level.member;
+			$openedRoom = $openedRoom;
+		});
+
+		$socketStore.on("chat/set-mute", (data: SetRequestDTO) => {
+			console.log("chat/set-mute", data);
+
+			($openedRoom.members.get(data.targetId) as Profile).isMuted = true;
+			$openedRoom = $openedRoom;
+		});
+
+		$socketStore.on("chat/unset-mute", (data: SetRequestDTO) => {
+			console.log("chat/unset-mute", data);
+
+			($openedRoom.members.get(data.targetId) as Profile).isMuted = false;
+			$openedRoom = $openedRoom;
+		});
+
+		$socketStore.on("chat/set-kick", (data: SetRequestDTO) => {
+			console.log("chat/set-kick", data);
+
+			$openedRoom.members.delete(data.targetId);
+			$openedRoom = $openedRoom;
+		});
+	});
 </script>
 
 <div class="members">

@@ -1,9 +1,8 @@
-<script>
-	const email = "hhwang@student.42seoul.kr"
+<script lang='ts'>
 </script>
 
 <button type="button" class="profile_image">
-	<img class="image" src="/asset/hhwang.png" alt="sample">
+	<img class="image" src="/asset/hhwang.png" alt="profile image">
 </button>
 <form>
 	<input type="text" maxlength="10" placeholder="put your nickname" required>
@@ -40,7 +39,6 @@
 	form {
 		position: relative;
 		display: flex;
-		/* justify-content: center; */
 		align-items: center;
 	}
 
@@ -84,7 +82,4 @@
 		background-color: var(--point-color);
 		border-radius: 10%;
 	}
-
-
-
 </style>

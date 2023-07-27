@@ -2,10 +2,12 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import { Level } from '../../../../enums';
 
     onMount(() => {
         /*
@@ -13,6 +15,12 @@
             URI에서 id 추출해서 방 정보 API 요청하고
             받은 데이터를 store에 있는 openedRoom에 저장
         */
+       
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id")})
+        
+        $socketStore.on("chat/join", (data: any) => {
+            console.log("join:", data);
+        });
 
     });
 
@@ -31,9 +39,13 @@
             <div class="chat-room-name">
                 CHAT ROOM NAME
             </div>
-            <div class="chat-setting-button">
-                <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
-            </div>
+            {#if $openedRoom.members.get($myData.id)?.level === Level.host}
+                <div class="chat-setting-button">
+                    <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
+                </div>
+            {:else}
+                <div class="chat-setting-button"></div>
+            {/if}
             <div class="invite-button">
                <button on:click={() => { $modalStatesStore.isInviteModal = true; }}>+</button>
             </div>
@@ -68,16 +80,21 @@
     }
 
     .chat-room-name {
-        flex-grow: 1;
+        flex-grow: 1;        
+        text-align: left;
+        margin-left: 10px;
     }
 
-    .chat-setting-button {
+    .chat-setting-button {        
+        height: 30px;
         flex-grow: 1;
+        flex-basis: 40px;
         font-size: 25px;
+        padding-bottom: 4px;  
     }
 
     .chat-setting-button > button {
-        font-size: 25px;
+        font-size: 25px;        
 
         background-color: var(--bg-color);
         color: var(--text-color);
@@ -99,6 +116,7 @@
     .invite-button {
         flex-grow: 30;       
         text-align: right;
+        padding-bottom: 4px;  
     }
 
     .invite-button > button {
