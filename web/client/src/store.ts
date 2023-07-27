@@ -36,11 +36,11 @@ const openedRoom: Writable<RoomDetail> = writable({
 	roomtype: RoomType.lock,
 	memberCount: 4,
 	members: new Map([
-		["jaewchoi", { user: {id: "jaewchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
-		["hhwang", { user: {id: "hhwang", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
 		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: true }],
 		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
 		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
+		["jaewchoi", { user: {id: "jaewchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
+		["hhwang", { user: {id: "hhwang", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
 	]),
 	history: [],
 });
@@ -51,22 +51,22 @@ const openedRoom: Writable<RoomDetail> = writable({
 	
 	* 내 정보 API 요청
 	GET("/api/user?id=[userid]")
-	>> userID: string
+	>> userId: string
 	<< mydata: MyData
 
 	* room List 목록 요청
 	GET("/api/chat/list")
-	>> userID: string
+	>> userId: string
 	<< rooms: Room[]
 
 	* Chatting방 생성 API 요청
 	POST("/api/chat/create")
 	>> roomInfoDTO: RoomInfoDTO
-	<< roomID: string
+	<< roomId: string
 	
 	* 들어간 방의 정보 API 요청
 	POST("/api/chat/room")
-	>> userID: string, roomID: string
+	>> userId: string, roomId: string
 	<< openedRoom: RoomDetail
 
 	* 방 정보 수정 API 요청
@@ -76,21 +76,24 @@ const openedRoom: Writable<RoomDetail> = writable({
 
 	* 초대할 대상 존재 여부 확인 API 요청
 	GET(/api/user/check?id=[userid])
-	>> userID
+	>> userId
 	<< result: boolean
 
 	* 방 나가기 API 요청
 	POST(/api/chat/room/out)
-	>> userID: string, roomID: string
+	>> userId: string, roomId: string
 	<< result: boolean
 
 	(나중에)
 	* profile 정보 API 요청
 	GET
-	>> userID: string
+	>> userId: string
 	<< result: profile 관련 interface(아직 미 생성함)
 
-	
+	* 방 들어가기 API 요청
+	POST
+	>> roomId: string, userId: string, password: string
+	<< result: boolean
 */
 
 export {

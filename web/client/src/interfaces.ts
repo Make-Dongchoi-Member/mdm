@@ -72,3 +72,9 @@ export interface SetRequestDTO {
 	targetId: string;
 }
 
+export interface RoomEnterDTO {
+	roomId: string;
+	userId: string;
+	password: string;
+}
+

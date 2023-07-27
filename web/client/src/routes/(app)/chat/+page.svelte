@@ -3,7 +3,8 @@
     import { modalStatesStore, myData } from '../../../store';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
-    import type { Room } from '../../../interfaces';
+    import type { Room, RoomEnterDTO } from '../../../interfaces';
+    import { goto } from '$app/navigation';    
 
     const roomlist: Room[] = [
             {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
@@ -12,20 +13,50 @@
             {id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
             {id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
             {id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
-        ]
+        ]    
+        /*
+            @TODO
+            룸 리스트 요청 api 해야함.
+        */
+    const publicRoomlist = roomlist.filter(item1 => !($myData.rooms).some(item2 => item2.id === item1.id));
     
     onMount(() => {
-    
-        
+        console.log("$myData.rooms", $myData.rooms);
+        console.log("publicRoomList", publicRoomlist);
         /*
             @TODO
         */
-
+        
     });
 
 
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
+    }
+
+    const roomEnter = (room: any) => {
+        if ($myData.rooms.some(item => item.id === room.id)) {
+            goto(`/chat/room?id=${room.id}`);
+            return ;
+        }
+        const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
+        const roomEnterInfo: RoomEnterDTO = {roomId: room.id, userId: $myData.id, password: password};
+
+        /*
+            
+            방들어가기 API 요청
+            roomEnterAPI(roomEnterIno)
+        */
+        const result: boolean = true;
+        if (result) {
+            goto(`/chat/room?id=${room.id}`);
+            myDataUpdate(room);
+        }
+    }
+
+    const myDataUpdate = (roomDetail: Room) => {
+        $myData.rooms = [...$myData.rooms, roomDetail];
+        console.log("myDataUpdate", $myData);
     }
  
 
@@ -44,7 +75,7 @@
     </div>
     <div class="room-list">        
         {#each $myData.rooms as room}
-            <a href="/chat/room?id={room.id}">
+            <button on:click={()=>(roomEnter(room))}>
                 <div>
                     {room.name}
                 </div>
@@ -56,16 +87,15 @@
                 <div>
                     {room.memberCount}
                 </div>
-            </a>
+            </button>
         {/each}
-        {#if $myData.rooms.length > 0}
+        {#if $myData.rooms.length > 0 && publicRoomlist.length > 0}
             <div class="divider">
                 
             </div>
         {/if}
-        {#each roomlist as room}
-            {#if (!$myData.rooms.includes(room))}                            
-                <a href="/chat/room?id={room.id}">
+        {#each publicRoomlist as room}
+                <button on:click={()=>(roomEnter(room))}>
                     <div>
                         {room.name}
                     </div>
@@ -77,8 +107,7 @@
                     <div>
                         {room.memberCount}
                     </div>
-                </a>
-            {/if}
+                </button>
         {/each}
     </div>
 </div>
@@ -153,7 +182,7 @@
         text-decoration: none;
     }
 
-    .room-list > a {
+    .room-list > button {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
@@ -169,23 +198,23 @@
         color: var(--text-color);         
     }
 
-    .room-list > a > :nth-child(1) {
+    .room-list > button > :nth-child(1) {
         
         padding-left: 10px;        
     }
 
-    .room-list > a > :nth-child(2) {
+    .room-list > button > :nth-child(2) {
         display: flex;
         padding-left: 5px;        
     }
 
-    .room-list > a > :nth-child(3) {
+    .room-list > button > :nth-child(3) {
         flex-grow: 10;
         text-align: right;
         padding-right: 10px;
     }
 
-    .room-list > a:hover {
+    .room-list > button:hover {
         background-color: var(--hover-color);
     }
 
