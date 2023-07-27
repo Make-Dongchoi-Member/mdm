@@ -25,7 +25,7 @@
 		let code = e.target.value;
 		if (code.length === 6 && !block) { 
 			block = true;
-			emailCodeValidation({email_code : code})
+			emailCodeValidation({emailCode : code})
 			.then((res) => {
 				setTimeout(() => {
 					if (res) {
