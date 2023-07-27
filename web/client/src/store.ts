@@ -32,7 +32,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 
 const openedRoom: Writable<RoomDetail> = writable({
 	id: "tesroomid123",
-	name: "testroomname",
+	name: "Room Name Test!",
 	roomtype: RoomType.lock,
 	memberCount: 4,
 	members: new Map([

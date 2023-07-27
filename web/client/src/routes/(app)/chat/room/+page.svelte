@@ -11,6 +11,7 @@
     import type { SetRequestDTO } from '../../../../interfaces';
     import { goto } from '$app/navigation';
 
+    const roomName: string = $openedRoom.name;
     onMount(() => {
         /*
             @TODO
@@ -58,7 +59,7 @@
                 <a href="/chat">&#11013;</a>
             </div>
             <div class="chat-room-name">
-                CHAT ROOM NAME
+                {roomName}
             </div>
             {#if $openedRoom.members.get($myData.id)?.level === Level.host}
                 <div class="chat-setting-button">
