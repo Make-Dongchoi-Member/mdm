@@ -65,6 +65,7 @@
 	}
 
 	onDestroy(() => {
+		console.log("destroy!");
 		isClicked = false;
 	})
 

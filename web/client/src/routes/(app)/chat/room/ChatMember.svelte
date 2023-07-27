@@ -35,13 +35,6 @@
 			($openedRoom.members.get(data.targetId) as Profile).isMuted = false;
 			$openedRoom = $openedRoom;
 		});
-
-		$socketStore.on("chat/set-kick", (data: SetRequestDTO) => {
-			console.log("chat/set-kick", data);
-
-			$openedRoom.members.delete(data.targetId);
-			$openedRoom = $openedRoom;
-		});
 	});
 </script>
 

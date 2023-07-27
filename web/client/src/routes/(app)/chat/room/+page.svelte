@@ -5,9 +5,11 @@
     import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
+    import type { SetRequestDTO } from '../../../../interfaces';
+    import { goto } from '$app/navigation';
 
     onMount(() => {
         /*
@@ -16,13 +18,32 @@
             받은 데이터를 store에 있는 openedRoom에 저장
         */
        
-        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id")})
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
         
         $socketStore.on("chat/join", (data: any) => {
             console.log("join:", data);
         });
 
+        $socketStore.on("chat/leave", (data: any) => {
+			console.log("chat/leave", data);
+
+			$openedRoom.members.delete(data.userId);
+			$openedRoom = $openedRoom;
+		});
+
+        $socketStore.on("chat/set-kick", (data: any) => {
+            if ($myData.id === data.targetId) {
+                console.log("chat/set-kick", data);
+                goto("/chat");
+            }
+		});
+
     });
+
+    onDestroy(() => {
+        console.log("chat/leave");
+        $socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
+    })
 
 </script>
 
