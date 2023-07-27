@@ -1,7 +1,8 @@
 import { RoomType } from 'src/types/enums';
 import { Message } from 'src/types/interfaces';
-import { BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Rooms extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,7 +13,7 @@ export class Rooms extends BaseEntity {
   @Column({ nullable: true })
   password: string | null;
 
-  @Column()
+  @Column('enum', { enum: RoomType })
   roomtype: RoomType;
 
   @Column({ default: 1 })
@@ -21,18 +22,18 @@ export class Rooms extends BaseEntity {
   @Column()
   host: number;
 
-  @Column({ default: Array<number>() })
+  @Column('int', { array: true, default: [] })
   admin: number[];
 
-  @Column({ default: Array<number>() })
+  @Column('int', { array: true, default: [] })
   members: number[];
 
-  @Column({ default: Array<number>() })
+  @Column('int', { array: true, default: [] })
   ban: number[];
 
-  @Column({ default: Array<number>() })
+  @Column('int', { array: true, default: [] })
   mute: number[];
 
-  @Column({ default: Array<Message>() })
+  @Column('json', { array: true, default: [] })
   messages: Message[];
 }

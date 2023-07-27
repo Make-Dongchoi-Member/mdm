@@ -6,6 +6,6 @@ export class roomDetail {
   name: string;
   roomtype: RoomType;
   memberCount: number;
-  members: Map<string, Profile>;
+  members: string;
   history: Message[];
 }

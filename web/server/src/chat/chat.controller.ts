@@ -3,6 +3,19 @@ import { ChatService } from './chat.service';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { RoomInfoDto } from './dto/chat.room-info.dto';
 
+/**
+ * * 방 들어가기 API 요청
+    POST
+    >> roomId: string, userId: string, password: string
+    << result: boolean
+    export interface RoomEnterDTO {
+        roomId: string;
+        userId: string;
+        password: string;
+    }
+    일반 방은 비밀번호가 빈상태로 가고, 비밀번호 방은 채워서 갑니다.
+ */
+
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
@@ -38,7 +51,8 @@ export class ChatController {
    * << roomID: string
    */
   @Post('create')
-  async create(@Body('room_info') roomInfo: RoomInfoDto) {
+  async create(@Body('roomInfo') roomInfo: RoomInfoDto) {
+    // 요청 userID와 roomInfo의 hostID 비교 로직 필요
     const roomID = await this.chatService.createRoom(roomInfo);
     return { roomID };
   }
@@ -50,9 +64,9 @@ export class ChatController {
    * <<
    */
   @Post('room/update')
-  async roomUpdate(@Body('room_info') roomInfo: RoomInfoDto) {
+  async roomUpdate(@Body('roomInfo') roomInfo: RoomInfoDto) {
     // 요청 userID와 roomInfo의 hostID 비교 로직 필요
-    this.chatService.updateRoom(roomInfo);
+    await this.chatService.updateRoom(roomInfo);
   }
 
   /**
@@ -62,5 +76,7 @@ export class ChatController {
    * <<
    */
   @Post('room/out')
-  async roomOut(@UserId() userId: string, @Body('room_id') roomId: string) {}
+  async roomOut(@UserId() userId: string, @Body('roomId') roomId: string) {
+    await this.chatService.roomOut(+userId, +roomId);
+  }
 }
