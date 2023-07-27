@@ -5,12 +5,17 @@
     import type { RoomInfoDTO } from '../../../../interfaces';
     
     
-    let isPrivate:boolean = $openedRoom.roomtype === RoomType.private ? true : false;
-    let isPassword: boolean = $openedRoom.roomtype === RoomType.lock ? true : false;  
+    let isPrivate: boolean = $openedRoom.roomtype === RoomType.private;
+    let isPassword: boolean = $openedRoom.roomtype === RoomType.lock;  
     let isPasswordChanged: boolean = false;
     let isMakeButtonActivation: boolean = false;
     let roomNameInputValue: string = $openedRoom.name;
-    const initialRoomInfo:RoomInfoDTO = { hostId:$myData.id, roomname:$openedRoom.name, password:"initialpw", roomtype:$openedRoom.roomtype};    
+    const initialRoomInfo: RoomInfoDTO = { 
+        hostId: $myData.id,
+        roomname: $openedRoom.name,
+        password:"initialpw",
+        roomtype: $openedRoom.roomtype,
+    };    
     
     onMount(() => {
         const makeButton = document.querySelector(".make-button") as HTMLButtonElement;        
