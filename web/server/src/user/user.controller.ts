@@ -25,6 +25,7 @@ export class UserController {
    */
   @Get('info')
   async check(@Query('nickname') nickname: string) {
+    // pipe로 쿼리 유효성 체크 필요
     return await this.userService.getInfoByNickName(nickname);
   }
 }

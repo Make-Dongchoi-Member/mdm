@@ -23,6 +23,6 @@ export class Users extends BaseEntity {
   @Column({ nullable: true })
   skin: number | null;
 
-  @Column()
+  @Column('int', { array: true, default: [] })
   rooms: number[];
 }
