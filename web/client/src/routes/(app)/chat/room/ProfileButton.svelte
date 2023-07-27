@@ -3,6 +3,7 @@
 	import { Level } from '../../../../enums';
     import { myData, socketStore } from '../../../../store';
     import { page } from '$app/stores';
+    import { onDestroy } from 'svelte';
 	
 	export let key: string;
 	export let value: Profile;
@@ -62,6 +63,10 @@
 		if (myLevel === Level.admin && value.level !== Level.member) return ;
 		$socketStore.emit("chat/set-kick", requestData);
 	}
+
+	onDestroy(() => {
+		isClicked = false;
+	})
 
 </script>
 
