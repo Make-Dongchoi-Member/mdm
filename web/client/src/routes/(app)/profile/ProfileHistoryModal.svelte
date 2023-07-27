@@ -1,5 +1,6 @@
 <script lang="ts">
-    import MyInfo from "./MyInfo.svelte";
+	import { modalStatesStore } from "../../../store";
+    import OtherInfo from "./history/OtherInfo.svelte";
 
 	const history = [
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
@@ -17,56 +18,110 @@
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 	];
+
+	const ModalCloseEvent = () => {
+		$modalStatesStore.isProfileHistoryModal = false;
+		$modalStatesStore.isProfileSocialModal = false;
+	}
+
+	const SocialModalEvent = () => {
+		$modalStatesStore.isProfileSocialModal = true;
+		$modalStatesStore.isProfileHistoryModal = false;
+	}
+
+	const HistoryModalEvent = () => {
+		$modalStatesStore.isProfileSocialModal = false;
+		$modalStatesStore.isProfileHistoryModal = true;
+	}
 </script>
 
-<div class="info_container">
-	<MyInfo />
-</div>
-<div class="data_container">
-	<div class="button_area">
-		<nav>
-			<a href="/profile">SOCIAL</a>
-			<a href="/profile/history">HISTORY</a>
-		</nav>
-	</div>
-	<div class="data">
-		{#each history as item}
-		<div class="history">
-			<div>
-				{item.result}
+<div class="modal-frame" style="{$modalStatesStore.isProfileHistoryModal ? 'display: flex;' : 'display: none;'}">
+	<button class="close-button" on:click={ ModalCloseEvent }>&#215;</button>
+	<div class="modal-container">
+		<div class="info_container">
+			<OtherInfo />
+		</div>
+		<div class="data_container">
+			<div class="button_area">
+				<nav>
+					<a on:click={ SocialModalEvent }>SOCIAL</a>
+					<a on:click={ HistoryModalEvent }>HISTORY</a>
+				</nav>
 			</div>
-			<div>
-				{item.date}&nbsp;&nbsp;&nbsp;{item.time}
+			<div class="data">
+				{#each history as item}
+				<div class="history">
+					<div>
+						{item.result}
+					</div>
+					<div>
+						{item.date}&nbsp;&nbsp;&nbsp;{item.time}
+					</div>
+					<div>
+						<span>vs</span>
+						<span class="nickname_text">{item.enemy}</span>
+					</div>
+				</div>	
+				{/each}
 			</div>
-			<div>
-				<span>vs</span>
-				<span class="nickname_text">{item.enemy}</span>
-			</div>
-		</div>	
-		{/each}
+		</div>
 	</div>
 </div>
 
 <style>
+	.close-button {
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		border: none;
+		font-size: 25px;
+		font-weight: 500;
+		background: none;
+		outline: none;
+	}
+
+	.modal-frame {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		width: 860px;
+		height: 710px;
+
+		background-color: var(--bg-color);
+		border: 1px solid var(--point-color);
+		box-sizing: border-box;
+
+		position: absolute;
+
+		margin-top: -70px;
+		margin-left: -30px;
+	}
+
+	.modal-container {
+		width: 800px;
+		height: 650px;
+	}
+
 	/* scroll bar */
 
-    .data::-webkit-scrollbar {
-        width: 6px;
-        height: 30px;
-    }
+	.data::-webkit-scrollbar {
+		width: 6px;
+		height: 30px;
+	}
 
-    .data::-webkit-scrollbar-track {
-        background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
-    }
+	.data::-webkit-scrollbar-track {
+		background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
+	}
 
-    .data::-webkit-scrollbar-thumb {
-        background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
-        border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
-    }
+	.data::-webkit-scrollbar-thumb {
+		background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
+		border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
+	}
 
-    .data::-webkit-scrollbar-thumb:hover {
-        background-color: var(--text-color) /* 스크롤바 썸바 호버 배경색 설정 */
-    }
+	.data::-webkit-scrollbar-thumb:hover {
+		background-color: var(--text-color) /* 스크롤바 썸바 호버 배경색 설정 */
+	}
 
 	/* scroll bar */
 
@@ -78,6 +133,7 @@
 		width: 775px;
 		height: 300px;
         overflow-y: auto;
+        overflow-x: hidden;
 		margin: 10px 10px 10px 15px;
 	}
 
@@ -153,7 +209,6 @@
 
 	nav > a {
 		width: 150px;
-		/* height: 30px; */
 		border: 1px solid var(--border-color);
 		text-align: center;
 		color: var(--text-color);

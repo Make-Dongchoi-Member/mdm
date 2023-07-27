@@ -19,48 +19,87 @@
 		{ id: "dongchoi8", avatarSrc: "/asset/default_profile.png" },
 		{ id: "dongchoi9", avatarSrc: "/asset/default_profile.png" },
 	]
+
+	const ModalCloseEvent = () => {
+		$modalStatesStore.isProfileHistoryModal = false;
+		$modalStatesStore.isProfileSocialModal = false;
+	}
+
+	const SocialModalEvent = () => {
+		$modalStatesStore.isProfileSocialModal = true;
+		$modalStatesStore.isProfileHistoryModal = false;
+	}
+
+	const HistoryModalEvent = () => {
+		$modalStatesStore.isProfileSocialModal = false;
+		$modalStatesStore.isProfileHistoryModal = true;
+	}
 </script>
 
-<div class="modal-container {$modalStatesStore.isProfileSocialModal ? 'flex-container' : 'hidden-container'}">
-	<div class="info_container">
-		<OtherInfo />
-	</div>
-	<div class="data_container">
-		<div class="button_area">
-			<nav>
-				<a href="/profile">SOCIAL</a>
-				<a href="/profile/history">HISTORY</a>
-			</nav>
+<div class="modal-frame {$modalStatesStore.isProfileSocialModal ? "flex-frame" : "hidden-frame"}">
+	<button class="close-button" on:click={ ModalCloseEvent }>&#215;</button>
+	<div class="modal-container">
+		<div class="info_container">
+			<OtherInfo />
 		</div>
-		<div class="data">
-			{#each members as item}
-			<div>
-				<img src={item.avatarSrc} alt="profile_image">
-				<div>
-					{item.id}
-				</div>
+		<div class="data_container">
+			<div class="button_area">
+				<nav>
+					<a on:click={ SocialModalEvent }>SOCIAL</a>
+					<a on:click={ HistoryModalEvent }>HISTORY</a>
+				</nav>
 			</div>
-			{/each}
+			<div class="data">
+				{#each members as item}
+				<div>
+					<img src={item.avatarSrc} alt="profile_image">
+					<div>
+						{item.id}
+					</div>
+				</div>
+				{/each}
+			</div>
 		</div>
 	</div>
 </div>
 
 <style>
-	.modal-container {
-		width: 900px;
+	.close-button {
+		position: absolute;
+		top: 1px;
+		right: 1px;
+		border: none;
+		font-size: 25px;
+		font-weight: 500;
+		background: none;
+		outline: none;
+	}
+
+	.modal-frame {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		width: 860px;
+		height: 710px;
 
 		background-color: var(--bg-color);
-		border: 1px solid var(--border-color);
+		border: 1px solid var(--point-color);
 		box-sizing: border-box;
 
 		position: absolute;
 
-		margin-top: -30px;
-		margin-left: -50px;
+		margin-top: -70px;
+		margin-left: -30px;
 	}
 
-	.hidden-container {
+	.hidden-frame {
 		display: none;
+	}
+
+	.modal-container {
+		width: 800px;
+		height: 650px;
 	}
 
 	/* scroll bar */

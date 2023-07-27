@@ -1,6 +1,8 @@
 <script lang="ts">
 import ProfileSocialModal from "./ProfileSocialModal.svelte";
+import ProfileHistoryModal from "./ProfileHistoryModal.svelte";
 import MyInfo from "./history/MyInfo.svelte";
+import { modalStatesStore } from "../../../store";
 
 	let members = [
 		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },
@@ -19,9 +21,16 @@ import MyInfo from "./history/MyInfo.svelte";
 		{ id: "dongchoi8", avatarSrc: "/asset/default_profile.png" },
 		{ id: "dongchoi9", avatarSrc: "/asset/default_profile.png" },
 	]
+
+	const ProfileModalEvent = () => {
+		$modalStatesStore.isProfileSocialModal = true;
+		$modalStatesStore.isProfileHistoryModal = false;
+		console.log($modalStatesStore.isProfileSocialModal);
+	}
 </script>
 
 <ProfileSocialModal />
+<ProfileHistoryModal />
 
 <div class="info_container">
 	<MyInfo />
@@ -35,12 +44,12 @@ import MyInfo from "./history/MyInfo.svelte";
 	</div>
 	<div class="data">
 		{#each members as item}
-		<div>
+		<button class="profile-button" on:click={ ProfileModalEvent }>
 			<img src={item.avatarSrc} alt="profile_image">
 			<div>
 				{item.id}
 			</div>
-		</div>
+		</button>
 		{/each}
 	</div>
 </div>
@@ -77,16 +86,16 @@ import MyInfo from "./history/MyInfo.svelte";
 		height: 300px;
 
 		overflow-y: auto;
-		/* overflow-x: hidden; */
 
 		margin: 10px 10px 10px 15px;
 	}
 
-	.data > div {
+	.data > .profile-button {
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-start;
 		align-items: center;
+		text-align: left;
 
 		height: 60px;
 		width: 370px;
@@ -98,7 +107,11 @@ import MyInfo from "./history/MyInfo.svelte";
 		color: var(--text-color);
 	}
 
-	.data > div > :nth-child(1) {
+	.data > .profile-button:hover {
+		background-color: var(--hover-color);
+	}
+
+	.data > .profile-button > :nth-child(1) {
 		display: flex;
 
 		border-radius: 70%;
@@ -108,7 +121,7 @@ import MyInfo from "./history/MyInfo.svelte";
 		margin-right: 30px;
 	}
 
-	.data > div > :nth-child(2) {
+	.data > .profile-button > :nth-child(2) {
 		flex-grow: 10;
 		font-size: 20px
 	}
