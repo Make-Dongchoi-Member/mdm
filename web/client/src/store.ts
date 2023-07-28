@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
+import type { MyData, GameSetting, ModalStates, Room, RoomDetail, ProfilePageSetting } from "./interfaces";
 import { Level, RoomType } from './enums';
 import { io } from 'socket.io-client';
 
@@ -19,6 +19,10 @@ const gameSettingStore: Writable<GameSetting> = writable({
 	gameMode: "basic",
 	barColor: "#FF6231",
 	ballShape: "square",
+});
+
+const profilePageSettingStore: Writable<ProfilePageSetting> = writable({
+	whichTab: "social",
 });
 
 const modalStatesStore: Writable<ModalStates> = writable({
@@ -97,5 +101,6 @@ export {
 	modalStatesStore,
 	myData,
 	openedRoom,
-	socketStore
+	socketStore,
+	profilePageSettingStore,
 }
