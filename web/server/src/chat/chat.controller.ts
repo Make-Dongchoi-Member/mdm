@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { UserId } from 'src/decorators/user-id.decorator';
-import { RoomInfo } from './dto/chat.room-info.dto';
 import { GetListDTO } from './dto/GetList.dto';
 import { GetRoomDTO } from './dto/GetRoom.dto';
 import { PostCreateDTO } from './dto/PostCreate.dto';
