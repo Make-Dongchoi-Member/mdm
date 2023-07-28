@@ -1,25 +1,20 @@
 <script lang="ts">
     import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
     import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
-    import { modalStatesStore, myData } from '../../../store';
+    import { modalStatesStore, myData, roomList } from '../../../store';
     import type { Room, RoomEnterDTO } from '../../../interfaces';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
     import { goto } from '$app/navigation';    
 
-    const roomlist: Room[] = [
-            {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
-            {id: "456", name: 'room2(not enter)', roomtype: RoomType.normal, memberCount: 3},
-            {id: "7777", name: 'room3(not enter)', roomtype: RoomType.normal, memberCount: 121},
-            {id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
-            {id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
-            {id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
-        ]    
+    
+    let roomEnterInfo: RoomEnterDTO = {roomId:"", userId:"", password:""};
+    let thisRoom: Room;
         /*
             @TODO
             룸 리스트 요청 api 해야함.
-        */
-    const publicRoomlist = roomlist.filter(item1 => !($myData.rooms).some(item2 => item2.id === item1.id));    
+        */    
+    const publicRoomlist = $roomList.filter(item1 => !($myData.rooms).some(item2 => item2.id === item1.id));    
     onMount(() => {
         console.log("$myData.rooms", $myData.rooms);
         console.log("publicRoomList", publicRoomlist);
@@ -44,30 +39,19 @@
             return ;
         }
         // const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
-        
-        if (room.roomtype === RoomType.lock) {
+        roomEnterInfo.roomId = room.id;
+        roomEnterInfo.userId = $myData.id;
+        if (room.roomtype === RoomType.lock) {            
             passwordInputModalButton();
+        } else {
+            //     방들어가기 API 요청
+            //     roomEnterAPI(roomEnterIno)
+            const result: boolean = true;
+            goto(`/chat/room?id=${room.id}`);
         }
 
-
-        // const roomEnterInfo: RoomEnterDTO = {roomId: room.id, userId: $myData.id, password: ""};
-
-        // /*
-            
-        //     방들어가기 API 요청
-        //     roomEnterAPI(roomEnterIno)
-        // */
-        // const result: boolean = true;
-        // if (result) {
-        //     goto(`/chat/room?id=${room.id}`);
-        //     myDataUpdate(room);
-        // }
     }
 
-    const myDataUpdate = (roomDetail: Room) => {
-        $myData.rooms = [...$myData.rooms, roomDetail];
-        console.log("myDataUpdate", $myData);
-    }
 
 
 
@@ -77,7 +61,7 @@
 </script>
 
 <ChatRoomCreateModal />
-<ChatRoomEnterPasswordModal />
+<ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
 
 <div class="chatroom-box">
     <div class="chat-title">
