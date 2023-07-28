@@ -82,7 +82,7 @@ export class LoginController {
   @Post('mailauth')
   async mailAuth(
     // @Query('user_id') userId: string,
-    @Body('email_code') code: string,
+    @Body('emailCode') code: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
