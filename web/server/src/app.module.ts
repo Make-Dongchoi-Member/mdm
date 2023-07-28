@@ -9,9 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './login/guards/login.jwt.guard';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
-import { ChatGateway } from './socket/chat.gateway';
-import { GameGateway } from './socket/game.gateway';
-import { EventsGateway } from './socket/event.gateway';
+import { AppGateway } from './app.gateway';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -39,9 +37,7 @@ if (process.env.NODE_ENV === 'prod') {
       provide: APP_GUARD,
       useClass: JwtGuard,
     },
-    EventsGateway,
-    ChatGateway,
-    GameGateway
+    AppGateway,
   ],
 })
 export class AppModule {}

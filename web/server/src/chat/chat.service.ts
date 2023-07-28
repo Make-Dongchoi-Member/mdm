@@ -8,10 +8,8 @@ import { ROOM_REPOSITORY, USER_REPOSITORY } from 'src/configs/constants';
 import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
-import { Profile } from 'src/types/interfaces';
+import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
 import { In, Repository } from 'typeorm';
-import { roomDetail } from './dto/chat.room-detail.dto';
-import { RoomInfoDto } from './dto/chat.room-info.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
@@ -50,7 +48,7 @@ export class ChatService {
       },
     });
     const members = this.roomMembers(room, users);
-    const roomDetail: roomDetail = {
+    const roomDetail: RoomDetail = {
       id: room.id.toString(),
       name: room.name,
       roomtype: room.roomtype,
@@ -61,7 +59,7 @@ export class ChatService {
     return roomDetail;
   }
 
-  async createRoom(roomInfo: RoomInfoDto) {
+  async createRoom(roomInfo: RoomInfo) {
     const newRoomEntity = this.roomRepository.create({
       name: roomInfo.roomname,
       password: await this.genRoomPassword(roomInfo),
@@ -73,7 +71,7 @@ export class ChatService {
     return savedRoom.id.toString();
   }
 
-  async updateRoom(roomInfo: RoomInfoDto) {
+  async updateRoom(roomInfo: RoomInfo) {
     const room = await this.roomRepository.findOneByOrFail({
       id: +roomInfo.roomId,
     });
@@ -151,7 +149,7 @@ export class ChatService {
     return bcrypt.hash(pw, salt);
   }
 
-  private async updateRoomEntity(updateValue: RoomInfoDto) {
+  private async updateRoomEntity(updateValue: RoomInfo) {
     this.roomRepository.update(updateValue.roomId, {
       name: updateValue.roomname,
       password: await this.genRoomPassword(updateValue),

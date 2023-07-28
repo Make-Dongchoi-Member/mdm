@@ -1,4 +1,4 @@
-export class JoinGameRoomData {
+export class JoinChatRoomDTO {
     roomId: string;
     userId: string;
 }
