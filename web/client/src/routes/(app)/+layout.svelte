@@ -1,9 +1,35 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
     import { modalStatesStore, myData } from '../../store';
+    import type { MyData } from '../../interfaces';
+    import { goto } from '$app/navigation';
 
+    let isSigned: boolean = false;
+
+    const getMyData = async (): Promise<void> => {
+        try {
+			const response = await fetch("http://localhost:3000/user/me", {
+				method: "GET",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+            if (response.status === 401) {
+                goto("/signin");
+                return;
+            }
+			const data: Promise<MyData> = response.json();
+            $myData = await data;
+            isSigned = true;
+		} catch (error) {
+			console.error("실패:", error);
+		}
+    }
+    getMyData();
 </script>
 
+{#if isSigned}
 <div class="container">
     <nav class= "containerTop" >
         <a href="/" >GAME</a>
@@ -20,6 +46,7 @@
     </button>
 </div>
 <NotiModal />
+{/if}
 
 <style>
     @import url('https://rsms.me/inter/inter.css'); /* font */
@@ -96,7 +123,6 @@
 		width: 800px;
 		height: 650px;
 		margin-top: 80px;
-        border: 1px solid red;
 	}
 
     nav {

@@ -33,9 +33,9 @@
 			@TODO
 			관리자 권한 SOCKET 요청
 		*/
-		if (value.level === Level.member) {
+		if (value.level === Level.MEMBER) {
 			$socketStore.emit("chat/set-admin", requestData);
-		} else if (value.level === Level.admin) {
+		} else if (value.level === Level.ADMIN) {
 			$socketStore.emit("chat/unset-admin", requestData);
 		}
 	}
@@ -45,8 +45,8 @@
 			@TODO
 			채팅금지 SOCKET 요청
 		*/
-		if (myLevel === Level.member) return ;
-		if (myLevel === Level.admin && value.level !== Level.member) return ;
+		if (myLevel === Level.MEMBER) return ;
+		if (myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		if (!value.isMuted) {
 			$socketStore.emit("chat/set-mute", requestData);
 		} else {
@@ -59,8 +59,8 @@
 			@TODO
 			강퇴 SOCKET 요청
 		*/
-		if (myLevel === Level.member) return ;
-		if (myLevel === Level.admin && value.level !== Level.member) return ;
+		if (myLevel === Level.MEMBER) return ;
+		if (myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		$socketStore.emit("chat/set-kick", requestData);
 	}
 
@@ -84,21 +84,21 @@
 		{:else}
 			<div></div>
 		{/if}
-		{#if value.level == Level.host}
+		{#if value.level == Level.HOST}
 			<div>&#128081;</div>
-		{:else if value.level == Level.admin}
+		{:else if value.level == Level.ADMIN}
 			<div>&#128736;</div>
-		{:else if value.level == Level.member}
+		{:else if value.level == Level.MEMBER}
 			<div></div>
 		{/if}
 	</button>
 	{#if isClicked}
 		<div class="menu-list">
 			<button on:click={profileClickEvent}>PROFILE</button>
-			{#if myLevel === Level.host}
+			{#if myLevel === Level.HOST}
 				<button on:click={adminClickEvent}>ADMIN</button>
 			{/if}
-			{#if (myLevel === Level.host || (myLevel === Level.admin && value.level === Level.member))}
+			{#if (myLevel === Level.HOST || (myLevel === Level.ADMIN && value.level === Level.MEMBER))}
 				<button on:click={muteClickEvent}>MUTE</button>
 				<button on:click={kickClickEvent}>KICK</button>
 			{/if}

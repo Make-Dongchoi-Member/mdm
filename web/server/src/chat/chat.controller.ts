@@ -57,6 +57,11 @@ export class ChatController {
   @Post('create')
   async create(@Body('data') data: RoomInfoDTO): Promise<PostCreateDTO> {
     // 요청 userID와 roomInfo의 hostID 비교 로직 필요
+    console.log(data);
+    /**
+     * 
+     */
+    
     const roomId = await this.chatService.createRoom(data.roomInfo);
     return { roomId };
   }

@@ -1,15 +1,20 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { modalStatesStore } from '../../../store';
+    import { modalStatesStore, myData } from '../../../store';
     import { goto } from '$app/navigation';
     import { page } from "$app/stores";
+    import type { PostCreateDTO, RoomInfoDTO } from '../../../interfaces';
+    import { RoomType } from '../../../enums';
 
     let isPrivate: boolean = false;  
     let isPassword: boolean = false;  
     let isMakeButtonActivation: boolean = false;
     let roomNameInputValue: string = "";
+    let passwordInput: string = "";
 
-    onMount(() => {     
+    onMount(() => {
+        console.log($myData);
+        
         const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
         const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
         const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
@@ -26,6 +31,31 @@
         });
     });
 
+    async function createRoom(data: any) {
+		try {
+			const response = await fetch("http://localhost:3000/chat/create", {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+			console.log(response);
+            
+		} catch (error) {
+			console.error("실패:", error);
+		}
+	}
+
+//     export class RoomInfo {
+//   roomId: string;
+//   hostId: string;
+//   roomname: string;
+//   password: string;
+//   roomtype: RoomType;
+// }
+
     const makeButtonEvent = () => {
         /*
             @TODO
@@ -34,8 +64,23 @@
             요청 콜백으로 라우터 이동.
             */
         // const roomID = createRoom();
-        const roomID = "room0001";
-        goto(`/chat/room?id=${roomID}`);
+        let roomtype: RoomType = RoomType.NORMAL;
+        if (isPassword && !isPrivate) {
+            roomtype = RoomType.LOCK;
+        } else if (!isPassword && isPrivate) {
+            roomtype = RoomType.PRIVATE;
+        }
+
+        const roomInfo: RoomInfoDTO = {
+            roomId: "",
+            hostId: $myData.id,
+            roomname: roomNameInputValue,
+            password: passwordInput,
+            roomtype: roomtype
+        }
+
+        createRoom({data: { roomInfo }});
+        goto(`/chat/room?id=${roomInfo.roomId}`);
         $modalStatesStore.isRoomCreateModal = false;
     }
 
@@ -85,7 +130,7 @@
 
 </script>
   
-    <div class="modal-container" style="{$modalStatesStore.isRoomCreateModal ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="display: block;">
         <div class="modal-title">
             <div>
             NEW CHAT ROOM
@@ -121,6 +166,7 @@
                         disabled={isPrivate || !isPassword ? true : false}
                         class="password-inputbox"
                         on:input={passwordInputBoxEvent}
+                        bind:value={passwordInput}
                         type="password" 
                         placeholder="PASSWORD IF YOU NEED"
                         maxlength=10

@@ -11,14 +11,14 @@
 		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
 			console.log("chat/set-admin", data);
 			
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.admin;
+			($openedRoom.members.get(data.targetId) as Profile).level = Level.ADMIN;
 			$openedRoom = $openedRoom;
 		});
 
 		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
 			console.log("chat/unset-admin", data);
 
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.member;
+			($openedRoom.members.get(data.targetId) as Profile).level = Level.MEMBER;
 			$openedRoom = $openedRoom;
 		});
 
@@ -47,11 +47,11 @@
 			<div class="profile-id">
 				{$myData.id}
 			</div>
-			{#if $openedRoom.members.get($myData.id)?.level == Level.host}
+			{#if $openedRoom.members.get($myData.id)?.level == Level.HOST}
 				<div>&#128081;</div>
-			{:else if $openedRoom.members.get($myData.id)?.level == Level.admin}
+			{:else if $openedRoom.members.get($myData.id)?.level == Level.ADMIN}
 				<div>&#128736;</div>
-			{:else if $openedRoom.members.get($myData.id)?.level == Level.member}
+			{:else if $openedRoom.members.get($myData.id)?.level == Level.MEMBER}
 				<div></div>
 			{/if}
 		</div>

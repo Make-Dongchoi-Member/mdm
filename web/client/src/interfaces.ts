@@ -41,6 +41,7 @@ export interface RoomDetail extends Room {
 }
 
 export interface RoomInfoDTO {
+	roomId: string;
 	hostId: string;
 	roomname: string;
 	password: string;
@@ -72,3 +73,6 @@ export interface SetRequestDTO {
 	targetId: string;
 }
 
+export interface PostCreateDTO {
+	roomId: string;
+}

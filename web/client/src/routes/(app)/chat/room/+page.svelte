@@ -60,7 +60,7 @@
             <div class="chat-room-name">
                 CHAT ROOM NAME
             </div>
-            {#if $openedRoom.members.get($myData.id)?.level === Level.host}
+            {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
                 <div class="chat-setting-button">
                     <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
                 </div>
