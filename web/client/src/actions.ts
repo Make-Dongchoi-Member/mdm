@@ -1,23 +1,31 @@
 export function clickOutside(node: any) {
-    const outClickEvent = (event: any) => {
-        if (!node.contains(event.target)) {
-            node.dispatchEvent(new CustomEvent("outclick"));
-        }
-    };
+	const outClickEvent = (event: any) => {
+		if (!node.contains(event.target)) {
+			node.dispatchEvent(new CustomEvent("outclick"));
+		}
+	};
 
-    document.addEventListener("click", outClickEvent, true);
+	document.addEventListener("click", outClickEvent, true);
 
-    return {
-        destroy() {
-            document.removeEventListener("click", outClickEvent, true);
-        }
-    };
+	return {
+		destroy() {
+			document.removeEventListener("click", outClickEvent, true);
+		}
+	};
 }
 
-// export function escapeKey(node: any) {
-// 	const excapeKeyDownEvent = (event: any) => {
-// 		if ()
-// 	}
-// }
+export function escapeKey(node: any) {
+	const escapeKeyDownEvent = (event: any) => {
+		if (event.key === 'Escape') {
+			node.dispatchEvent(new CustomEvent("esckey"));
+		}
+	};
 
-// esc 버튼 눌렀을 때의 action 만들어보기.
+	document.addEventListener("keydown", escapeKeyDownEvent, true);
+
+	return {
+		destroy() {
+			document.removeEventListener("keydown", escapeKeyDownEvent, true);
+		}
+	};
+}
