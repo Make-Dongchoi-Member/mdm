@@ -96,7 +96,6 @@
 		width: 800px;
 		height: 650px;
 		margin-top: 80px;
-        border: 1px solid red;
 	}
 
     nav {
