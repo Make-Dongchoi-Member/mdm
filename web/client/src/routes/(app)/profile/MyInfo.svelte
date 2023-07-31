@@ -1,7 +1,5 @@
 <script lang="ts">
-    import MatchStat from "./MatchStat.svelte";
-
-	
+	import MatchStat from "./MatchStat.svelte";
 </script>
 
 <div class="personal_box">
@@ -9,27 +7,16 @@
 		<img class="image" src="/asset/hhwang.png" alt="profile_image">
 	</button>
 	<div class="personal_info">
-		<button disabled>
+		<button>
 			nickname
 		</button>
-		<button disabled>
-			OFFLINE
+		<button>
+			LOGOUT
 		</button>
 	</div>
 </div>
 <div class="stat_box">
 	<MatchStat />
-</div>
-<div class="option_box">
-	<button>
-		FOLLOW
-	</button>
-	<button>
-		PLAY WITH
-	</button>
-	<button>
-		BLOCK
-	</button>
 </div>
 
 <style>
@@ -43,23 +30,9 @@
 	.stat_box {
 		display: flex;
 		flex-direction: column;
-		width: 50%
-		
-	}
+		width: 60%;
 
-	.option_box {
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		align-items: center;
-		width: 25%;
-		flex-grow: 1;
-	}
-
-	.option_box > button {
-		width: 150px;
-		height: 40px;
-		margin-bottom: 20px;
+		padding-left: 5.5%;
 	}
 
 	.profile_image_circle {
@@ -97,9 +70,5 @@
 	.personal_info > button {
 		width: 150px;
 		margin-bottom: 10px;
-	}
-
-	.personal_info > button:hover {
-		background-color: var(--bg-color);
 	}
 </style>

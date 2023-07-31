@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore } from "../../../../store";
+	import { modalStatesStore } from "../../../store";
 	
 	let members = [
 		{ id: "dongchoi", avatarSrc: "/asset/hhwang.png" },

@@ -1,10 +1,8 @@
 <script lang="ts">
-	import ProfileSocialModal from "./ProfileSocialModal.svelte";
-	import ProfileHistoryModal from "./ProfileHistoryModal.svelte";
-	import ProfileSocial from "./history/ProfileSocial.svelte";
-	import ProfileHistory from "./history/ProfileHistory.svelte";
-	import MyInfo from "./history/MyInfo.svelte";
+	import ProfileSocial from "./ProfileSocial.svelte";
+	import ProfileHistory from "./ProfileHistory.svelte";
     import ProfileModal from "./ProfileModal.svelte";
+	import MyInfo from "./MyInfo.svelte";
 
 	interface tabButtons {
 		[index: string]: boolean;
@@ -25,8 +23,6 @@
 	}
 </script>
 
-<!-- <ProfileSocialModal />
-<ProfileHistoryModal /> -->
 <ProfileModal />
 
 <div class="info_container">

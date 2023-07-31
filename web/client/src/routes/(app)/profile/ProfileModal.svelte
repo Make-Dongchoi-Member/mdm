@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { modalStatesStore } from "../../../store";
-	import ProfileSocial from "./history/ProfileSocial.svelte";
-	import ProfileHistory from "./history/ProfileHistory.svelte";
-	import OtherInfo from "./history/OtherInfo.svelte";
+    import ModalSocial from "./ModalSocial.svelte";
+	import ProfileHistory from "./ProfileHistory.svelte";
+	import OtherInfo from "./OtherInfo.svelte";
 
 	interface tabButtons {
 		[index: string]: boolean;
@@ -39,7 +39,7 @@
 					class={tabButtonSet.history ? "selected" : ""}>HISTORY</button>
 			</div>
 			{#if tabButtonSet.social}
-				<ProfileSocial />
+				<ModalSocial />
 			{:else if tabButtonSet.history}
 				<ProfileHistory />
 			{/if}
