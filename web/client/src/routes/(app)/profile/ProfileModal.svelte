@@ -15,6 +15,14 @@
 		history: false,
 	};
 
+	const modalCloseEvent = () => {
+		$modalStatesStore.isProfileModal = false;
+		for (const key of Object.keys(tabButtonSet)) {
+			tabButtonSet[key] = false;
+		}
+		tabButtonSet.social = true;
+	}
+
 	const profileTabEvent = (e: any) => {
 		for (const key of Object.keys(tabButtonSet)) {
 			tabButtonSet[key] = false;
@@ -24,7 +32,7 @@
 </script>
 
 <div class="modal-frame" style="{$modalStatesStore.isProfileModal ? 'display: flex;' : 'display: none;'}">
-	<button class="close-button" on:click={ () => $modalStatesStore.isProfileModal = false }>&#215;</button>
+	<button class="close-button" on:click={ modalCloseEvent }>&#215;</button>
 	<div class="modal-container">
 		<div class="info_container">
 			<OtherInfo />
