@@ -13,8 +13,6 @@
     let passwordInput: string = "";
 
     onMount(() => {
-        console.log($myData);
-        
         const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
         const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
         const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;

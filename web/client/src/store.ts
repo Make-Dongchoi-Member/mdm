@@ -45,6 +45,8 @@ const openedRoom: Writable<RoomDetail> = writable({
 	history: [],
 });
 
+const myLevel: Writable<Level> = writable(Level.MEMBER);
+
 /*
 
 	@API
@@ -98,5 +100,6 @@ export {
 	modalStatesStore,
 	myData,
 	openedRoom,
-	socketStore
+	socketStore,
+	myLevel
 }

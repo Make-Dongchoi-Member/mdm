@@ -20,12 +20,13 @@
 					"Content-Type": "application/json",
 				},
 			});
-            if (response.status === 401) {
+            if (response.status !== 200) {
                 goto("/signin");
                 return;
             }
 			const data: Promise<MyData> = response.json();
             $myData = await data;
+            
             isSigned = true;
 		} catch (error) {
 			console.error("실패:", error);

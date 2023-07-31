@@ -37,7 +37,9 @@ export class LoginController {
     } else {
       // 로그인 url
       // url = 로그인 url
-      url = new ConfigService().get('APP_URL');
+      // @TODO
+      // token vaild check
+      url = new ConfigService().get('APP_URL') + '/api';
     }
     return { url };
   }

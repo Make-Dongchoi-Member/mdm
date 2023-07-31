@@ -28,7 +28,7 @@ export interface RoomDetail {
   history: Message[];
 }
 
-export class RoomInfo {
+export interface RoomInfo {
   roomId: string;
   hostId: string;
   roomname: string;

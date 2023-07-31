@@ -9,8 +9,8 @@
     onMount(() => {
         document.body.addEventListener("keypress", enterKeyPressEvent);
 
-        $socketStore.on("chat/message", (data: Message) => {
-            pushNewMessage(data);
+        $socketStore.on("chat/message", (data: { message: Message; }) => {
+            pushNewMessage(data.message);
         });
     });
 
@@ -25,7 +25,7 @@
             return ;
         }
         
-        const newMessage: Message = {
+        const message: Message = {
             sender: {id: $myData.id, avatarSrc: $myData.avatarSrc},
             roomId: $page.url.searchParams.get("id") as string,
             body: inputValue,
@@ -37,10 +37,10 @@
             @TODO
             메시지 SOCKET 요청
         */
-        $socketStore.emit("chat/message", newMessage);
+        $socketStore.emit("chat/message", { message });
 
         inputValue = "";
-        pushNewMessage(newMessage);
+        pushNewMessage(message);
     }
 
     const pushNewMessage = (message: Message) => {

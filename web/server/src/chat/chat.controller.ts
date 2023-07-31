@@ -34,6 +34,11 @@ export class ChatController {
   async list(@UserId() userId: string): Promise<GetListDTO> {
     const rooms = await this.chatService.getRoomListByUserID(+userId);
     return { rooms };
+    /**
+     * @TODO
+     *  RoomInfo의 리스트를 보내주세요!!!
+     *  내가 들어간 방 + 프라이빗 제외한 모든 방 목록을 보내주세요!!!!!
+     */
   }
 
   /**

@@ -5,19 +5,34 @@
     import { RoomType } from '../../../enums';
     import type { Room } from '../../../interfaces';
 
-    const roomlist: Room[] = [
-            // {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
-        ]
+    let roomlist: Map<number, Room> = new Map();
     
     onMount(() => {
-    
+        getRoomList();
         
-        /*
-            @TODO
-        */
 
     });
 
+    const getRoomList = async () => {
+        const response = await fetch(`http://localhost:3000/api/chat/list`, {
+            method: "GET",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.rooms);
+            
+            for (let i = 0; i < data.rooms.length; i++) {
+                const element = data.rooms[i];
+                roomlist.set(element.id, element);
+            }
+            roomlist = roomlist;
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
@@ -41,17 +56,17 @@
     </div>
     <div class="room-list">        
         {#each $myData.rooms as room}
-            <a href="/chat/room?id={room.id}">
+            <a href="/chat/room?id={room}">
                 <div>
-                    {room.name}
+                    {roomlist.get(room)?.name}
                 </div>
-                {#if room.roomtype === RoomType.LOCK}
+                {#if roomlist.get(room)?.roomtype === RoomType.LOCK}
                     <div>&#x1F512</div>
                 {:else}
                     <div></div>
                 {/if}
                 <div>
-                    {room.memberCount}
+                    {roomlist.get(room)?.memberCount}
                 </div>
             </a>
         {/each}
@@ -61,18 +76,18 @@
             </div>
         {/if}
         {#each roomlist as room}
-            {#if (!$myData.rooms.includes(room))}                            
-                <a href="/chat/room?id={room.id}">
+            {#if (!$myData.rooms.includes(room[0]))}                            
+                <a href="/chat/room?id={room[0]}">
                     <div>
-                        {room.name}
+                        {room[1].name}
                     </div>
-                    {#if room.roomtype === RoomType.LOCK}
+                    {#if room[1].roomtype === RoomType.LOCK}
                         <div>&#x1F512</div>
                     {:else}
                         <div></div>
                     {/if}
                     <div>
-                        {room.memberCount}
+                        {room[1].memberCount}
                     </div>
                 </a>
             {/if}
