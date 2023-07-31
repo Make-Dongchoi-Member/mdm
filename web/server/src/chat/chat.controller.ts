@@ -57,11 +57,12 @@ export class ChatController {
   @Post('create')
   async create(@Body('data') data: RoomInfoDTO): Promise<PostCreateDTO> {
     // 요청 userID와 roomInfo의 hostID 비교 로직 필요
-    console.log(data);
+    // console.log(data);
+    console.log(data.roomInfo);
     /**
-     * 
+     *
      */
-    
+
     const roomId = await this.chatService.createRoom(data.roomInfo);
     return { roomId };
   }
@@ -86,6 +87,6 @@ export class ChatController {
    */
   @Post('room/out')
   async roomOut(@UserId() userId: string, @Body('data') data: RoomOutDTO) {
-    await this.chatService.roomOut(+userId, +(data.roomId));
+    await this.chatService.roomOut(+userId, +data.roomId);
   }
 }

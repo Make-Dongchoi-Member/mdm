@@ -2,6 +2,7 @@ export const USER_REPOSITORY = 'USER_REPOSITORY';
 export const ROOM_REPOSITORY = 'ROOM_REPOSITORY';
 export const DATA_SOURCE = 'DATA_SOURCE';
 export const IS_PUBLIC_KEY = 'IS_PUBLIC';
+export const TYPEORM_CUSTOM_REPOSITORY = 'TYPEORM_CUSTOM_REPOSITORY';
 
 // .env value
 export const APP_URL = 'APP_URL';
