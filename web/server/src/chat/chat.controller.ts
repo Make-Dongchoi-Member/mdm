@@ -1,7 +1,11 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { UserId } from 'src/decorators/user-id.decorator';
-import { RoomInfoDto } from './dto/chat.room-info.dto';
+import { GetListDTO } from './dto/GetList.dto';
+import { GetRoomDTO } from './dto/GetRoom.dto';
+import { PostCreateDTO } from './dto/PostCreate.dto';
+import { RoomInfoDTO } from './dto/RoomInfo.dto';
+import { RoomOutDTO } from './dto/RoomOut.dto';
 
 /**
  * * 방 들어가기 API 요청
@@ -16,7 +20,7 @@ import { RoomInfoDto } from './dto/chat.room-info.dto';
     일반 방은 비밀번호가 빈상태로 가고, 비밀번호 방은 채워서 갑니다.
  */
 
-@Controller('chat')
+@Controller('api/chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
@@ -27,19 +31,24 @@ export class ChatController {
    * << rooms: Room[]
    */
   @Get('list')
-  async list(@UserId() userId: string) {
+  async list(@UserId() userId: string): Promise<GetListDTO> {
     const rooms = await this.chatService.getRoomListByUserID(+userId);
     return { rooms };
+    /**
+     * @TODO
+     *  RoomInfo의 리스트를 보내주세요!!!
+     *  내가 들어간 방 + 프라이빗 제외한 모든 방 목록을 보내주세요!!!!!
+     */
   }
 
   /**
    * 들어간 방의 정보 API 요청
-   * Get("/api/room?room_id=[roomID]")
+   * Get("/api/chat/room?room_id=[roomID]")
    * >> roomID: string
    * << openedRoom: RoomDetail
    */
   @Get('room')
-  async room(@Query('room_id') roomId: string) {
+  async room(@Query('room_id') roomId: string): Promise<GetRoomDTO> {
     const openedRoom = await this.chatService.getRoomDetail(+roomId);
     return { openedRoom };
   }
@@ -51,10 +60,15 @@ export class ChatController {
    * << roomID: string
    */
   @Post('create')
-  async create(@Body('roomInfo') roomInfo: RoomInfoDto) {
+  async create(@Body('data') data: RoomInfoDTO): Promise<PostCreateDTO> {
     // 요청 userID와 roomInfo의 hostID 비교 로직 필요
-    const roomID = await this.chatService.createRoom(roomInfo);
-    return { roomID };
+    console.log(data);
+    /**
+     * 
+     */
+    
+    const roomId = await this.chatService.createRoom(data.roomInfo);
+    return { roomId };
   }
 
   /**
@@ -64,9 +78,9 @@ export class ChatController {
    * <<
    */
   @Post('room/update')
-  async roomUpdate(@Body('roomInfo') roomInfo: RoomInfoDto) {
+  async roomUpdate(@Body('data') data: RoomInfoDTO) {
     // 요청 userID와 roomInfo의 hostID 비교 로직 필요
-    await this.chatService.updateRoom(roomInfo);
+    await this.chatService.updateRoom(data.roomInfo);
   }
 
   /**
@@ -76,7 +90,7 @@ export class ChatController {
    * <<
    */
   @Post('room/out')
-  async roomOut(@UserId() userId: string, @Body('roomId') roomId: string) {
-    await this.chatService.roomOut(+userId, +roomId);
+  async roomOut(@UserId() userId: string, @Body('data') data: RoomOutDTO) {
+    await this.chatService.roomOut(+userId, +(data.roomId));
   }
 }

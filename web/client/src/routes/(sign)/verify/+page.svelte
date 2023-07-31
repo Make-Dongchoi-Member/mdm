@@ -7,7 +7,7 @@
 
 	async function emailCodeValidation(data: any) {
 		try {
-			const response = await fetch("http://localhost:3000/login/mailauth", {
+			const response = await fetch("http://localhost:3000/api/login/mailauth", {
 				method: "POST",
 				credentials: 'include',
 				headers: {

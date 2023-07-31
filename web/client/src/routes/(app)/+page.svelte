@@ -1,21 +1,15 @@
 <script lang="ts">
-    import {onMount} from 'svelte'
-    import {gameSettingStore} from '../../store'
+    import { onMount } from 'svelte'
+    import { gameSettingStore, myData } from '../../store'
+    import type { MyData } from '../../interfaces';
+    import { goto } from '$app/navigation';
 
     let barColor: string = "#ff6231";
     let isColorOptionShow: boolean = false;
     let isShapeOptionShow: boolean = false;
 
     onMount(() => {
-        // const colorOption = document.querySelector(".color-option") as HTMLDivElement;
-        // colorOption.addEventListener("mouseout", () => {
-        //     isColorOptionShow = false;            
-        // });
 
-        // const shapeOption = document.querySelector(".shape-option") as HTMLDivElement;
-        // shapeOption.addEventListener("mouseout", () => {
-        //     isShapeOptionShow = false;            
-        // });
         const gameModeDiv = document.querySelector(".game-mode") as HTMLDivElement;
         for (const child of gameModeDiv.children) {
             if (child.tagName === "BUTTON") {
@@ -32,7 +26,7 @@
             }
         }
         
-    })
+    });
 
     const colorButtonEvent = () => {
         isColorOptionShow = !isColorOptionShow;

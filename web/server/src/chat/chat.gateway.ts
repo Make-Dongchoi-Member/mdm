@@ -4,9 +4,9 @@ import {
     WebSocketServer
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { JoinChatRoomData } from './dto/JoinChatRoomData.dto';
-import { Message } from 'src/socket/dto/Message.dto';
-import { SetRequestData } from 'src/socket/dto/SetRequestData.dto';
+import { JoinChatRoomDTO } from './dto/JoinChatRoom.dto';
+import { SetRequestDTO } from './dto/SetRequest.dto';
+import { MessageDTO } from './dto/Message.dto';
 
 @WebSocketGateway({
 	cors: {
@@ -17,7 +17,7 @@ export class ChatGateway {
     @WebSocketServer() io: Server;
     
     @SubscribeMessage('chat/join')
-    handleJoinRoom(client: Socket, data: JoinChatRoomData) {
+    handleJoinRoom(client: Socket, data: JoinChatRoomDTO) {
         console.log("chat/join", data);
         /*
             @TODO
@@ -30,7 +30,7 @@ export class ChatGateway {
     }
 
     @SubscribeMessage('chat/message')
-    handleMessage(client: Socket, data: Message) {
+    handleMessage(client: Socket, data: MessageDTO) {
         console.log("chat/message", data);
 
         /*
@@ -40,11 +40,11 @@ export class ChatGateway {
             방 참가 권한 체크
         */
         
-        client.broadcast.to(data.roomId).emit('chat/message', data);
+        client.broadcast.to(data.message.roomId).emit('chat/message', data);
     }
 
     @SubscribeMessage('chat/set-admin')
-    handleSetAdmin(client: Socket, data: SetRequestData) {
+    handleSetAdmin(client: Socket, data: SetRequestDTO) {
         console.log("chat/set-admin", data);
         /*
             @TODO
@@ -59,7 +59,7 @@ export class ChatGateway {
     }
 
     @SubscribeMessage('chat/set-mute')
-    handleSetMute(client: Socket, data: SetRequestData) {
+    handleSetMute(client: Socket, data: SetRequestDTO) {
         console.log("chat/set-mute", data);
         /*
             @TODO
@@ -74,7 +74,7 @@ export class ChatGateway {
     }
 
     @SubscribeMessage('chat/unset-admin')
-    handleUnsetAdmin(client: Socket, data: SetRequestData) {
+    handleUnsetAdmin(client: Socket, data: SetRequestDTO) {
         console.log("chat/unset-admin", data);
         /*
             @TODO
@@ -89,7 +89,7 @@ export class ChatGateway {
     }
 
     @SubscribeMessage('chat/unset-mute')
-    handleUnsetMute(client: Socket, data: SetRequestData) {
+    handleUnsetMute(client: Socket, data: SetRequestDTO) {
         console.log("chat/unset-mute", data);
         /*
             @TODO
@@ -104,7 +104,7 @@ export class ChatGateway {
     }
 
     @SubscribeMessage('chat/set-kick')
-    handleSetKick(client: Socket, data: SetRequestData) {
+    handleSetKick(client: Socket, data: SetRequestDTO) {
         console.log("chat/set-kick", data);
         /*
             @TODO
@@ -122,7 +122,7 @@ export class ChatGateway {
     }
     
     @SubscribeMessage('chat/leave')
-    handleLeaveRoom(client: Socket, data: JoinChatRoomData) {
+    handleLeaveRoom(client: Socket, data: JoinChatRoomDTO) {
         console.log("chat/leave", data);
         /*
             @TODO

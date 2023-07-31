@@ -1,12 +1,41 @@
 <script lang='ts'>
+	let nickname: string = "";
+	let profileSrc: string = "/asset/default_profile.png";
+
+	const profileClickEvent = () => {
+		(document.querySelector("#input-profile") as HTMLInputElement).click();
+	};
+
+	const fileUpload = async (e: any) => {
+		profileSrc = e.target.files[0];
+		console.log(profileSrc);
+		
+		/**
+		 * @TODO
+		 * 업로드한 이미지가 적절한지 확인
+		 * 프로필 변경 API
+		*/
+	};
+
+	const nicknameClickEvent = () => {
+		console.log(nickname);
+
+		/**
+		 * @TODO
+		 * 닉네임이 적절한지 확인
+		 * 닉네임 변경 API
+		*/
+	};
+
 </script>
 
-<button type="button" class="profile_image">
-	<img class="image" src="/asset/hhwang.png" alt="profile image">
+<button type="button" class="profile_image" on:click={profileClickEvent}>
+	<img class="image" src={profileSrc} alt="profile image">
 </button>
+<input id="input-profile" type="file" accept="image/*" on:change={fileUpload} style="display: none;" />
 <form>
-	<input type="text" maxlength="10" placeholder="put your nickname" required>
-	<button type="submit"></button>
+	<input type="text" maxlength="10" placeholder="put your nickname" bind:value={nickname} required>
+	<button on:click={nicknameClickEvent} type="submit"></button>
 </form>
 
 <style>

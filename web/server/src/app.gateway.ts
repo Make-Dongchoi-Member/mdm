@@ -10,7 +10,7 @@ import { Socket } from 'socket.io';
 		origin: ['http://localhost:5173'],
 	},
 })
-export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     handleConnection(client: Socket, ...args: any[]) {
         console.log(`connected:		${client.id}`);
     }

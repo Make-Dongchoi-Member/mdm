@@ -1,4 +1,4 @@
-export interface SetRequestData {
+export interface SetRequestDTO {
 	roomId: string;
 	userId: string;
 	targetId: string;

@@ -1,24 +1,22 @@
 <script lang="ts">
-	import { myData, openedRoom, socketStore } from '../../../../store';
+	import { myData, openedRoom, socketStore, myLevel } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
     import { onMount } from 'svelte';
 
-	let myLevel: Level = ($openedRoom.members.get($myData.id) as Profile).level;
-
 	onMount(() => {
 		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
 			console.log("chat/set-admin", data);
 			
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.admin;
+			($openedRoom.members.get(data.targetId) as Profile).level = Level.ADMIN;
 			$openedRoom = $openedRoom;
 		});
 
 		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
 			console.log("chat/unset-admin", data);
 
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.member;
+			($openedRoom.members.get(data.targetId) as Profile).level = Level.MEMBER;
 			$openedRoom = $openedRoom;
 		});
 
@@ -47,19 +45,19 @@
 			<div class="profile-id">
 				{$myData.id}
 			</div>
-			{#if $openedRoom.members.get($myData.id)?.level == Level.host}
+			{#if $myLevel === Level.HOST}
 				<div>&#128081;</div>
-			{:else if $openedRoom.members.get($myData.id)?.level == Level.admin}
+			{:else if $myLevel === Level.ADMIN}
 				<div>&#128736;</div>
-			{:else if $openedRoom.members.get($myData.id)?.level == Level.member}
+			{:else if $myLevel === Level.MEMBER}
 				<div></div>
 			{/if}
 		</div>
 	</div>
 	<div class="other-profile-container">
 		{#each Array.from($openedRoom.members) as [key, value]}
-			{#if key !== $myData.id}
-				<ProfileButton {key} {value} {myLevel} />
+			{#if key != $myData.id}
+				<ProfileButton {key} {value} />
 			{/if}
 		{/each}
 	</div>
