@@ -9,3 +9,7 @@ down:
 
 pdown:
 	docker-compose -f docker-compose.prod.yml down
+
+re:
+	make down
+	make

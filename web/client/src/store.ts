@@ -7,11 +7,11 @@ const socket = io('http://localhost:3000');
 const socketStore = writable(socket);
 
 const myData: Writable<MyData> = writable({
-	id: "seonhoki",
-	avatarSrc: "/asset/hhwang.png",
+	id: "",
+	avatarSrc: "",
 	rooms: [
-		{id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
-		{id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
+		// {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
+		// {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
 	],
 });
 
@@ -19,10 +19,6 @@ const gameSettingStore: Writable<GameSetting> = writable({
 	gameMode: "basic",
 	barColor: "#FF6231",
 	ballShape: "square",
-});
-
-const profilePageSettingStore: Writable<ProfilePageSetting> = writable({
-	whichTab: "social",
 });
 
 const modalStatesStore: Writable<ModalStates> = writable({
@@ -35,17 +31,21 @@ const modalStatesStore: Writable<ModalStates> = writable({
 });
 
 const openedRoom: Writable<RoomDetail> = writable({
-	id: "tesroomid123",
-	name: "testroomname",
-	roomtype: RoomType.lock,
-	memberCount: 4,
+	id: "",
+	name: "",
+	roomtype: RoomType.NORMAL,
+	memberCount: 0,
 	members: new Map([
-		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
-		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
-		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
+		// ["jaewchoi", { user: {id: "jaewchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
+		// ["hhwang", { user: {id: "hhwang", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
+		// ["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: true }],
+		// ["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
+		// ["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
 	]),
 	history: [],
 });
+
+const myLevel: Writable<Level> = writable(Level.MEMBER);
 
 /*
 
@@ -101,5 +101,5 @@ export {
 	myData,
 	openedRoom,
 	socketStore,
-	profilePageSettingStore,
+	myLevel,
 }

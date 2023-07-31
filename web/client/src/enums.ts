@@ -1,11 +1,11 @@
 export enum Level {
-	"host",
-	"admin",
-	"member"
+  HOST = "host",
+  ADMIN = "admin",
+  MEMBER = "member",
 }
 
 export enum RoomType {
-	"normal",
-	"lock",
-	"private"
+  NORMAL = "normal",
+  LOCK = "lock",
+  PRIVATE = "private",
 }

@@ -1,69 +1,63 @@
 <script lang="ts">
-	import {onMount} from 'svelte'
-	import {gameSettingStore, modalStatesStore} from '../../store'
+    import { onMount } from 'svelte'
+    import { gameSettingStore, myData } from '../../store'
+    import type { MyData } from '../../interfaces';
+    import { goto } from '$app/navigation';
 
-	let barColor: string = "#ff6231";
-	let isColorOptionShow: boolean = false;
-	let isShapeOptionShow: boolean = false;
+    let barColor: string = "#ff6231";
+    let isColorOptionShow: boolean = false;
+    let isShapeOptionShow: boolean = false;
 
-	onMount(() => {
-		// const colorOption = document.querySelector(".color-option") as HTMLDivElement;
-		// colorOption.addEventListener("mouseout", () => {
-		//	 isColorOptionShow = false;
-		// });
+    onMount(() => {
 
-		// const shapeOption = document.querySelector(".shape-option") as HTMLDivElement;
-		// shapeOption.addEventListener("mouseout", () => {
-		//	 isShapeOptionShow = false;
-		// });
-		const gameModeDiv = document.querySelector(".game-mode") as HTMLDivElement;
-		for (const child of gameModeDiv.children) {
-			if (child.tagName === "BUTTON") {
-				child.addEventListener("mouseover", (e: any) => {
-					if (e.target.value !== $gameSettingStore.gameMode) {
-						e.target.style.backgroundColor = "var(--hover-color)";
-					}
-				});
-				child.addEventListener("mouseout", (e: any) => {
-					if (e.target.value !== $gameSettingStore.gameMode) {
-						e.target.style.backgroundColor = "var(--bg-color)";
-					}
-				});
-			}
-		}
-		
-	})
+        const gameModeDiv = document.querySelector(".game-mode") as HTMLDivElement;
+        for (const child of gameModeDiv.children) {
+            if (child.tagName === "BUTTON") {
+                child.addEventListener("mouseover", (e: any) => {
+                    if (e.target.value !== $gameSettingStore.gameMode) {
+                        e.target.style.backgroundColor = "var(--hover-color)";
+                    }
+                });
+                child.addEventListener("mouseout", (e: any) => {
+                    if (e.target.value !== $gameSettingStore.gameMode) {
+                        e.target.style.backgroundColor = "var(--bg-color)";
+                    }
+                });
+            }
+        }
+        
+    });
 
-	const colorButtonEvent = () => {
-		isColorOptionShow = !isColorOptionShow;
-		isShapeOptionShow = false;
-	}
+    const colorButtonEvent = () => {
+        isColorOptionShow = !isColorOptionShow;
+        isShapeOptionShow = false;
+    }
 
-	const shapeButtonEvent = () => {
-		isShapeOptionShow = !isShapeOptionShow;
-		isColorOptionShow = false;
-	}
+    const shapeButtonEvent = () => {
+        isShapeOptionShow = !isShapeOptionShow;
+        isColorOptionShow = false;
+    }
 
-	const gameModeEvent = (e: any) => {
-		$gameSettingStore.gameMode = e.target.value;
+    const gameModeEvent = (e: any) => {
+        $gameSettingStore.gameMode = e.target.value;
 
-		for (const child of e.target.parentNode.children) {
-			if (child.tagName === "BUTTON") {
-				child.style.backgroundColor = "var(--bg-color)";
-				child.style.border = "1px solid var(--border-color)";
-			}
-		}
-		e.target.style.backgroundColor = "var(--hover-color)";
-		e.target.style.border = "1px solid var(--point-color)";
-	}
+        for (const child of e.target.parentNode.children) {
+            if (child.tagName === "BUTTON") {
+                child.style.backgroundColor = "var(--bg-color)";
+                child.style.border = "1px solid var(--border-color)";
+            }
+        }
+        e.target.style.backgroundColor = "var(--hover-color)";
+        e.target.style.border = "1px solid var(--point-color)";
+    }
 
-	const barColorEvent = (e: any) => {
-		$gameSettingStore.barColor = e.target.value;
-	}
+    const barColorEvent = (e: any) => {
+        $gameSettingStore.barColor = e.target.value;
+    }
 
-	const ballShapeEvent = (e: any) => {
-		$gameSettingStore.ballShape = e.target.value;
-	}
+    const ballShapeEvent = (e: any) => {
+        $gameSettingStore.ballShape = e.target.value;
+    }
 
 </script>
 

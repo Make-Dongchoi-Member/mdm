@@ -7,7 +7,7 @@
 
 	async function emailCodeValidation(data: any) {
 		try {
-			const response = await fetch("http://localhost:3000/login/mailauth", {
+			const response = await fetch("http://localhost:3000/api/login/mailauth", {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -25,7 +25,7 @@
 		let code = e.target.value;
 		if (code.length === 6 && !block) { 
 			block = true;
-			emailCodeValidation({email_code : code})
+			emailCodeValidation({emailCode : code})
 			.then((res) => {
 				setTimeout(() => {
 					if (res) {

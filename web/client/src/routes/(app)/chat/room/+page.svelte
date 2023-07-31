@@ -2,11 +2,14 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
+    import { Level } from '../../../../enums';
+    import type { Profile, SetRequestDTO } from '../../../../interfaces';
+    import { goto } from '$app/navigation';
 
     onMount(() => {
         /*
@@ -15,13 +18,54 @@
             받은 데이터를 store에 있는 openedRoom에 저장
         */
        
-        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id")})
+        getRoomData();
+       
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
         
         $socketStore.on("chat/join", (data: any) => {
+            /**
+             * @TODO
+             * 방에 참가한 사용자를 사용자 목록에 추가하기
+            */
             console.log("join:", data);
         });
 
+        $socketStore.on("chat/leave", (data: any) => {
+			console.log("chat/leave", data);
+
+			$openedRoom.members.delete(data.userId);
+			$openedRoom = $openedRoom;
+		});
+
+        $socketStore.on("chat/set-kick", (data: any) => {
+            if ($myData.id === data.targetId) {
+                console.log("chat/set-kick", data);
+                goto("/chat");
+            }
+		});
+
     });
+
+    const getRoomData = async () => {
+        const response = await fetch(`http://localhost:3000/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
+            method: "GET",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+            $openedRoom = data.openedRoom;
+            $myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    onDestroy(() => {
+        $socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
+    })
 
 </script>
 
@@ -38,9 +82,13 @@
             <div class="chat-room-name">
                 CHAT ROOM NAME
             </div>
-            <div class="chat-setting-button">
-                <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
-            </div>
+            {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
+                <div class="chat-setting-button">
+                    <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
+                </div>
+            {:else}
+                <div class="chat-setting-button"></div>
+            {/if}
             <div class="invite-button">
                <button on:click={() => { $modalStatesStore.isInviteModal = true; }}>+</button>
             </div>
@@ -75,16 +123,21 @@
     }
 
     .chat-room-name {
-        flex-grow: 1;
+        flex-grow: 1;        
+        text-align: left;
+        margin-left: 10px;
     }
 
-    .chat-setting-button {
+    .chat-setting-button {        
+        height: 30px;
         flex-grow: 1;
+        flex-basis: 40px;
         font-size: 25px;
+        padding-bottom: 4px;  
     }
 
     .chat-setting-button > button {
-        font-size: 25px;
+        font-size: 25px;        
 
         background-color: var(--bg-color);
         color: var(--text-color);
@@ -106,6 +159,7 @@
     .invite-button {
         flex-grow: 30;       
         text-align: right;
+        padding-bottom: 4px;  
     }
 
     .invite-button > button {
