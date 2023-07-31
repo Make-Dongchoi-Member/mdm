@@ -20,7 +20,7 @@ import { RoomOutDTO } from './dto/RoomOut.dto';
     일반 방은 비밀번호가 빈상태로 가고, 비밀번호 방은 채워서 갑니다.
  */
 
-@Controller('chat')
+@Controller('api/chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
@@ -38,7 +38,7 @@ export class ChatController {
 
   /**
    * 들어간 방의 정보 API 요청
-   * Get("/api/room?room_id=[roomID]")
+   * Get("/api/chat/room?room_id=[roomID]")
    * >> roomID: string
    * << openedRoom: RoomDetail
    */

@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { Public } from './guards/login.jwt.public.decorator';
 import { APP_URL, DEV_URL } from 'src/configs/constants';
 
-@Controller('login')
+@Controller('api/login')
 @Public()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}

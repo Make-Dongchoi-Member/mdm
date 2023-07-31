@@ -2,7 +2,7 @@ import { Controller, Get, Headers, Query, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserId } from 'src/decorators/user-id.decorator';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

@@ -13,7 +13,7 @@
 
     const getMyData = async (): Promise<void> => {
         try {
-			const response = await fetch("http://localhost:3000/user/me", {
+			const response = await fetch("http://localhost:3000/api/user/me", {
 				method: "GET",
 				credentials: 'include',
 				headers: {

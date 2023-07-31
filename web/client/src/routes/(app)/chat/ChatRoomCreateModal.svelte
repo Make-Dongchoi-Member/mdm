@@ -32,20 +32,22 @@
     });
 
     async function createRoom(data: any) {
-		try {
-			const response = await fetch("http://localhost:3000/chat/create", {
-				method: "POST",
-				credentials: 'include',
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(data),
-			});
-			console.log(response);
+        const response = await fetch("http://localhost:3000/api/chat/create", {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
             
-		} catch (error) {
-			console.error("실패:", error);
-		}
+            goto(`/chat/room?id=${data.roomId}`);
+            $modalStatesStore.isRoomCreateModal = false;
+        })
+        .catch(error => console.error('Error:', error));
 	}
 
     const makeButtonEvent = () => {
@@ -71,8 +73,6 @@
         }
 
         createRoom({data: { roomInfo }});
-        goto(`/chat/room?id=${roomInfo.roomId}`);
-        $modalStatesStore.isRoomCreateModal = false;
     }
 
     const roomnameInputBoxEvent = (e: any) => {
