@@ -7,11 +7,6 @@
 
     const roomlist: Room[] = [
             // {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
-            // {id: "456", name: 'room2(not enter)', roomtype: RoomType.normal, memberCount: 3},
-            // {id: "7777", name: 'room3(not enter)', roomtype: RoomType.normal, memberCount: 121},
-            // {id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
-            // {id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
-            // {id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
         ]
     
     onMount(() => {
