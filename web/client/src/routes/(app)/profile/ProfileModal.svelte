@@ -3,6 +3,8 @@
     import ModalSocial from "./ModalSocial.svelte";
 	import ProfileHistory from "./ProfileHistory.svelte";
 	import OtherInfo from "./OtherInfo.svelte";
+    import { onMount } from "svelte";
+    import { clickOutside } from "../../../actions";
 
 	interface tabButtons {
 		[index: string]: boolean;
@@ -15,12 +17,23 @@
 		history: false,
 	};
 
+	onMount(() => {
+		document.body.addEventListener('keydown', escapeKeyDownEvent);
+	})
+
 	const modalCloseEvent = () => {
 		$modalStatesStore.isProfileModal = false;
 		for (const key of Object.keys(tabButtonSet)) {
 			tabButtonSet[key] = false;
 		}
 		tabButtonSet.social = true;
+	}
+
+	const escapeKeyDownEvent = (e: any) => {
+		if (e.key === 'Escape') {
+			modalCloseEvent();
+		}
+		console.log(e.key);
 	}
 
 	const profileTabEvent = (e: any) => {
@@ -31,7 +44,9 @@
 	}
 </script>
 
-<div class="modal-frame" style="{$modalStatesStore.isProfileModal ? 'display: flex;' : 'display: none;'}">
+<div class="modal-frame"
+	style="{$modalStatesStore.isProfileModal ? 'display: flex;' : 'display: none;'}"
+	use:clickOutside on:outclick={ modalCloseEvent }>
 	<button class="close-button" on:click={ modalCloseEvent }>&#215;</button>
 	<div class="modal-container">
 		<div class="info_container">

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {onMount} from 'svelte'
-	import {gameSettingStore} from '../../store'
+	import {gameSettingStore, modalStatesStore} from '../../store'
 
 	let barColor: string = "#ff6231";
 	let isColorOptionShow: boolean = false;

@@ -3,13 +3,13 @@
 	import ProfileHistory from "./ProfileHistory.svelte";
     import ProfileModal from "./ProfileModal.svelte";
 	import MyInfo from "./MyInfo.svelte";
-
+	
 	interface tabButtons {
 		[index: string]: boolean;
 		social: boolean;
 		history: boolean;
 	}
-
+	
 	let tabButtonSet: tabButtons = {
 		social: true,
 		history: false,
