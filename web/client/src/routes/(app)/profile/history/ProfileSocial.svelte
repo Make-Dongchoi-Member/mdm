@@ -18,16 +18,11 @@
 		{ id: "dongchoi8", avatarSrc: "/asset/default_profile.png" },
 		{ id: "dongchoi9", avatarSrc: "/asset/default_profile.png" },
 	]
-
-	const ProfileModalEvent = () => {
-		$modalStatesStore.isProfileSocialModal = true;
-		$modalStatesStore.isProfileHistoryModal = false;
-	}
 </script>
 
 <div class="data">
 	{#each members as item}
-	<button class="profile-button" on:click={ ProfileModalEvent }>
+	<button class="profile-button" on:click={ () => $modalStatesStore.isProfileModal = true }>
 		<img src={item.avatarSrc} alt="profile_image">
 		<div>
 			{item.id}

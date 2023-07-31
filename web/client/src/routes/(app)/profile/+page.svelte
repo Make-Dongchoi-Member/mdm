@@ -1,38 +1,51 @@
 <script lang="ts">
-import ProfileSocialModal from "./ProfileSocialModal.svelte";
-import ProfileHistoryModal from "./ProfileHistoryModal.svelte";
-import ProfileSocial from "./history/ProfileSocial.svelte";
-import MyInfo from "./history/MyInfo.svelte";
-import {profilePageSettingStore} from '../../../store';
+	import ProfileSocialModal from "./ProfileSocialModal.svelte";
+	import ProfileHistoryModal from "./ProfileHistoryModal.svelte";
+	import ProfileSocial from "./history/ProfileSocial.svelte";
+	import ProfileHistory from "./history/ProfileHistory.svelte";
+	import MyInfo from "./history/MyInfo.svelte";
+    import ProfileModal from "./ProfileModal.svelte";
 
-interface tabButtons {
-	social: boolean;
-	history: boolean;
-}
+	interface tabButtons {
+		[index: string]: boolean;
+		social: boolean;
+		history: boolean;
+	}
 
-let tabButtonSet: tabButtons = {
-	social: true,
-	history: false,
-};
+	let tabButtonSet: tabButtons = {
+		social: true,
+		history: false,
+	};
 
-const profileTabEvent = (e: any) => {
-	$profilePageSettingStore.whichTab = e.target.value;
-	console.log($profilePageSettingStore.whichTab);
-}
+	const profileTabEvent = (e: any) => {
+		for (const key of Object.keys(tabButtonSet)) {
+			tabButtonSet[key] = false;
+		}
+		tabButtonSet[e.target.value] = true;
+	}
 </script>
 
-<ProfileSocialModal />
-<ProfileHistoryModal />
+<!-- <ProfileSocialModal />
+<ProfileHistoryModal /> -->
+<ProfileModal />
 
 <div class="info_container">
 	<MyInfo />
 </div>
 <div class="data_container">
 	<div class="button_area">
-		<button on:click={ profileTabEvent } value="social">SOCIAL</button>
-		<button on:click={ profileTabEvent } value="history">HISTORY</button>
+		<button on:click={ profileTabEvent }
+			value="social"
+			class={tabButtonSet.social ? "selected" : ""}>SOCIAL</button>
+		<button on:click={ profileTabEvent }
+			value="history"
+			class={tabButtonSet.history ? "selected" : ""}>HISTORY</button>
 	</div>
-	<ProfileSocial />
+	{#if tabButtonSet.social}
+		<ProfileSocial />
+	{:else if tabButtonSet.history}
+		<ProfileHistory />
+	{/if}
 </div>
 
 <style>
@@ -60,5 +73,10 @@ const profileTabEvent = (e: any) => {
 	button {
 		width: 150px;
 		margin-right: 15px;
+	}
+
+	.selected {
+		border: 1px solid var(--point-color);
+		background-color: var(--hover-color);
 	}
 </style>

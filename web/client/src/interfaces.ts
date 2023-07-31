@@ -63,8 +63,7 @@ export interface ModalStates {
 	isSettingModal: boolean;
 	isRoomoutModal: boolean;
 	isRoomCreateModal: boolean;
-	isProfileSocialModal: boolean;
-	isProfileHistoryModal: boolean;
+	isProfileModal: boolean;
 }
 
 export interface MyData extends UserData {
