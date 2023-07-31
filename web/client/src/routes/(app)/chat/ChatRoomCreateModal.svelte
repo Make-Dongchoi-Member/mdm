@@ -48,22 +48,13 @@
 		}
 	}
 
-//     export class RoomInfo {
-//   roomId: string;
-//   hostId: string;
-//   roomname: string;
-//   password: string;
-//   roomtype: RoomType;
-// }
-
     const makeButtonEvent = () => {
         /*
             @TODO
             방 만들기에 필요한 입력값을 체크.
             새로운 방 만들기 API 요청.
             요청 콜백으로 라우터 이동.
-            */
-        // const roomID = createRoom();
+        */
         let roomtype: RoomType = RoomType.NORMAL;
         if (isPassword && !isPrivate) {
             roomtype = RoomType.LOCK;

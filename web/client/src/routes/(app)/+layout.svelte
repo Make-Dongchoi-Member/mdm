@@ -3,8 +3,13 @@
     import { modalStatesStore, myData } from '../../store';
     import type { MyData } from '../../interfaces';
     import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
 
     let isSigned: boolean = false;
+
+    onMount(() => {
+        getMyData();
+    });
 
     const getMyData = async (): Promise<void> => {
         try {
@@ -26,7 +31,6 @@
 			console.error("실패:", error);
 		}
     }
-    getMyData();
 </script>
 
 {#if isSigned}
