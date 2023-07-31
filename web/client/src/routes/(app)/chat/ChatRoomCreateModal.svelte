@@ -180,7 +180,7 @@
             </div>
         </div>
     </div>
-  
+
 <style>
     .modal-container {
         position: absolute;
@@ -327,4 +327,3 @@
     
 
 </style>
-  

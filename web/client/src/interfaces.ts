@@ -54,6 +54,10 @@ export interface GameSetting {
 	ballShape: string;
 }
 
+export interface ProfilePageSetting {
+	whichTab: string;
+}
+
 export interface ModalStates {
 	isNotiModal: boolean;
 	isInviteModal: boolean;

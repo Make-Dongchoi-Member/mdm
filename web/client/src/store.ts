@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
+import type { MyData, GameSetting, ModalStates, Room, RoomDetail, ProfilePageSetting } from "./interfaces";
 import { Level, RoomType } from './enums';
 import { io } from 'socket.io-client';
 
@@ -101,5 +101,5 @@ export {
 	myData,
 	openedRoom,
 	socketStore,
-	myLevel
+	myLevel,
 }
