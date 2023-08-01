@@ -109,8 +109,7 @@
 
 <style>
 	.profile-button {
-        width: 90%;
-		height: 30px;
+		height: 40px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;

@@ -37,22 +37,20 @@
 </script>
 
 <div class="members">
-	<div class="my-profile-container">
-		<div class="my-profile">
-			<div class="image-container">
-				<img src="{$myData.avatarSrc}" alt="프로필 이미지" class="profile-photo">
-			</div>
-			<div class="profile-id">
-				{$myData.id}
-			</div>
-			{#if $myLevel === Level.HOST}
-				<div>&#128081;</div>
-			{:else if $myLevel === Level.ADMIN}
-				<div>&#128736;</div>
-			{:else if $myLevel === Level.MEMBER}
-				<div></div>
-			{/if}
+	<div class="my-profile">
+		<div class="image-container">
+			<img src="{$myData.avatarSrc}" alt="프로필 이미지" class="profile-photo">
 		</div>
+		<div class="profile-id">
+			{$myData.id}
+		</div>
+		{#if $myLevel === Level.HOST}
+			<div>&#128081;</div>
+		{:else if $myLevel === Level.ADMIN}
+			<div>&#128736;</div>
+		{:else if $myLevel === Level.MEMBER}
+			<div></div>
+		{/if}
 	</div>
 	<div class="other-profile-container">
 		{#each Array.from($openedRoom.members) as [key, value]}
@@ -67,32 +65,31 @@
 
 <style>
 	.members {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
         width: 220px;
-        height: 380px;
-        margin-left: 10px;
-        margin-right: 10px;
+        height: 550px;
         border: 1px solid var(--border-color);
 		font-size: 12px;
+		box-sizing: border-box;
     }
 
 	.profile-id {
 		font-size: 12px;
 	}
 
-	.my-profile-container {
-		margin-bottom: 20px;
-	}
-
     .my-profile {
         width: 90%;
-		height: 30px;
+		height: 40px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         border: 1px solid var(--border-color);
 		padding: 4px 10px 4px 10px;
-		margin: 5%;
+		margin-top: 10px;
+		margin-bottom: 10px;
 		box-sizing: border-box;
     }
 
@@ -104,7 +101,8 @@
 	.other-profile-container {
 		display: flex;
 		flex-direction: column;
-		height: 78%;
+		width: 90%;
+		height: 490px;
 		overflow-y: auto;
 	}
 

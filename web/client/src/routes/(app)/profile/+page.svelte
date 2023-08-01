@@ -56,6 +56,7 @@
 		border: 1px solid var(--border-color);
 		height: 380px;
 		margin-top: 20px;
+		box-sizing: border-box;
 	}
 
 	.button_area {
