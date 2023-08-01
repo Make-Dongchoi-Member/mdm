@@ -21,19 +21,24 @@ export class ChatService {
     private config: ConfigService,
   ) {}
 
-  async getRoomListByUserID(userId: number) {
-    const userInfo = await this.userRepository
-      .findOneByOrFail({ id: userId })
-      .catch(() => {
-        throw new NotFoundException(`user_id ${userId} Not Found`);
-      });
-    console.log(userInfo);
-    const rooms = await this.roomRepository.find({
-      where: {
-        id: In(userInfo.rooms),
-      },
+  async getRoomListOfUser(userId: number) {
+    const publicRooms = await this.roomRepository.publicRooms();
+    const userEnteredRooms = (
+      await this.roomRepository.userEnteredRooms(userId)
+    ).filter((e) => {
+      e.roomtype === RoomType.PRIVATE;
     });
-    return rooms;
+    const roomList = Array<RoomInfo>();
+    [...publicRooms, ...userEnteredRooms].forEach((e) => {
+      roomList.push({
+        roomId: e.id.toString(),
+        hostId: e.host.toString(),
+        roomname: e.name,
+        password: '',
+        roomtype: e.roomtype,
+      });
+    });
+    return roomList;
   }
 
   async getRoomDetail(roomId: number) {

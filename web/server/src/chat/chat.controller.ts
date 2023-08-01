@@ -32,7 +32,7 @@ export class ChatController {
    */
   @Get('list')
   async list(@UserId() userId: string): Promise<GetListDTO> {
-    const rooms = await this.chatService.getRoomListByUserID(+userId);
+    const rooms = await this.chatService.getRoomListOfUser(+userId);
     return { rooms };
   }
 
