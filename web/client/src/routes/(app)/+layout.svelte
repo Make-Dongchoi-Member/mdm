@@ -7,9 +7,11 @@
 
     let isSigned: boolean = false;
 
-    onMount(() => {
-        getMyData();
-    });
+    // onMount(() => {
+    //     getMyData();
+    // });
+
+	$myData.id = "hhwang"; // 임시 닉네임, getMyData 활성화 시 이 부분 주석처리 할 것.
 
     const getMyData = async (): Promise<void> => {
         try {
@@ -34,7 +36,7 @@
     }
 </script>
 
-{#if isSigned}
+<!-- {#if isSigned} -->
 <div class="container">
 	<nav class= "containerTop" >
 		<a href="/" >GAME</a>
@@ -51,7 +53,7 @@
 	</button>
 </div>
 <NotiModal />
-{/if}
+<!-- {/if} -->
 
 <style>
 	@import url('https://rsms.me/inter/inter.css'); /* font */
