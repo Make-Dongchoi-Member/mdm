@@ -85,6 +85,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+		box-sizing: border-box;
 	}
 
 		
@@ -103,9 +104,10 @@
 	.alarm {
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
 		width: 900px;
+		height: 50px;
 		position: absolute;
-		top: 7px;
 		z-index: 0;
 	}
 
@@ -120,7 +122,7 @@
 
 	.container {
 		width: 800px;
-		border: 1px solid var(--border-color);
+		/* border: 1px solid var(--border-color); */
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -131,14 +133,18 @@
 		width: 800px;
 		height: 650px;
 		margin-top: 80px;
+		box-sizing: border-box;
 	}
 
 	nav {
-		border: 1px solid var(--border-color);
+		/* border: 1px solid var(--border-color); */
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 		text-align: center;
+
+		height: 50px;
 	}
 
 	nav > a {

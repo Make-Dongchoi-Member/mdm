@@ -131,9 +131,10 @@
 	}
 
 	.chat-title {
+		position: relative;
 		display: flex;
 		flex-direction: row;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
 		
 		width: 800px;
@@ -141,19 +142,17 @@
 	}
 		
 	.chat-title > :nth-child(1) {
-		flex-grow: 10;
 		text-align: center;
 	}
 
 	.chat-title > :nth-child(2) > button {
+		position: absolute;
+		right: 10px;
+		top: 35px;
 		font-size: 25px;
 		font-weight: 500;
-		flex-grow: 0;
-		text-align: right;
 		background-color: var(--bg-color);
-		color: var(--text-color);
 		border: none;
-		outline: none;
 	}
 
 	a {

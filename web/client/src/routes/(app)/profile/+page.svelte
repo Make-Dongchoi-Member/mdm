@@ -50,6 +50,7 @@
 		flex-direction: row;
 		border: 1px solid var(--border-color);
 		height: 250px;
+		box-sizing: border-box;
 	}
 
 	.data_container {

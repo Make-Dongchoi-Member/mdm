@@ -83,7 +83,7 @@
 		box-sizing: border-box;
 		
 		position: absolute;
-		top: 5px;
+		top: 8px;
 		margin-left: 400px;
 	}
 

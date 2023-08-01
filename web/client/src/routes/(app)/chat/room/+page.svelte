@@ -119,7 +119,7 @@
 		justify-content: space-between;
 		align-items: center;
 		width:530px;
-		margin-left: 10px;
+		/* margin-left: 10px; */
 	}
 
 	.chat-room-name {

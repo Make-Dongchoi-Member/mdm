@@ -111,7 +111,11 @@
 
 <style>
 	.game-box {
-		border: 1px solid #848484;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		height: 650px;
 	}
 
 	.color-option {
@@ -119,12 +123,8 @@
 	}
 
 	.color-option > button, .shape-option > button, .game-mode > button {
-		/* height: 30px; */
-		width: 380px;
-		outline: none;
-		/* border: 1px solid var(--border-color); */
-		/* background-color: var(--bg-color); */
-		/* color: var(--text-color); */
+		width:340px;
+		height: 40px;
 	}
 		
 	.game-mode > div, .skin-option > div, .game-mode > button {
@@ -145,8 +145,8 @@
 
 	.color-option > div {
 		position: absolute;
-		width: 380px;
-		top: 30px;
+		width:340px;
+		top: 40px;
 		left: 0px;
 		display: none;
 		flex-direction: column;
@@ -168,8 +168,8 @@
 
 	.shape-option > div {
 		position: absolute;
-		width: 380px;
-		top: 30px;
+		width:340px;
+		top: 40px;
 		left: 0px;
 		display: none;
 		flex-direction: column;
@@ -180,34 +180,30 @@
 	.game-setting {
 		display: flex;
 		flex-direction: row;
-		/* justify-content: center; */
-
+		justify-content: space-around;
+		border: 1px solid var(--border-color);
+		padding: 30px 20px 20px 20px;
 	}
 
 	.game-mode {
 		display: flex;
-		width: 50%;
+		width: 45%;
 		flex-direction: column;
 		align-content: center;
-		/* margin-right: 30px; */
-		margin-left: 10px;
-		margin-right: 10px;
 		text-align: center;
 	}
 
 	.skin-option {
 		display: flex;
 		flex-direction: column;
-		width: 50%;
-		margin-left: 10px;
-		margin-right: 10px;
+		width: 45%;
 		text-align: center;
 	}
 
 	canvas {
 		border: 1px solid var(--border-color);
 		width: 800px;
-		height: 400px;
-		margin-bottom: 30px;
+		height: 430px;
+		box-sizing: border-box;
 	}
 </style>
