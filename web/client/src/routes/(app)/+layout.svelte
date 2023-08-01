@@ -133,7 +133,6 @@
 		width: 800px;
 		height: 650px;
 		margin-top: 80px;
-		box-sizing: border-box;
 	}
 
 	nav {
