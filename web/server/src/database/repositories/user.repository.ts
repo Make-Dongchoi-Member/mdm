@@ -40,4 +40,10 @@ export class UserRepository extends Repository<Users> {
     const user = await this.findOneBy({ nickName });
     return user !== null;
   }
+
+  async appendRoomAtUser(userId: number, roomId: number) {
+    this.update(userId, {
+      rooms: () => `array_append("rooms", ${roomId})`,
+    });
+  }
 }

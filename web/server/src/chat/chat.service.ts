@@ -58,15 +58,9 @@ export class ChatService {
   }
 
   async createRoom(roomInfo: RoomInfo) {
-    const newRoomEntity = this.roomRepository.create({
-      name: roomInfo.roomname,
-      password: await this.genRoomPassword(roomInfo),
-      roomtype: roomInfo.roomtype,
-      host: +roomInfo.hostId,
-    });
-    const savedRoom = await this.roomRepository.save(newRoomEntity);
-    this.appendRoomAtUserTable(savedRoom.host, savedRoom.id);
-    return savedRoom.id.toString();
+    const newRoom = await this.roomRepository.saveRoom(roomInfo);
+    this.userRepository.appendRoomAtUser(newRoom.host, newRoom.id);
+    return newRoom.id.toString();
   }
 
   async updateRoom(roomInfo: RoomInfo) {
@@ -123,12 +117,6 @@ export class ChatService {
     // users - rooms 에서 room 삭제
     this.userRepository.update(userId, {
       rooms: () => `array_remove("rooms", ${roomId})`,
-    });
-  }
-
-  private async appendRoomAtUserTable(userId: number, roomId: number) {
-    this.userRepository.update(userId, {
-      rooms: () => `array_append("rooms", ${roomId})`,
     });
   }
 
