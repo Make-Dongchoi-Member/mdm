@@ -7,7 +7,6 @@ import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
 import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
-import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
@@ -17,7 +16,6 @@ export class ChatService {
   constructor(
     private roomRepository: RoomRepository,
     private userRepository: UserRepository,
-    private config: ConfigService,
   ) {}
 
   async getRoomListOfUser(userId: number) {
@@ -64,13 +62,13 @@ export class ChatService {
   }
 
   async updateRoom(roomInfo: RoomInfo) {
-    const room = await this.roomRepository.findOneByOrFail({
-      id: +roomInfo.roomId,
-    });
-    if (room.host.toString() !== roomInfo.hostId) {
+    const room = await this.roomRepository.getRoomById(+roomInfo.roomId);
+    if (!room) {
+      throw new NotFoundException(`room_id ${roomInfo.roomId} Not Found`);
+    } else if (room.host.toString() !== roomInfo.hostId) {
       throw new ForbiddenException();
     }
-    this.updateRoomEntity(roomInfo);
+    await this.roomRepository.updateRoom(roomInfo);
   }
 
   async roomOut(userId: number, roomId: number) {
@@ -117,29 +115,6 @@ export class ChatService {
     // users - rooms 에서 room 삭제
     this.userRepository.update(userId, {
       rooms: () => `array_remove("rooms", ${roomId})`,
-    });
-  }
-
-  private async genRoomPassword(info: {
-    password: string;
-    roomtype: RoomType;
-  }): Promise<string> | null {
-    if (info.roomtype !== RoomType.LOCK) {
-      return null;
-    }
-    return this.createHash(info.password);
-  }
-
-  private async createHash(pw: string) {
-    const salt = await bcrypt.genSalt(this.config.get<number>('SALT_ROUNDS'));
-    return bcrypt.hash(pw, salt);
-  }
-
-  private async updateRoomEntity(updateValue: RoomInfo) {
-    this.roomRepository.update(updateValue.roomId, {
-      name: updateValue.roomname,
-      password: await this.genRoomPassword(updateValue),
-      roomtype: updateValue.roomtype,
     });
   }
 

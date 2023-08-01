@@ -37,6 +37,14 @@ export class RoomRepository extends Repository<Rooms> {
     return await this.save(roomEntity);
   }
 
+  async updateRoom(roomInfo: RoomInfo) {
+    this.update(roomInfo.roomId, {
+      name: roomInfo.roomname,
+      password: await this.genRoomPassword(roomInfo),
+      roomtype: roomInfo.roomtype,
+    });
+  }
+
   private async genRoomPassword(info: {
     password: string;
     roomtype: RoomType;
