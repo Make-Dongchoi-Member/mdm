@@ -105,19 +105,17 @@
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
-		width: 900px;
+		width: 880px;
 		height: 50px;
 		position: absolute;
 		z-index: 0;
+		margin-top: 130px;
 	}
 
 	.alarm > button {
-		padding-right: 10px;
-		border: none;
-	}
-
-	.alarm > button:hover {
-		background-color: var(--bg-color);
+		border: 1px solid var(--border-color);
+		border-radius: 70%;
+		text-align: center;
 	}
 
 	.container {
