@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Users } from '../entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
@@ -16,18 +16,16 @@ export class UserRepository extends Repository<Users> {
     return await this.save(newUserEntity);
   }
 
-  async getInfoById(id: number) {
-    const user = await this.findOneByOrFail({ id }).catch(() => {
-      throw new NotFoundException(`user_id ${id} Not Found`);
-    });
-    return user;
+  async getUserById(id: number) {
+    return this.findOneBy({ id });
   }
 
-  async getInfoByNickname(nickName: string) {
-    const user = await this.findOneByOrFail({ nickName }).catch(() => {
-      throw new NotFoundException(`nickname ${nickName} Not Found`);
-    });
-    return user;
+  async getUserByNickname(nickName: string) {
+    return this.findOneBy({ nickName });
+  }
+
+  async getUserList(ids: number[]) {
+    return this.findBy({ id: In(ids) });
   }
 
   async updateUser(id: number, updateData: Partial<Users>) {

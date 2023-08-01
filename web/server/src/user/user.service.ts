@@ -10,11 +10,14 @@ export class UserService {
   constructor(private userRepository: UserRepository) {}
 
   async getInfoById(id: number) {
-    return await this.userRepository.getInfoById(id);
+    const user = await this.userRepository.getUserById(id);
+    if (!user) throw new NotFoundException(`user_id ${id} Not Found`);
+    return user;
   }
 
   async getInfoByNickName(nickName: string) {
-    return await this.userRepository.getInfoByNickname(nickName as string);
+    const user = await this.userRepository.getUserByNickname(nickName);
+    if (!user) throw new NotFoundException(`nickname ${nickName} Not Found`);
   }
 
   async setNickname(id: number, nickName: string) {

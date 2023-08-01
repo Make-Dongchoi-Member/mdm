@@ -18,4 +18,8 @@ export class RoomRepository extends Repository<Rooms> {
       ],
     });
   }
+
+  async getRoomById(id: number) {
+    return this.findOneBy({ id });
+  }
 }

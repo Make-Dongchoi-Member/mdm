@@ -7,7 +7,6 @@ import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
 import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
-import { In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { RoomRepository } from 'src/database/repositories/room.repository';
@@ -42,16 +41,10 @@ export class ChatService {
   }
 
   async getRoomDetail(roomId: number) {
-    const room = await this.roomRepository
-      .findOneByOrFail({ id: roomId })
-      .catch(() => {
-        throw new NotFoundException(`room_id ${roomId} Not Found`);
-      });
-    const users = await this.userRepository.find({
-      where: {
-        id: In([room.host, ...room.admin, ...room.members]),
-      },
-    });
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
+    const ids = [room.host, ...room.admin, ...room.members];
+    const users = await this.userRepository.getUserList(ids);
     const members = this.roomMembers(room, users);
     const roomDetail: RoomDetail = {
       id: room.id.toString(),
@@ -65,7 +58,6 @@ export class ChatService {
   }
 
   async createRoom(roomInfo: RoomInfo) {
-    console.log(roomInfo);
     const newRoomEntity = this.roomRepository.create({
       name: roomInfo.roomname,
       password: await this.genRoomPassword(roomInfo),
