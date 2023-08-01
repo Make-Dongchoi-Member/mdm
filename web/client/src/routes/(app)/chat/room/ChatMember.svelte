@@ -69,7 +69,7 @@
 		flex-direction: column;
 		align-items: center;
         width: 220px;
-        height: 550px;
+        height: 570px;
         border: 1px solid var(--border-color);
 		font-size: 12px;
 		box-sizing: border-box;
@@ -102,7 +102,7 @@
 		display: flex;
 		flex-direction: column;
 		width: 90%;
-		height: 490px;
+		height: 500px;
 		overflow-y: auto;
 	}
 

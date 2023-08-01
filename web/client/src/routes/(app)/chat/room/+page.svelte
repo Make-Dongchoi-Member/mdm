@@ -110,7 +110,7 @@
 		justify-content: space-between;
 		align-items: center;
 
-		height: 100px;
+		height: 80px;
 	}
 
 	.chatroom-left-top-box {
@@ -189,7 +189,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		height: 550px;
+		height: 570px;
 	}
 		
 	.chat-room-info {

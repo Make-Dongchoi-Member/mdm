@@ -40,7 +40,7 @@
 </script>
 
 {#if $modalStatesStore.isRoomCreateModal}
-<Modal />	
+	<Modal />
 {/if}
 
 <div class="chatroom-box">
@@ -102,7 +102,7 @@
 
 	.room-list {
 		width: 800px;
-		height: 550px;
+		height: 570px;
 		overflow-y: auto;
 
 		display: flex;
@@ -138,7 +138,7 @@
 		align-items: center;
 		
 		width: 800px;
-		height: 100px;
+		height: 80px;
 	}
 		
 	.chat-title > :nth-child(1) {
@@ -148,7 +148,7 @@
 	.chat-title > :nth-child(2) > button {
 		position: absolute;
 		right: 10px;
-		top: 35px;
+		top: 25px;
 		font-size: 25px;
 		font-weight: 500;
 		background-color: var(--bg-color);
