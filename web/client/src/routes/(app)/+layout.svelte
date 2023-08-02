@@ -11,6 +11,8 @@
         getMyData();
     });
 
+	// $myData.id = "hhwang"; // 임시 닉네임, getMyData 활성화 시 이 부분 주석처리 할 것.
+
     const getMyData = async (): Promise<void> => {
         try {
 			const response = await fetch("http://localhost:3000/api/user/me", {
@@ -83,6 +85,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
+		box-sizing: border-box;
 	}
 
 		
@@ -101,24 +104,23 @@
 	.alarm {
 		display: flex;
 		justify-content: flex-end;
-		width: 900px;
+		align-items: center;
+		width: 880px;
+		height: 50px;
 		position: absolute;
-		top: 7px;
 		z-index: 0;
+		margin-top: 130px;
 	}
 
 	.alarm > button {
-		padding-right: 10px;
-		border: none;
-	}
-
-	.alarm > button:hover {
-		background-color: var(--bg-color);
+		border: 1px solid var(--border-color);
+		border-radius: 70%;
+		text-align: center;
 	}
 
 	.container {
 		width: 800px;
-		border: 1px solid var(--border-color);
+		/* border: 1px solid var(--border-color); */
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -132,11 +134,14 @@
 	}
 
 	nav {
-		border: 1px solid var(--border-color);
+		/* border: 1px solid var(--border-color); */
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 		text-align: center;
+
+		height: 50px;
 	}
 
 	nav > a {

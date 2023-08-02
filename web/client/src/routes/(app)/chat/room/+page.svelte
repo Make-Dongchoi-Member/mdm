@@ -39,35 +39,35 @@
 			$openedRoom = $openedRoom;
 		});
 
-        $socketStore.on("chat/set-kick", (data: any) => {
-            if ($myData.id === data.targetId) {
-                console.log("chat/set-kick", data);
-                goto("/chat");
-            }
+		$socketStore.on("chat/set-kick", (data: any) => {
+			if ($myData.id === data.targetId) {
+				console.log("chat/set-kick", data);
+				goto("/chat");
+			}
 		});
 
-    });
+	});
 
-    const getRoomData = async () => {
-        const response = await fetch(`http://localhost:3000/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
-            method: "GET",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
-            $openedRoom = data.openedRoom;
-            $myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
-        })
-        .catch(error => console.error('Error:', error));
-    }
+	const getRoomData = async () => {
+		const response = await fetch(`http://localhost:3000/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
+			data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+			$openedRoom = data.openedRoom;
+			$myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
+		})
+		.catch(error => console.error('Error:', error));
+	}
 
-    onDestroy(() => {
-        $socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
-    })
+	onDestroy(() => {
+		$socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
+	})
 
     const myDataUpdate = (roomId: number) => {
         if (($myData.rooms).includes(roomId)) return;
@@ -112,98 +112,99 @@
 </div>
 
 <style>
-    .chatroom-top-box {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        margin-top: 80px;
-        margin-bottom: 20px;
-        align-items: center;
-    }
+	.chatroom-top-box {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 
-    .chatroom-left-top-box {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        width:530px;
-        margin-left: 10px;
-    }
+		height: 80px;
+	}
 
-    .chat-room-name {
-        flex-grow: 1;        
-        text-align: left;
-        margin-left: 10px;
-    }
+	.chatroom-left-top-box {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		width:530px;
+		/* margin-left: 10px; */
+	}
 
-    .chat-setting-button {        
-        height: 30px;
-        flex-grow: 1;
-        flex-basis: 40px;
-        font-size: 25px;
-        padding-bottom: 4px;  
-    }
+	.chat-room-name {
+		flex-grow: 1;
+		text-align: left;
+		margin-left: 10px;
+	}
 
-    .chat-setting-button > button {
-        font-size: 25px;        
+	.chat-setting-button {
+		height: 30px;
+		flex-grow: 1;
+		flex-basis: 40px;
+		font-size: 25px;
+		padding-bottom: 4px;
+	}
 
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        border: none;
-        outline: none;
-    }
+	.chat-setting-button > button {
+		font-size: 25px;
 
-    .back-button {
-        font-size: 20px;
-        flex-grow: 1;
-        margin-left: 10px;
-    }
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		border: none;
+		outline: none;
+	}
 
-    .back-button > a {
-        text-decoration: none;
-        color: var(--text-color);
-    }
+	.back-button {
+		font-size: 20px;
+		flex-grow: 1;
+		margin-left: 10px;
+	}
 
-    .invite-button {
-        flex-grow: 30;       
-        text-align: right;
-        padding-bottom: 4px;  
-    }
+	.back-button > a {
+		text-decoration: none;
+		color: var(--text-color);
+	}
 
-    .invite-button > button {
-        font-size: 25px;
-        font-weight: 500; 
+	.invite-button {
+		flex-grow: 30;
+		text-align: right;
+		padding-bottom: 4px;
+	}
 
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        border: none;
-        outline: none;        
-    }
+	.invite-button > button {
+		font-size: 25px;
+		font-weight: 500;
 
-    .out-of-room-button {
-        margin-right: 10px;              
-    }
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		border: none;
+		outline: none;
+	}
 
-    .out-of-room-button > button {
-        font-size: 20px;
+	.out-of-room-button {
+		margin-right: 10px;
+	}
 
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        border: none;
-        outline: none;    
-    }
+	.out-of-room-button > button {
+		font-size: 20px;
 
-    .chatroom-bottom-box {
-        display: flex;
-        flex-direction: row;
-        height: 400px;
-    }
-    
-    .chat-room-info {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        padding-right: 20px;
-        padding-top: 7px;
-    }
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		border: none;
+		outline: none;
+	}
+
+	.chatroom-bottom-box {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		height: 570px;
+	}
+		
+	.chat-room-info {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		padding-right: 20px;
+		padding-top: 7px;
+	}
 </style>

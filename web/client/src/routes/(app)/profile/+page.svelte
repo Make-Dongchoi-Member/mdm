@@ -1,25 +1,25 @@
 <script lang="ts">
 	import ProfileSocial from "./ProfileSocial.svelte";
 	import ProfileHistory from "./ProfileHistory.svelte";
-    import ProfileModal from "./ProfileModal.svelte";
+	import ProfileModal from "./ProfileModal.svelte";
 	import MyInfo from "./MyInfo.svelte";
 	
-	interface tabButtons {
+	interface subComponents {
 		[index: string]: boolean;
 		social: boolean;
 		history: boolean;
 	}
 	
-	let tabButtonSet: tabButtons = {
+	let components: subComponents = {
 		social: true,
 		history: false,
 	};
 
 	const profileTabEvent = (e: any) => {
-		for (const key of Object.keys(tabButtonSet)) {
-			tabButtonSet[key] = false;
+		for (const key of Object.keys(components)) {
+			components[key] = false;
 		}
-		tabButtonSet[e.target.value] = true;
+		components[e.target.value] = true;
 	}
 </script>
 
@@ -32,14 +32,14 @@
 	<div class="button_area">
 		<button on:click={ profileTabEvent }
 			value="social"
-			class={tabButtonSet.social ? "selected" : ""}>SOCIAL</button>
+			class={components.social ? "selected" : ""}>SOCIAL</button>
 		<button on:click={ profileTabEvent }
 			value="history"
-			class={tabButtonSet.history ? "selected" : ""}>HISTORY</button>
+			class={components.history ? "selected" : ""}>HISTORY</button>
 	</div>
-	{#if tabButtonSet.social}
+	{#if components.social}
 		<ProfileSocial />
-	{:else if tabButtonSet.history}
+	{:else if components.history}
 		<ProfileHistory />
 	{/if}
 </div>
@@ -50,12 +50,14 @@
 		flex-direction: row;
 		border: 1px solid var(--border-color);
 		height: 250px;
+		box-sizing: border-box;
 	}
 
 	.data_container {
 		border: 1px solid var(--border-color);
 		height: 380px;
 		margin-top: 20px;
+		box-sizing: border-box;
 	}
 
 	.button_area {

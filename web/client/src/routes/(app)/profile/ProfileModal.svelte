@@ -63,11 +63,12 @@
 	.close-button {
 		position: absolute;
 		width: 0;
-		top: 1px;
-		right: 2px;
+		top: 0px;
+		right: 3px;
 		border: none;
+		border-radius: 70%;
 		font-size: 25px;
-		font-weight: 500;
+		font-weight: 300;
 		background: none;
 		outline: none;
 	}
@@ -82,6 +83,7 @@
 
 		background-color: var(--bg-color);
 		border: 1px solid var(--point-color);
+		border-radius: 0.5rem;
 		box-sizing: border-box;
 
 		position: absolute;

@@ -90,13 +90,6 @@
     function filterRoomsNotInNumbers($roomlist: Map<number, Room>, numbers: number[]): Map<number, Room> {
         return new Map([...$roomlist].filter(([roomNumber, room]) => !numbers.includes(roomNumber)));
     }
-
-
-
-
-    
- 
-
 </script>
 
 
@@ -108,166 +101,156 @@
 
 
 <div class="chatroom-box">
-    <div class="chat-title">
-        <div>
-            CHAT ROOM LIST
-        </div>
-        <div>
-            <button on:click={roomCreateModalButton}>+</button>
-        </div>
-    </div>
-    <div class="room-list">        
-        {#each $myData.rooms as roomNum}
+	<div class="chat-title">
+		<div>
+			CHAT ROOM LIST
+		</div>
+		<div>
+			<button on:click={roomCreateModalButton}>+</button>
+		</div>
+	</div>
+	<div class="room-list">		
+		{#each $myData.rooms as roomNum}
 
-            <button on:click={()=>(myRoomEnter(roomNum))}>
+			<button on:click={()=>(myRoomEnter(roomNum))}>
 
-                <div>
-                    {$roomList.get(roomNum)?.name}
-                </div>
-                {#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
-                    <div>&#x1F512</div>
-                {:else}
-                    <div></div>
-                {/if}
-                <div>
-                    {$roomList.get(roomNum)?.memberCount}
-                </div>
-            </button>
-        {/each}
-        {#if $myData.rooms.length > 0 && publicRoomlist.size > 0}
-            <div class="divider">
-                
-            </div>
-        {/if}
-        {#each Array.from(publicRoomlist) as [roomId, room]}
-                <button on:click={()=>(roomEnter(room))}>
+				<div>
+					{$roomList.get(roomNum)?.name}
+				</div>
+				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
+					<div>&#x1F512</div>
+				{:else}
+					<div></div>
+				{/if}
+				<div>
+					{$roomList.get(roomNum)?.memberCount}
+				</div>
+			</button>
+		{/each}
+		{#if $myData.rooms.length > 0 && publicRoomlist.size > 0}
+			<div class="divider">
+				
+			</div>
+		{/if}
+		{#each Array.from(publicRoomlist) as [roomId, room]}
+				<button on:click={()=>(roomEnter(room))}>
 
-                    <div>
-                        {room.name}
-                    </div>
-                    {#if room.roomtype === RoomType.LOCK}
-                        <div>&#x1F512</div>
-                    {:else}
-                        <div></div>
-                    {/if}
-                    <div>
-                        {room.memberCount}
-                    </div>
-                </button>
-        {/each}
-    </div>
+					<div>
+						{room.name}
+					</div>
+					{#if room.roomtype === RoomType.LOCK}
+						<div>&#x1F512</div>
+					{:else}
+						<div></div>
+					{/if}
+					<div>
+						{room.memberCount}
+					</div>
+				</button>
+		{/each}
+	</div>
 </div>
 
 <style>
-    .chatroom-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+	.chatroom-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-    .room-list {
-        width: 770px;
-        height: 380px;
-        overflow-y: auto;
-        overflow-x: hidden;
+	.room-list {
+		width: 800px;
+		height: 570px;
+		overflow-y: auto;
 
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-content: flex-start;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		align-content: flex-start;
+	}
 
-        margin-bottom: 20px;
-    }
+	.room-list::-webkit-scrollbar {
+		width: 6px;
+		height: 30px;
+	}
 
-    .room-list::-webkit-scrollbar {
-        width: 6px;
-        height: 30px;
-    }
+	.room-list::-webkit-scrollbar-track {
+		background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
+	}
 
-    .room-list::-webkit-scrollbar-track {
-        background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
-    }
+	.room-list::-webkit-scrollbar-thumb {
+		background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
+		border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
+	}
 
-    .room-list::-webkit-scrollbar-thumb {
-        background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
-        border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
-    }
+	.room-list::-webkit-scrollbar-thumb:hover {
+		background-color: var(--text-color); /* 스크롤바 썸바 호버 배경색 설정 */
+	}
 
-    .room-list::-webkit-scrollbar-thumb:hover {
-        background-color: var(--text-color); /* 스크롤바 썸바 호버 배경색 설정 */
-    }
+	.chat-title {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		
+		width: 800px;
+		height: 80px;
+	}
+		
+	.chat-title > :nth-child(1) {
+		text-align: center;
+	}
 
-    .chat-title {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        
-        width: 760px;
-        margin-top : 80px;
-        margin-bottom: 20px;
-    }
-    
-    .chat-title > :nth-child(1) {        
-        flex-grow: 10;
-        text-align: center;
-    }
+	.chat-title > :nth-child(2) > button {
+		position: absolute;
+		right: 10px;
+		top: 25px;
+		font-size: 25px;
+		font-weight: 500;
+		background-color: var(--bg-color);
+		border: none;
+	}
 
-    .chat-title > :nth-child(2) > button {
-        font-size: 25px;
-        font-weight: 500;
-        flex-grow: 0;
-        text-align: right;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        border: none;
-        outline: none;
-    }
+	.room-list > button {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
 
-    a {
-        text-decoration: none;
-    }
+		height: 50px;
+		width: 380px;
+		margin-right: 10px;
+		margin-bottom: 10px;
+		outline: none;
+		border: 1px solid var(--border-color);
+		background-color: var(--bg-color);
+		color: var(--text-color);
+	}
 
-    .room-list > button {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
+	.room-list > button > :nth-child(1) {
+		
+		padding-left: 20px;
+	}
 
-        height: 40px;
-        width: 370px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        outline: none;
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-color);
-        color: var(--text-color);         
-    }
+	.room-list > button > :nth-child(2) {
+		display: flex;
+		padding-left: 5px;
+	}
 
-    .room-list > button > :nth-child(1) {
-        
-        padding-left: 10px;        
-    }
+	.room-list > button > :nth-child(3) {
+		flex-grow: 10;
+		text-align: right;
+		padding-right: 20px;
+	}
 
-    .room-list > button > :nth-child(2) {
-        display: flex;
-        padding-left: 5px;        
-    }
+	.room-list > button:hover {
+		background-color: var(--hover-color);
+	}
 
-    .room-list > button > :nth-child(3) {
-        flex-grow: 10;
-        text-align: right;
-        padding-right: 10px;
-    }
-
-    .room-list > button:hover {
-        background-color: var(--hover-color);
-    }
-
-    .divider {
-        width: 770px;
-        height: 20px;
-    }
-
-
+	.divider {
+		width: 770px;
+		height: 20px;
+	}
 </style>

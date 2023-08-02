@@ -3,14 +3,14 @@
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'seonhoki'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'jaewchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'sooyokim'},
+		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'sooyokim'},
+		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
+		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
+		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
+		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
@@ -20,9 +20,15 @@
 <div class="data">
 	{#each history as item}
 	<div class="history">
-		<div>
-			{item.result}
-		</div>
+		{#if item.result === 'WIN'}
+			<div class="win">
+				{item.result}
+			</div>
+		{:else}
+			<div class="lose">
+				{item.result}
+			</div>
+		{/if}
 		<div>
 			{item.date}&nbsp;&nbsp;&nbsp;{item.time}
 		</div>
@@ -85,7 +91,7 @@
 		color: var(--text-color);
 	}
 
-	.history > :nth-child(1) {
+	/* .history > :nth-child(1) {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -94,7 +100,7 @@
 		border: 1px solid var(--point-color);
 		margin-left: 20px;
 		margin-right: 20px;
-	}
+	} */
 
 	.history > :nth-child(2) {
 		justify-content: flex-start;
@@ -111,5 +117,28 @@
 
 	.nickname_text {
 		font-size: 20px;
+	}
+
+	.win {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 120px;
+		height: 30px;
+		border: 1px solid var(--point-color);
+		margin-left: 20px;
+		margin-right: 20px;
+	}
+
+	.lose {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 120px;
+		height: 30px;
+		border: 1px solid var(--border-color);
+		color: var(--border-color);
+		margin-left: 20px;
+		margin-right: 20px;
 	}
 </style>

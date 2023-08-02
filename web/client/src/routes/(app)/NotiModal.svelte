@@ -63,27 +63,30 @@
 
 <style>
 	.modal-container {
-		width: 900px;
+		width: 880px;
 
 		border: 1px solid transparent;
 		box-sizing: border-box;
 
 		position: absolute;
 		z-index: 2;
+
+		margin-top: 130px;
 	}
 
 	.modal-box {
-		width: 500px;
+		width: 480px;
 		display: flex;
 		flex-direction: column;
 
 		background-color: var(--bg-color);
 		border: 1px solid var(--border-color);
+		border-radius: 0.5rem;
 
 		box-sizing: border-box;
 		
 		position: absolute;
-		top: 5px;
+		top: 8px;
 		margin-left: 400px;
 	}
 
@@ -100,15 +103,21 @@
 		margin-left: 15px;
 		margin-bottom: 5px;
 	}
+
+	.modal-title > :nth-child(1) {
+		margin-top: 5px;
+	}
 		
 	.alarm > button {
+		width: 30px;
 		background-color: var(--bg-color);
-		padding-right: 10px;
+		text-align: center;
 		border: none;
+		border-radius: 70%;
 	}
 
 	.modal-content-box {
-		height: 400px;
+		height: 350px;
 		overflow-y: scroll;
 
 		margin-right: 5px;
