@@ -3,7 +3,7 @@ import {
     WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { JoinGameRoomData } from '../dto/JoinGameRoomData.dto';
+import { JoinGameRoomData } from './dto/JoinGameRoomData.dto';
 
 @WebSocketGateway({
 	cors: {
