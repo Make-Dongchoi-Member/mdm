@@ -77,7 +77,7 @@ export class ChatService {
     if (room.host === userId && room.memberCount === 1) {
       this.roomRepository.delete(roomId);
     } else {
-      const updateData = this.roomOutUpdateData(roomId, room);
+      const updateData = this.roomOutUpdateData(userId, room);
       updateData.memberCount = room.memberCount - 1;
       await this.roomRepository.updateRoom(roomId, updateData);
     }

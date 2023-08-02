@@ -1,4 +1,4 @@
-import { In, Not, Repository } from 'typeorm';
+import { ArrayContains, Not, Repository } from 'typeorm';
 import { Rooms } from '../entities/room.entity';
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
 import { RoomType } from 'src/types/enums';
@@ -18,8 +18,8 @@ export class RoomRepository extends Repository<Rooms> {
     return this.find({
       where: [
         { host: userId },
-        { admin: In([userId]) },
-        { members: In[userId] },
+        { admin: ArrayContains([userId]) },
+        { members: ArrayContains([userId]) },
       ],
     });
   }
