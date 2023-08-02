@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import type { MyData, GameSetting, ModalStates, Room, RoomDetail } from "./interfaces";
+import type { MyData, GameSetting, ModalStates, Room, RoomDetail, ProfilePageSetting } from "./interfaces";
 import { Level, RoomType } from './enums';
 import { io } from 'socket.io-client';
 
@@ -7,11 +7,11 @@ const socket = io('http://localhost:3000');
 const socketStore = writable(socket);
 
 const myData: Writable<MyData> = writable({
-	id: "seonhoki",
-	avatarSrc: "/asset/hhwang.png",
+	id: "",
+	avatarSrc: "",
 	rooms: [
-		{id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
-		{id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
+		// {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
+		// {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},
 	],
 });
 
@@ -32,16 +32,16 @@ const modalStatesStore: Writable<ModalStates> = writable({
 });
 
 const openedRoom: Writable<RoomDetail> = writable({
-	id: "tesroomid123",
-	name: "Room Name Test!",
-	roomtype: RoomType.lock,
-	memberCount: 4,
+	id: "",
+	name: "",
+	roomtype: RoomType.NORMAL,
+	memberCount: 0,
 	members: new Map([
-		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: true }],
-		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
-		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
-		["jaewchoi", { user: {id: "jaewchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
-		["hhwang", { user: {id: "hhwang", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
+		// ["jaewchoi", { user: {id: "jaewchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.member, isMuted: false }],
+		// ["hhwang", { user: {id: "hhwang", avatarSrc: "/asset/hhwang.png"}, level: Level.member, isMuted: false }],
+		// ["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: true }],
+		// ["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.host, isMuted: false }],
+		// ["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.admin, isMuted: false }],
 	]),
 	history: [],
 });
@@ -54,6 +54,7 @@ const roomList: Writable<Room[]> = writable([
 	{id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
 	{id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
 ]);
+const myLevel: Writable<Level> = writable(Level.MEMBER);
 
 /*
 
@@ -112,5 +113,6 @@ export {
 	myData,
 	openedRoom,
 	socketStore,
-	roomList
+  roomList,
+	myLevel
 }

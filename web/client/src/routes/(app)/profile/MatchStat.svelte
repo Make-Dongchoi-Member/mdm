@@ -1,5 +1,4 @@
 <script lang="ts">
-	
 </script>
 
 <div class="match_count_area">

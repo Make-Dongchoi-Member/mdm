@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { Public } from './guards/login.jwt.public.decorator';
 import { APP_URL, DEV_URL } from 'src/configs/constants';
 
-@Controller('login')
+@Controller('api/login')
 @Public()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
@@ -37,7 +37,9 @@ export class LoginController {
     } else {
       // 로그인 url
       // url = 로그인 url
-      url = new ConfigService().get('APP_URL');
+      // @TODO
+      // token vaild check
+      url = new ConfigService().get('APP_URL') + '/api';
     }
     return { url };
   }
@@ -82,7 +84,7 @@ export class LoginController {
   @Post('mailauth')
   async mailAuth(
     // @Query('user_id') userId: string,
-    @Body('email_code') code: string,
+    @Body('emailCode') code: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {

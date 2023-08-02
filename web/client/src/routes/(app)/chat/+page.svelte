@@ -6,6 +6,9 @@
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
     import { goto } from '$app/navigation';    
+    import type { Room } from '../../../interfaces';
+
+    let roomlist: Map<number, Room> = new Map();
 
     
     let roomEnterInfo: RoomEnterDTO = {roomId:"", userId:"", password:""};
@@ -16,14 +19,38 @@
         */    
     const publicRoomlist = $roomList.filter(item1 => !($myData.rooms).some(item2 => item2.id === item1.id));    
     onMount(() => {
+
         console.log("$myData.rooms", $myData.rooms);
         console.log("publicRoomList", publicRoomlist);
         /*
             @TODO
         */
         
+
+        getRoomList();
+ 
     });
 
+    const getRoomList = async () => {
+        const response = await fetch(`http://localhost:3000/api/chat/list`, {
+            method: "GET",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.rooms);
+            
+            for (let i = 0; i < data.rooms.length; i++) {
+                const element = data.rooms[i];
+                roomlist.set(element.id, element);
+            }
+            roomlist = roomlist;
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
@@ -60,8 +87,14 @@
 
 </script>
 
+
 <ChatRoomCreateModal />
 <ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
+
+{#if $modalStatesStore.isRoomCreateModal}
+<Modal />    
+{/if}
+
 
 <div class="chatroom-box">
     <div class="chat-title">
@@ -74,17 +107,19 @@
     </div>
     <div class="room-list">        
         {#each $myData.rooms as room}
+
             <button on:click={()=>(roomEnter(room))}>
+
                 <div>
-                    {room.name}
+                    {roomlist.get(room)?.name}
                 </div>
-                {#if room.roomtype === RoomType.lock}
+                {#if roomlist.get(room)?.roomtype === RoomType.LOCK}
                     <div>&#x1F512</div>
                 {:else}
                     <div></div>
                 {/if}
                 <div>
-                    {room.memberCount}
+                    {roomlist.get(room)?.memberCount}
                 </div>
             </button>
         {/each}
@@ -95,16 +130,17 @@
         {/if}
         {#each publicRoomlist as room}
                 <button on:click={()=>(roomEnter(room))}>
+
                     <div>
-                        {room.name}
+                        {room[1].name}
                     </div>
-                    {#if room.roomtype === RoomType.lock}
+                    {#if room[1].roomtype === RoomType.LOCK}
                         <div>&#x1F512</div>
                     {:else}
                         <div></div>
                     {/if}
                     <div>
-                        {room.memberCount}
+                        {room[1].memberCount}
                     </div>
                 </button>
         {/each}

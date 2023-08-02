@@ -41,6 +41,7 @@ export interface RoomDetail extends Room {
 }
 
 export interface RoomInfoDTO {
+	roomId: string;
 	hostId: string;
 	roomname: string;
 	password: string;
@@ -51,6 +52,10 @@ export interface GameSetting {
 	gameMode: string;
 	barColor: string;
 	ballShape: string;
+}
+
+export interface ProfilePageSetting {
+	whichTab: string;
 }
 
 export interface ModalStates {
@@ -64,7 +69,7 @@ export interface ModalStates {
 }
 
 export interface MyData extends UserData {
-	rooms: Room[];
+	rooms: number[];
 }
 
 export interface SetRequestDTO {
@@ -79,3 +84,6 @@ export interface RoomEnterDTO {
 	password: string;
 }
 
+export interface PostCreateDTO {
+	roomId: string;
+}
