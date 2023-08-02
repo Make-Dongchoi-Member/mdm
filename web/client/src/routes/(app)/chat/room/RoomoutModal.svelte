@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { modalStatesStore, myData, openedRoom } from "../../../../store";
+    import { page } from '$app/stores';
 
     const outButtonEvent = () => {
         /*
@@ -8,13 +9,15 @@
             방에서 나가는 API 요청
         */
         
-        deleteRoomId($openedRoom.id);
+        deleteRoomId($page.url.searchParams.get("id") as string);
         goto("/chat");
         $modalStatesStore.isRoomoutModal = false;
     }
 
     function deleteRoomId(deleteID: string) {
-        $myData.rooms = $myData.rooms.filter((room) => room.id !== deleteID);
+        console.log("$myData.rooms", $myData.rooms);
+        $myData.rooms = ($myData.rooms).filter((room) => room.id !== deleteID);
+        console.log("$myData.rooms", $myData.rooms);
     }
 
 </script>

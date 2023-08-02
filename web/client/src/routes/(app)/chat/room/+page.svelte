@@ -2,26 +2,28 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom, roomList, myLevel } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
-    import type { Profile, SetRequestDTO } from '../../../../interfaces';
+    import type { Profile, SetRequestDTO, Room } from '../../../../interfaces';
     import { goto } from '$app/navigation';
 
+    const roomName: string = $openedRoom.name;
     onMount(() => {
         /*
             @TODO
             URI에서 id 추출해서 방 정보 API 요청하고
             받은 데이터를 store에 있는 openedRoom에 저장
         */
-       
+        myDataUpdate($roomList.find(item => item.id === $page.url.searchParams.get("id")) as Room);
+      
         getRoomData();
        
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
-        
+
         $socketStore.on("chat/join", (data: any) => {
             /**
              * @TODO
@@ -67,6 +69,11 @@
         $socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
     })
 
+    const myDataUpdate = (roomDetail: Room) => {
+        if (($myData.rooms).find(obj => obj.id === roomDetail.id)) return;
+        $myData.rooms = [...$myData.rooms, roomDetail];
+    }
+
 </script>
 
 <InviteModal />
@@ -80,7 +87,7 @@
                 <a href="/chat">&#11013;</a>
             </div>
             <div class="chat-room-name">
-                CHAT ROOM NAME
+                {roomName}
             </div>
             {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
                 <div class="chat-setting-button">

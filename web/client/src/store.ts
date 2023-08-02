@@ -28,6 +28,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 	isRoomoutModal: false,
 	isRoomCreateModal: false,
 	isProfileModal: false,
+	isPasswordInputModal: false,
 });
 
 const openedRoom: Writable<RoomDetail> = writable({
@@ -45,6 +46,14 @@ const openedRoom: Writable<RoomDetail> = writable({
 	history: [],
 });
 
+const roomList: Writable<Room[]> = writable([
+	{id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
+	{id: "456", name: 'room2(not enter)', roomtype: RoomType.normal, memberCount: 3},
+	{id: "7777", name: 'room3(not enter)', roomtype: RoomType.normal, memberCount: 121},
+	{id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
+	{id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
+	{id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
+]);
 const myLevel: Writable<Level> = writable(Level.MEMBER);
 
 /*
@@ -53,22 +62,22 @@ const myLevel: Writable<Level> = writable(Level.MEMBER);
 	
 	* 내 정보 API 요청
 	GET("/api/user?id=[userid]")
-	>> userID: string
+	>> userId: string
 	<< mydata: MyData
 
 	* room List 목록 요청
 	GET("/api/chat/list")
-	>> userID: string
+	>> userId: string
 	<< rooms: Room[]
 
 	* Chatting방 생성 API 요청
 	POST("/api/chat/create")
 	>> roomInfoDTO: RoomInfoDTO
-	<< roomID: string
+	<< roomId: string
 	
 	* 들어간 방의 정보 API 요청
 	POST("/api/chat/room")
-	>> userID: string, roomID: string
+	>> userId: string, roomId: string
 	<< openedRoom: RoomDetail
 
 	* 방 정보 수정 API 요청
@@ -78,21 +87,24 @@ const myLevel: Writable<Level> = writable(Level.MEMBER);
 
 	* 초대할 대상 존재 여부 확인 API 요청
 	GET(/api/user/check?id=[userid])
-	>> userID
+	>> userId
 	<< result: boolean
 
 	* 방 나가기 API 요청
 	POST(/api/chat/room/out)
-	>> userID: string, roomID: string
+	>> userId: string, roomId: string
 	<< result: boolean
 
 	(나중에)
 	* profile 정보 API 요청
 	GET
-	>> userID: string
+	>> userId: string
 	<< result: profile 관련 interface(아직 미 생성함)
 
-	
+	* 방 들어가기 API 요청
+	POST
+	>> roomId: string, userId: string, password: string
+	<< result: boolean
 */
 
 export {
@@ -101,5 +113,6 @@ export {
 	myData,
 	openedRoom,
 	socketStore,
-	myLevel,
+  roomList,
+	myLevel
 }
