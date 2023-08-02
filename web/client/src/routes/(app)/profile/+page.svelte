@@ -4,6 +4,7 @@
 	import ProfileModal from "./ProfileModal.svelte";
 	import MyInfo from "./MyInfo.svelte";
     import LogoutModal from "./LogoutModal.svelte";
+    import NicknameModal from "./NicknameModal.svelte";
 	
 	interface subComponents {
 		[index: string]: boolean;
@@ -26,6 +27,7 @@
 
 <ProfileModal />
 <LogoutModal />
+<NicknameModal />
 
 <div class="info_container">
 	<MyInfo />

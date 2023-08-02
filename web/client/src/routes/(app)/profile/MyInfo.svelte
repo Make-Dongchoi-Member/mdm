@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { modalStatesStore } from "../../../store";
+    import { modalStatesStore, myData } from "../../../store";
 	import MatchStat from "./MatchStat.svelte";
 </script>
 
@@ -8,8 +8,8 @@
 		<img class="image" src="/asset/hhwang.png" alt="profile_image">
 	</button>
 	<div class="personal_info">
-		<button>
-			nickname
+		<button on:click={() => {$modalStatesStore.isNicknameModal = true}}>
+			{$myData.nickName}
 		</button>
 		<button on:click={() => {$modalStatesStore.isLogoutModal = true}}>
 			LOGOUT

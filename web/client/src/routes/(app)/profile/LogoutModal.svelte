@@ -6,7 +6,7 @@
 	const outButtonEvent = () => {
 		/*
 			@TODO
-			방에서 나가는 API 요청
+			LOGOUT 했다는 API 요청
 		*/
 		
 		deleteToken();
@@ -26,12 +26,8 @@
 		ARE YOU SURE?
 	</div>
 	<div class="modal-content">
-		<div>
-			<button on:click={outButtonEvent} class="yes-button">YES</button>
-		</div>
-		<div>
-			<button on:click={() => { $modalStatesStore.isLogoutModal = false; }} class="no-button">NO</button>
-		</div>
+		<button on:click={outButtonEvent} class="yes-button">YES</button>
+		<button on:click={() => { $modalStatesStore.isLogoutModal = false; }} class="no-button">NO</button>
 	</div>
 </div>
 
@@ -45,7 +41,7 @@
 		width: 690px;
 		height: 150px;
 		
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
 		
@@ -69,5 +65,10 @@
 	button {
 		width: 120px;
 		height: 35px;
+		background-color: var(--dark-color);
+	}
+
+	button:hover {
+		background-color: var(--hover-color);
 	}
 </style>

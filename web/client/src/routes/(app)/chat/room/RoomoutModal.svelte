@@ -44,8 +44,8 @@
 		width: 690px;
 		height: 150px;
 		
-		background-color: var(--bg-color);
-		border: 1px solid var(--border-color);
+		background-color: var(--dark-color);
+		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
 		
 		position: absolute;
@@ -68,5 +68,10 @@
 	button {
 		width: 120px;
 		height: 35px;
+		background-color: var(--dark-color);
+	}
+
+	button:hover {
+		background-color: var(--hover-color);
 	}
 </style>

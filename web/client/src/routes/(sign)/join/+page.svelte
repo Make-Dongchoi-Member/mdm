@@ -19,6 +19,7 @@
 
 	const nicknameClickEvent = () => {
 		console.log(nickname);
+		nicknameSetAPI({data : {nickname}});
 
 		/**
 		 * @TODO
@@ -26,6 +27,22 @@
 		 * 닉네임 변경 API
 		*/
 	};
+
+	async function nicknameSetAPI(data: any) {
+		try {
+			const response = await fetch("http://localhost:3000/api/user/set/nickname", {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
+			return response;
+		} catch (error) {
+			console.error("실패:", error);
+		}
+	}
 
 </script>
 

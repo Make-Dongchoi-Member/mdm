@@ -40,7 +40,7 @@
 	}
 
 	.data::-webkit-scrollbar-track {
-		background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
+		background-color: var(--dark-color); /* 스크롤바 트랙 배경색 설정 */
 	}
 
 	.data::-webkit-scrollbar-thumb {

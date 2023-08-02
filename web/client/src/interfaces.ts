@@ -3,6 +3,7 @@ import type { Level, RoomType } from "./enums";
 export interface UserData {
 	id: string;
 	avatarSrc: string;
+	nickName: string;
 }
 
 export interface Notification {
@@ -65,6 +66,7 @@ export interface ModalStates {
 	isProfileModal: boolean;
 	isPasswordInputModal: boolean;
 	isLogoutModal: boolean;
+	isNicknameModal: boolean;
 }
 
 export interface MyData extends UserData {

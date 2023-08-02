@@ -58,6 +58,11 @@
 		width: 150px;
 		height: 40px;
 		margin-bottom: 20px;
+		background-color: var(--dark-color);
+	}
+
+	.option_box > button:hover {
+		background-color: var(--hover-color);
 	}
 
 	.profile_image_circle {
@@ -89,9 +94,6 @@
 	.personal_info > button {
 		width: 150px;
 		margin-bottom: 10px;
-	}
-
-	.personal_info > button:hover {
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 	}
 </style>

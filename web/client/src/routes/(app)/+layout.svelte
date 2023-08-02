@@ -41,7 +41,7 @@
 	<nav class= "containerTop" >
 		<a href="/" >GAME</a>
 		<a href="/chat" >CHAT</a> 
-		<a href="/profile" >{$myData.id}</a>
+		<a href="/profile" >{$myData.nickName}</a>
 	</nav>
 	<div class="containerBody">
 		<slot></slot>
@@ -74,6 +74,7 @@
 		--point-color: #FF6231;
 		--hover-color: rgba(255, 98, 49, 0.4);
 		--intra-color: #00BABC;
+		--dark-color: #3E3E3E;
 	}
 
 	:global(body) {
