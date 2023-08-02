@@ -33,7 +33,7 @@
 			{item.date}&nbsp;&nbsp;&nbsp;{item.time}
 		</div>
 		<div>
-			<span>vs</span>
+			<span class="simple-text">vs</span>
 			<span class="nickname_text">{item.enemy}</span>
 		</div>
 	</div>	
@@ -78,7 +78,6 @@
 		position: relative;
 		display: flex;
 		flex-direction: row;
-		/* justify-content:space-around; */
 		align-items: center;
 
 		height: 45px;
@@ -91,17 +90,6 @@
 		color: var(--text-color);
 	}
 
-	/* .history > :nth-child(1) {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 120px;
-		height: 30px;
-		border: 1px solid var(--point-color);
-		margin-left: 20px;
-		margin-right: 20px;
-	} */
-
 	.history > :nth-child(2) {
 		justify-content: flex-start;
 		margin-left: 20px;
@@ -113,6 +101,10 @@
 		right: 20px;
 		text-align: right;
 		margin-left: 20px;
+	}
+
+	.simple-text {
+		color: var(--border-color);
 	}
 
 	.nickname_text {
