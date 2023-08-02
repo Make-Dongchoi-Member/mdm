@@ -1,5 +1,5 @@
-import { Rooms } from "src/database/entities/room.entity";
+import { RoomInfo } from 'src/types/interfaces';
 
 export class GetListDTO {
-	rooms: Rooms[];
+  rooms: RoomInfo[];
 }

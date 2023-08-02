@@ -1,52 +1,48 @@
 import {
   ForbiddenException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ROOM_REPOSITORY, USER_REPOSITORY } from 'src/configs/constants';
 import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
 import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
-import { In, Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
+import { RoomRepository } from 'src/database/repositories/room.repository';
+import { UserRepository } from 'src/database/repositories/user.repository';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class ChatService {
   constructor(
-    @Inject(ROOM_REPOSITORY) private roomRepository: Repository<Rooms>,
-    @Inject(USER_REPOSITORY) private userRepository: Repository<Users>,
-    private config: ConfigService,
+    private roomRepository: RoomRepository,
+    private userRepository: UserRepository,
   ) {}
 
-  async getRoomListByUserID(userId: number) {
-    const userInfo = await this.userRepository
-      .findOneByOrFail({ id: userId })
-      .catch(() => {
-        throw new NotFoundException(`user_id ${userId} Not Found`);
-      });
-    console.log(userInfo);
-    const rooms = await this.roomRepository.find({
-      where: {
-        id: In(userInfo.rooms),
-      },
+  async getRoomListOfUser(userId: number) {
+    const publicRooms = await this.roomRepository.publicRooms();
+    const userEnteredRooms = (
+      await this.roomRepository.userEnteredRooms(userId)
+    ).filter((e) => {
+      e.roomtype === RoomType.PRIVATE;
     });
-    return rooms;
+    const roomList = Array<RoomInfo>();
+    [...publicRooms, ...userEnteredRooms].forEach((e) => {
+      roomList.push({
+        roomId: e.id.toString(),
+        hostId: e.host.toString(),
+        roomname: e.name,
+        password: '',
+        roomtype: e.roomtype,
+      });
+    });
+    return roomList;
   }
 
   async getRoomDetail(roomId: number) {
-    const room = await this.roomRepository
-      .findOneByOrFail({ id: roomId })
-      .catch(() => {
-        throw new NotFoundException(`room_id ${roomId} Not Found`);
-      });
-    const users = await this.userRepository.find({
-      where: {
-        id: In([room.host, ...room.admin, ...room.members]),
-      },
-    });
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
+    const ids = [room.host, ...room.admin, ...room.members];
+    const users = await this.userRepository.getUserList(ids);
     const members = this.roomMembers(room, users);
     const roomDetail: RoomDetail = {
       id: room.id.toString(),
@@ -60,100 +56,44 @@ export class ChatService {
   }
 
   async createRoom(roomInfo: RoomInfo) {
-    const newRoomEntity = this.roomRepository.create({
-      name: roomInfo.roomname,
-      password: await this.genRoomPassword(roomInfo),
-      roomtype: roomInfo.roomtype,
-      host: +roomInfo.hostId,
-    });
-    const savedRoom = await this.roomRepository.save(newRoomEntity);
-    this.appendRoomAtUserTable(savedRoom.host, savedRoom.id);
-    return savedRoom.id.toString();
+    const newRoom = await this.roomRepository.saveRoom(roomInfo);
+    this.userRepository.appendRoomAtUser(newRoom.host, newRoom.id);
+    return newRoom.id.toString();
   }
 
   async updateRoom(roomInfo: RoomInfo) {
-    const room = await this.roomRepository.findOneByOrFail({
-      id: +roomInfo.roomId,
-    });
-    if (room.host.toString() !== roomInfo.hostId) {
+    const room = await this.roomRepository.getRoomById(+roomInfo.roomId);
+    if (!room) {
+      throw new NotFoundException(`room_id ${roomInfo.roomId} Not Found`);
+    } else if (room.host.toString() !== roomInfo.hostId) {
       throw new ForbiddenException();
     }
-    this.updateRoomEntity(roomInfo);
+    await this.roomRepository.updateRoomInfo(roomInfo);
   }
 
   async roomOut(userId: number, roomId: number) {
-    const room = await this.roomRepository.findOneByOrFail({ id: +roomId });
-    if (room.host === userId) {
-      // 나가려는 사용자가 host라면?
-      // 1) admin 중 가장 빨리 들어온 사람
-      // 2) member 중 가장 빨리 들어온 사람
-      // 3) 방삭제
-      if (room.memberCount === 1) {
-        this.roomRepository.delete(roomId);
-      } else {
-        let newHost = -1;
-        if (room.admin.length !== 0) {
-          newHost = room.admin[0];
-          this.roomRepository.update(roomId, {
-            admin: () => `array_remove("admin", ${newHost})`,
-          });
-        } else {
-          newHost = room.members[0];
-          this.roomRepository.update(roomId, {
-            members: () => `array_remove("members", ${newHost})`,
-          });
-        }
-        this.roomRepository.update(roomId, {
-          host: newHost,
-        });
-      }
-    } else if (room.admin.includes(userId)) {
-      this.roomRepository.update(roomId, {
-        admin: () => `array_remove("admin", ${userId})`,
-      });
-    } else if (room.members.includes(userId)) {
-      this.roomRepository.update(roomId, {
-        members: () => `array_remove("members", ${userId})`,
-      });
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
+    if (room.host === userId && room.memberCount === 1) {
+      this.roomRepository.delete(roomId);
     } else {
-      // room에 포함되지 않은 roomId
-      throw new NotFoundException();
+      const updateData = this.roomOutUpdateData(userId, room);
+      updateData.memberCount = room.memberCount - 1;
+      await this.roomRepository.updateRoom(roomId, updateData);
     }
-    this.roomRepository.update(roomId, {
-      memberCount: room.memberCount - 1,
-    });
-    // users - rooms 에서 room 삭제
-    this.userRepository.update(userId, {
-      rooms: () => `array_remove("rooms", ${roomId})`,
-    });
+    await this.userRepository.removeRoom(userId, roomId);
   }
 
-  private async appendRoomAtUserTable(userId: number, roomId: number) {
-    this.userRepository.update(userId, {
+  async roomEnter(userId: number, roomId: number, password: string) {
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
+    if (room.roomtype === RoomType.LOCK)
+      await this.checkPassword(room, password);
+    this.roomRepository.updateRoom(roomId, {
+      members: () => `array_append("members", ${userId})`,
+    });
+    this.userRepository.updateUser(userId, {
       rooms: () => `array_append("rooms", ${roomId})`,
-    });
-  }
-
-  private async genRoomPassword(info: {
-    password: string;
-    roomtype: RoomType;
-  }): Promise<string> | null {
-    if (info.roomtype !== RoomType.LOCK) {
-      return null;
-    }
-    return this.createHash(info.password);
-  }
-
-  private async createHash(pw: string) {
-    const salt = await bcrypt.genSalt(this.config.get<number>('SALT_ROUNDS'));
-    return bcrypt.hash(pw, salt);
-  }
-
-  private async updateRoomEntity(updateValue: RoomInfo) {
-    this.roomRepository.update(updateValue.roomId, {
-      name: updateValue.roomname,
-      password: await this.genRoomPassword(updateValue),
-      roomtype: updateValue.roomtype,
     });
   }
 
@@ -186,5 +126,42 @@ export class ChatService {
         break;
     }
     return level;
+  }
+
+  private roomOutUpdateData(
+    userId: number,
+    room: Rooms,
+  ): QueryDeepPartialEntity<Rooms> {
+    let updateData: QueryDeepPartialEntity<Rooms>;
+    if (room.host === userId) {
+      updateData = this.roomOutChangeHost(room);
+    } else if (room.admin.includes(userId)) {
+      updateData = { admin: () => `array_remove("admin", ${userId})` };
+    } else if (room.members.includes(userId)) {
+      updateData = { members: () => `array_remove("members", ${userId})` };
+    } else {
+      throw new ForbiddenException();
+    }
+    return updateData;
+  }
+
+  private roomOutChangeHost(room: Rooms) {
+    let result: QueryDeepPartialEntity<Rooms>;
+    if (room.admin.length !== 0) {
+      result.host = room.admin[0];
+      result.admin = () => `array_remove("admin", ${room.admin[0]})`;
+    } else {
+      result.host = room.members[0];
+      result.members = () => `array_remove("members", ${room.members[0]})`;
+    }
+    return result;
+  }
+
+  private async checkPassword(room: Rooms, password: string) {
+    const isCorrectPassword = await this.roomRepository.checkRoomPassword(
+      password,
+      room.password,
+    );
+    if (!isCorrectPassword) throw new ForbiddenException();
   }
 }
