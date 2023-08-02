@@ -6,6 +6,7 @@ import { RoomInfo } from 'src/types/interfaces';
 import { SALT_ROUNDS } from 'src/configs/constants';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @CustomRepository(Rooms)
 export class RoomRepository extends Repository<Rooms> {
@@ -37,7 +38,11 @@ export class RoomRepository extends Repository<Rooms> {
     return await this.save(roomEntity);
   }
 
-  async updateRoom(roomInfo: RoomInfo) {
+  async updateRoom(id: number, updateData: QueryDeepPartialEntity<Rooms>) {
+    this.update(id, updateData);
+  }
+
+  async updateRoomInfo(roomInfo: RoomInfo) {
     this.update(roomInfo.roomId, {
       name: roomInfo.roomname,
       password: await this.genRoomPassword(roomInfo),

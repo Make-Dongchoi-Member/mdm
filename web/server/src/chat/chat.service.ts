@@ -7,9 +7,9 @@ import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
 import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
-import { ConfigService } from '@nestjs/config';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class ChatService {
@@ -68,54 +68,20 @@ export class ChatService {
     } else if (room.host.toString() !== roomInfo.hostId) {
       throw new ForbiddenException();
     }
-    await this.roomRepository.updateRoom(roomInfo);
+    await this.roomRepository.updateRoomInfo(roomInfo);
   }
 
   async roomOut(userId: number, roomId: number) {
-    const room = await this.roomRepository.findOneByOrFail({ id: +roomId });
-    if (room.host === userId) {
-      // 나가려는 사용자가 host라면?
-      // 1) admin 중 가장 빨리 들어온 사람
-      // 2) member 중 가장 빨리 들어온 사람
-      // 3) 방삭제
-      if (room.memberCount === 1) {
-        this.roomRepository.delete(roomId);
-      } else {
-        let newHost = -1;
-        if (room.admin.length !== 0) {
-          newHost = room.admin[0];
-          this.roomRepository.update(roomId, {
-            admin: () => `array_remove("admin", ${newHost})`,
-          });
-        } else {
-          newHost = room.members[0];
-          this.roomRepository.update(roomId, {
-            members: () => `array_remove("members", ${newHost})`,
-          });
-        }
-        this.roomRepository.update(roomId, {
-          host: newHost,
-        });
-      }
-    } else if (room.admin.includes(userId)) {
-      this.roomRepository.update(roomId, {
-        admin: () => `array_remove("admin", ${userId})`,
-      });
-    } else if (room.members.includes(userId)) {
-      this.roomRepository.update(roomId, {
-        members: () => `array_remove("members", ${userId})`,
-      });
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
+    if (room.host === userId && room.memberCount === 1) {
+      this.roomRepository.delete(roomId);
     } else {
-      // room에 포함되지 않은 roomId
-      throw new NotFoundException();
+      const updateData = this.roomOutUpdateData(roomId, room);
+      updateData.memberCount = room.memberCount - 1;
+      this.roomRepository.updateRoom(roomId, updateData);
     }
-    this.roomRepository.update(roomId, {
-      memberCount: room.memberCount - 1,
-    });
-    // users - rooms 에서 room 삭제
-    this.userRepository.update(userId, {
-      rooms: () => `array_remove("rooms", ${roomId})`,
-    });
+    this.userRepository.removeRoom(userId, roomId);
   }
 
   private roomMembers(room: Rooms, users: Users[]) {
@@ -147,5 +113,34 @@ export class ChatService {
         break;
     }
     return level;
+  }
+
+  private roomOutUpdateData(
+    userId: number,
+    room: Rooms,
+  ): QueryDeepPartialEntity<Rooms> {
+    let updateData: QueryDeepPartialEntity<Rooms>;
+    if (room.host === userId) {
+      updateData = this.roomOutChangeHost(room);
+    } else if (room.admin.includes(userId)) {
+      updateData = { admin: () => `array_remove("admin", ${userId})` };
+    } else if (room.members.includes(userId)) {
+      updateData = { members: () => `array_remove("members", ${userId})` };
+    } else {
+      throw new ForbiddenException();
+    }
+    return updateData;
+  }
+
+  private roomOutChangeHost(room: Rooms) {
+    let result: QueryDeepPartialEntity<Rooms>;
+    if (room.admin.length !== 0) {
+      result.host = room.admin[0];
+      result.admin = () => `array_remove("admin", ${room.admin[0]})`;
+    } else {
+      result.host = room.members[0];
+      result.members = () => `array_remove("members", ${room.members[0]})`;
+    }
+    return result;
   }
 }

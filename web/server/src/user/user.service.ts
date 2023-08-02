@@ -25,7 +25,7 @@ export class UserService {
     if (alreadyExist) {
       throw new ConflictException(`nickname ${nickName} already exist`);
     }
-    this.userRepository.update(id, { nickName });
+    this.userRepository.updateUser(id, { nickName });
   }
 
   async setStatus(id: number, status: string) {

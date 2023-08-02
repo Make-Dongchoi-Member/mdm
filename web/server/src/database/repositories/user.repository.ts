@@ -46,4 +46,8 @@ export class UserRepository extends Repository<Users> {
       rooms: () => `array_append("rooms", ${roomId})`,
     });
   }
+
+  async removeRoom(userId: number, roomId: number) {
+    this.update(userId, { rooms: () => `array_remove("rooms", ${roomId})` });
+  }
 }
