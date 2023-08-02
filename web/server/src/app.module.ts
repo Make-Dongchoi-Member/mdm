@@ -34,13 +34,6 @@ if (process.env.NODE_ENV === 'prod') {
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtGuard,
-    },
-    AppGateway,
-  ],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}

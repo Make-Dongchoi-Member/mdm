@@ -17,6 +17,8 @@ import {
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/user.entity';
 import { UserRepository } from 'src/database/repositories/user.repository';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './guards/login.jwt.guard';
 
 @Module({
   imports: [
@@ -55,6 +57,13 @@ import { UserRepository } from 'src/database/repositories/user.repository';
     DatabaseModule.forCustomRepository([UserRepository]),
   ],
   controllers: [LoginController],
-  providers: [LoginService, PendingUserService],
+  providers: [
+    LoginService,
+    PendingUserService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+  ],
 })
 export class LoginModule {}
