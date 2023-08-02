@@ -81,7 +81,7 @@
 
 		background-color: var(--bg-color);
 		border: 1px solid var(--border-color);
-		border-radius: 2%;
+		border-radius: 0.5rem;
 
 		box-sizing: border-box;
 		
