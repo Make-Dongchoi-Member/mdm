@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { PendingUser } from './objects/pending-user.object';
@@ -11,6 +11,7 @@ import {
   AUTHORIZE_PATH,
   CLIENT_ID,
   CLIENT_SECRET,
+  JWT_SECRET,
   OAUTH42_BASE_URL,
   OAUTH_TOKEN_PATH,
   USER_INFO_PATH,
@@ -41,6 +42,19 @@ export class LoginService {
       .join('&');
     const url = `${baseUrl + path}?${queryString}`;
     return url;
+  }
+
+  async tokenValidCheck(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.config.get(JWT_SECRET),
+      });
+      if (this.userRepository.findOneBy({ id: +payload.sub }) === null)
+        throw new Error();
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 
   async generatePendingUser(code: string) {

@@ -39,7 +39,16 @@ export class LoginController {
       // url = 로그인 url
       // @TODO
       // token vaild check
-      url = new ConfigService().get('APP_URL') + '/api';
+      const tokenValid = await this.loginService.tokenValidCheck(token);
+      if (tokenValid) {
+        if (new ConfigService().get('NODE_ENV') === 'prod') {
+          url = new ConfigService().get(APP_URL);
+        } else {
+          url = new ConfigService().get(DEV_URL);
+        }
+      } else {
+        url = await this.loginService.oAuth42AccessUrl();
+      }
     }
     return { url };
   }
