@@ -35,6 +35,8 @@ export interface Room {
 	memberCount: number;
 }
 
+export type RoomList = Map<number, Room>;
+
 export interface RoomDetail extends Room {
 	members: Map<string, Profile>;
 	history: Message[];
@@ -61,16 +63,24 @@ export interface ModalStates {
 	isRoomoutModal: boolean;
 	isRoomCreateModal: boolean;
 	isProfileModal: boolean;
+	isPasswordInputModal: boolean;
 }
 
 export interface MyData extends UserData {
 	rooms: number[];
+	// rooms: Room[];
 }
 
 export interface SetRequestDTO {
 	roomId: string;
 	userId: string;
 	targetId: string;
+}
+
+export interface RoomEnterDTO {
+	roomId: string;
+	userId: string;
+	password: string;
 }
 
 export interface PostCreateDTO {

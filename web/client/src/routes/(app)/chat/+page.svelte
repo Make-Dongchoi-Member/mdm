@@ -1,47 +1,104 @@
 <script lang="ts">
-	import Modal from './ChatRoomCreateModal.svelte';
-	import { modalStatesStore, myData } from '../../../store';
-	import { onMount } from 'svelte';
-	import { RoomType } from '../../../enums';
-	import type { Room } from '../../../interfaces';
+    import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
+    import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
+    import { modalStatesStore, myData, roomList } from '../../../store';
+    import type { Room, RoomEnterDTO } from '../../../interfaces';
+    import { onMount } from 'svelte';
+    import { RoomType } from '../../../enums';
+    import { goto } from '$app/navigation';    
 
-	let roomlist: Map<number, Room> = new Map();
-		
-	onMount(() => {
-		getRoomList();
-		
+    // let $roomlist: Map<number, Room> = new Map();
+    
+    let roomEnterInfo: RoomEnterDTO = {roomId:"", userId:"", password:""};
+    let thisRoom: Room;
+        /*
+            @TODO
+            룸 리스트 요청 api 해야함.
+        */    
+    
+    const publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
+    onMount(() => {
 
-	});
+        $modalStatesStore.isRoomCreateModal = false;
+        console.log("$myData.rooms", $myData.rooms);
+        console.log("publicRoomList", publicRoomlist);
+        /*
+            @TODO
+        */
+        
 
-	const getRoomList = async () => {
-		const response = await fetch(`http://localhost:3000/api/chat/list`, {
-			method: "GET",
-			credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-			},
-		})
-		.then(response => response.json())
-		.then(data => {
-			console.log(data.rooms);
-			
-			for (let i = 0; i < data.rooms.length; i++) {
-				const element = data.rooms[i];
-				roomlist.set(element.id, element);
-			}
-			roomlist = roomlist;
-		})
-		.catch(error => console.error('Error:', error));
-	}
+        getRoomList();
+        console.log("roomList", $roomList);
+ 
+    });
 
-	const roomCreateModalButton = () => {
-		$modalStatesStore.isRoomCreateModal = true;
-	}
+    const getRoomList = async () => {
+        const response = await fetch(`http://localhost:3000/api/chat/list`, {
+            method: "GET",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.rooms);
+            
+            for (let i = 0; i < data.rooms.length; i++) {
+                const element = data.rooms[i];
+                $roomList.set(element.id, element);                
+            }
+            $roomList = $roomList;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    const roomCreateModalButton = () => {
+        $modalStatesStore.isRoomCreateModal = true;
+    }
+
+    const passwordInputModalButton = () => {
+        $modalStatesStore.isPasswordInputModal = true;
+    }    
+
+    const roomEnter = (room: any) => {
+        // if ($myData.rooms.some(item => item === room.id)) {
+        //     goto(`/chat/room?id=${room.id}`);
+        //     return ;
+        // }
+        // const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
+        roomEnterInfo.roomId = room.id;
+        roomEnterInfo.userId = $myData.id;
+        if (room.roomtype === RoomType.LOCK) {            
+            passwordInputModalButton();
+        } else {
+            //     방들어가기 API 요청
+            //     roomEnterAPI(roomEnterIno)
+            const result: boolean = true;
+            goto(`/chat/room?id=${room.id}`);
+        }
+
+    }
+
+    const myRoomEnter = (roomNum: number) => {
+        if ($myData.rooms.includes(roomNum)) {
+            goto(`/chat/room?id=${roomNum}`);
+            return ;
+        }
+    }
+
+    function filterRoomsNotInNumbers($roomlist: Map<number, Room>, numbers: number[]): Map<number, Room> {
+        return new Map([...$roomlist].filter(([roomNumber, room]) => !numbers.includes(roomNumber)));
+    }
 </script>
 
+
+<ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
+
 {#if $modalStatesStore.isRoomCreateModal}
-	<Modal />
+    <ChatRoomCreateModal />
 {/if}
+
 
 <div class="chatroom-box">
 	<div class="chat-title">
@@ -53,42 +110,43 @@
 		</div>
 	</div>
 	<div class="room-list">		
-		{#each $myData.rooms as room}
-			<a href="/chat/room?id={room}">
+		{#each $myData.rooms as roomNum}
+
+			<button on:click={()=>(myRoomEnter(roomNum))}>
+
 				<div>
-					{roomlist.get(room)?.name}
+					{$roomList.get(roomNum)?.name}
 				</div>
-				{#if roomlist.get(room)?.roomtype === RoomType.LOCK}
+				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
 					<div>&#x1F512</div>
 				{:else}
 					<div></div>
 				{/if}
 				<div>
-					{roomlist.get(room)?.memberCount}
+					{$roomList.get(roomNum)?.memberCount}
 				</div>
-			</a>
+			</button>
 		{/each}
-		{#if $myData.rooms.length > 0}
+		{#if $myData.rooms.length > 0 && publicRoomlist.size > 0}
 			<div class="divider">
 				
 			</div>
 		{/if}
-		{#each roomlist as room}
-			{#if (!$myData.rooms.includes(room[0]))}
-				<a href="/chat/room?id={room[0]}">
+		{#each Array.from(publicRoomlist) as [roomId, room]}
+				<button on:click={()=>(roomEnter(room))}>
+
 					<div>
-						{room[1].name}
+						{room.name}
 					</div>
-					{#if room[1].roomtype === RoomType.LOCK}
+					{#if room.roomtype === RoomType.LOCK}
 						<div>&#x1F512</div>
 					{:else}
 						<div></div>
 					{/if}
 					<div>
-						{room[1].memberCount}
+						{room.memberCount}
 					</div>
-				</a>
-			{/if}
+				</button>
 		{/each}
 	</div>
 </div>
@@ -155,11 +213,7 @@
 		border: none;
 	}
 
-	a {
-		text-decoration: none;
-	}
-
-	.room-list > a {
+	.room-list > button {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-around;
@@ -175,23 +229,23 @@
 		color: var(--text-color);
 	}
 
-	.room-list > a > :nth-child(1) {
+	.room-list > button > :nth-child(1) {
 		
 		padding-left: 20px;
 	}
 
-	.room-list > a > :nth-child(2) {
+	.room-list > button > :nth-child(2) {
 		display: flex;
 		padding-left: 5px;
 	}
 
-	.room-list > a > :nth-child(3) {
+	.room-list > button > :nth-child(3) {
 		flex-grow: 10;
 		text-align: right;
 		padding-right: 20px;
 	}
 
-	.room-list > a:hover {
+	.room-list > button:hover {
 		background-color: var(--hover-color);
 	}
 
@@ -199,6 +253,4 @@
 		width: 770px;
 		height: 20px;
 	}
-
-
 </style>

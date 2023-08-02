@@ -114,14 +114,14 @@
 		return true;
 	}
 </script>
-
+  
 <div class="modal-container" style="display: block;">
 	<div class="modal-title">
 		<div>
 		NEW CHAT ROOM
 		</div>
 		<div class="close-button">
-			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
+			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false;}}>&#215;</button>
 		</div>
 	</div>
 	<div class="modal-content">
@@ -171,8 +171,8 @@
 					disabled={isMakeButtonActivation ? false : true}
 					on:click={makeButtonEvent} >
 					MAKE
-				</button>
-			</div>
+				</button>                
+			</div>                            
 		</div>
 	</div>
 </div>

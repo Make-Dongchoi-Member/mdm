@@ -1,36 +1,38 @@
 <script lang="ts">
-	import InviteModal from './InviteModal.svelte';
-	import SettingModal from './SettingModal.svelte';
-	import RoomoutModal from './RoomoutModal.svelte';
-	import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
-	import ChatMessage from './ChatMessage.svelte';
-	import ChatMember from './ChatMember.svelte';
-	import { onDestroy, onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { Level } from '../../../../enums';
-	import type { Profile, SetRequestDTO } from '../../../../interfaces';
-	import { goto } from '$app/navigation';
+    import InviteModal from './InviteModal.svelte';
+    import SettingModal from './SettingModal.svelte';
+    import RoomoutModal from './RoomoutModal.svelte';
+    import { modalStatesStore, socketStore, myData, openedRoom, roomList, myLevel } from '../../../../store';
+    import ChatMessage from './ChatMessage.svelte';
+    import ChatMember from './ChatMember.svelte';
+    import { onDestroy, onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import { Level } from '../../../../enums';
+    import type { Profile, SetRequestDTO, Room } from '../../../../interfaces';
+    import { goto } from '$app/navigation';
 
-	onMount(() => {
-		/*
-			@TODO
-			URI에서 id 추출해서 방 정보 API 요청하고
-			받은 데이터를 store에 있는 openedRoom에 저장
-		*/
+    const roomName: string = $openedRoom.name;
+    onMount(() => {
+        /*
+            @TODO
+            URI에서 id 추출해서 방 정보 API 요청하고
+            받은 데이터를 store에 있는 openedRoom에 저장
+        */
+       
+        getRoomData();
+        myDataUpdate(Number($page.url.searchParams.get("id")) as number);
+       
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
-		getRoomData();
+        $socketStore.on("chat/join", (data: any) => {
+            /**
+             * @TODO
+             * 방에 참가한 사용자를 사용자 목록에 추가하기
+            */
+            console.log("join:", data);
+        });
 
-		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
-		
-		$socketStore.on("chat/join", (data: any) => {
-			/**
-			 * @TODO
-			 * 방에 참가한 사용자를 사용자 목록에 추가하기
-			*/
-			console.log("join:", data);
-		});
-
-		$socketStore.on("chat/leave", (data: any) => {
+        $socketStore.on("chat/leave", (data: any) => {
 			console.log("chat/leave", data);
 
 			$openedRoom.members.delete(data.userId);
@@ -67,6 +69,12 @@
 		$socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 	})
 
+    const myDataUpdate = (roomId: number) => {
+        if (($myData.rooms).includes(roomId)) return;
+        $myData.rooms = [...$myData.rooms, roomId];
+        console.log("$myData.rooms", $myData.rooms);
+    }
+
 </script>
 
 <InviteModal />
@@ -74,33 +82,33 @@
 <RoomoutModal />
 
 <div class="chat-box">
-	<div class="chatroom-top-box">
-		<div class="chatroom-left-top-box">
-			<div class="back-button" >
-				<a href="/chat">&#11013;</a>
-			</div>
-			<div class="chat-room-name">
-				CHAT ROOM NAME
-			</div>
-			{#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
-				<div class="chat-setting-button">
-					<button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
-				</div>
-			{:else}
-				<div class="chat-setting-button"></div>
-			{/if}
-			<div class="invite-button">
-				<button on:click={() => { $modalStatesStore.isInviteModal = true; }}>+</button>
-			</div>
-		</div>
-		<div class="out-of-room-button">
-			<button on:click={() => { $modalStatesStore.isRoomoutModal = true; }}>&#128682;</button>
-		</div>
-	</div>
-	<div class="chatroom-bottom-box">
-		<ChatMessage />
-		<ChatMember />
-	</div>
+    <div class="chatroom-top-box">
+        <div class="chatroom-left-top-box">
+            <div class="back-button" >
+                <a href="/chat">&#11013;</a>
+            </div>
+            <div class="chat-room-name">
+                {roomName}
+            </div>
+            {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
+                <div class="chat-setting-button">
+                    <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
+                </div>
+            {:else}
+                <div class="chat-setting-button"></div>
+            {/if}
+            <div class="invite-button">
+               <button on:click={() => { $modalStatesStore.isInviteModal = true; }}>+</button>
+            </div>
+        </div>
+        <div class="out-of-room-button">
+            <button on:click={() => { $modalStatesStore.isRoomoutModal = true; }}>&#128682;</button>
+        </div>
+    </div>
+    <div class="chatroom-bottom-box">
+        <ChatMessage />
+        <ChatMember />
+    </div>
 </div>
 
 <style>
