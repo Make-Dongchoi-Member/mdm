@@ -1,13 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { PendingUser } from './objects/pending-user.object';
 import { PendingUserService } from './objects/pending-user.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
-import { Users } from 'src/database/entities/user.entity';
-import { Repository } from 'typeorm';
 import {
   APP_URL,
   AUTHORIZE_PATH,
@@ -16,8 +14,8 @@ import {
   OAUTH42_BASE_URL,
   OAUTH_TOKEN_PATH,
   USER_INFO_PATH,
-  USER_REPOSITORY,
 } from 'src/configs/constants';
+import { UserRepository } from 'src/database/repositories/user.repository';
 
 @Injectable()
 export class LoginService {
@@ -27,7 +25,7 @@ export class LoginService {
     private readonly pendingUsers: PendingUserService,
     private readonly mailerService: MailerService,
     private readonly jwtService: JwtService,
-    @Inject(USER_REPOSITORY) private userRepository: Repository<Users>,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async oAuth42AccessUrl() {
@@ -57,18 +55,8 @@ export class LoginService {
     console.log(`verifyEmailCode start`);
     const user = this.pendingUsers.verify(userId, emailCode);
     const access_token = await this.generateJwtToken(user);
-    await this.saveUserToDatabase(user);
+    await this.userRepository.saveNewUser(user);
     return access_token;
-  }
-
-  private async saveUserToDatabase(user: PendingUser) {
-    const newUserEntity = this.userRepository.create({
-      id: user.id,
-      userName: user.login,
-      email: user.email,
-    });
-    const savedUser = this.userRepository.save(newUserEntity);
-    return savedUser;
   }
 
   private async generateJwtToken(user: PendingUser) {
@@ -106,6 +94,7 @@ export class LoginService {
       id: userInfo.data.id,
       email: userInfo.data.email,
       login: userInfo.data.login,
+      image: userInfo.data.image.link,
     } as PendingUser;
     return pendingUser;
   }
