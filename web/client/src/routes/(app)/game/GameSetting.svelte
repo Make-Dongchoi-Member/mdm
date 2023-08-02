@@ -5,25 +5,27 @@
 	let isColorOptionShow: boolean = false;
 	let isShapeOptionShow: boolean = false;
 
-	onMount(() => {
+	let isColorOptionSelected: boolean = false;
+	let isShapeOptionSelected: boolean = false;
 
-		const gameModeDiv = document.querySelector(".game-mode") as HTMLDivElement;
-		for (const child of gameModeDiv.children) {
-			if (child.tagName === "BUTTON") {
-				child.addEventListener("mouseover", (e: any) => {
-					if (e.target.value !== $gameSettingStore.gameMode) {
-						e.target.style.backgroundColor = "var(--hover-color)";
-					}
-				});
-				child.addEventListener("mouseout", (e: any) => {
-					if (e.target.value !== $gameSettingStore.gameMode) {
-						e.target.style.backgroundColor = "var(--bg-color)";
-					}
-				});
-			}
+	interface gameMode {
+		[index: string]: boolean;
+		basic: boolean;
+		hard: boolean;
+	}
+
+	let mode: gameMode = {
+		basic: true,
+		hard: false,
+	}
+
+	const gameModeSetEvent = (e: any) => {
+		for (const key of Object.keys(mode)) {
+			mode[key] = false;
 		}
-		
-	});
+		mode[e.target.value] = true;
+		$gameSettingStore.gameMode = e.target.value;
+	}
 
 	const colorButtonEvent = () => {
 		isColorOptionShow = !isColorOptionShow;
@@ -33,19 +35,6 @@
 	const shapeButtonEvent = () => {
 		isShapeOptionShow = !isShapeOptionShow;
 		isColorOptionShow = false;
-	}
-
-	const gameModeEvent = (e: any) => {
-		$gameSettingStore.gameMode = e.target.value;
-
-		for (const child of e.target.parentNode.children) {
-			if (child.tagName === "BUTTON") {
-				child.style.backgroundColor = "var(--bg-color)";
-				child.style.border = "1px solid var(--border-color)";
-			}
-		}
-		e.target.style.backgroundColor = "var(--hover-color)";
-		e.target.style.border = "1px solid var(--point-color)";
 	}
 
 	const barColorEvent = (e: any) => {
@@ -61,9 +50,11 @@
 	<div class="game-mode">
 		<div>GAME MODE</div>
 		<button value="basic"
-			on:click={gameModeEvent}>BASIC</button>
+			class={mode.basic ? "selected" : ""}
+			on:click={ gameModeSetEvent }>BASIC</button>
 		<button value="hard"
-			on:click={gameModeEvent}>HARD</button>
+			class={mode.hard ? "selected" : ""}
+			on:click={ gameModeSetEvent }>HARD</button>
 	</div>
 	<div class="skin-option">
 		<div>SKIN OPTION</div>
@@ -163,5 +154,10 @@
 
 	.skin-option > div > div > button {
 		margin-top: 5px;
+	}
+
+	.selected {
+		border: 1px solid var(--point-color);
+		background-color: var(--hover-color);
 	}
 </style>
