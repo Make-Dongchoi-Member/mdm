@@ -125,7 +125,7 @@
             NEW CHAT ROOM
             </div>
             <div class="close-button">
-                <button on:click={() => { $modalStatesStore.isRoomCreateModal = false; }}>&#215;</button>
+                <button on:click={() => { $modalStatesStore.isRoomCreateModal = false;}}>&#215;</button>
             </div>
         </div>
         <div class="modal-content">

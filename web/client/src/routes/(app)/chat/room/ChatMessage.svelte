@@ -62,7 +62,7 @@
 		{#each $openedRoom.history as message}
 			<div class={$myData.id === message.sender.id ? "chatting my-message" : "chatting"}>
 				<div>
-					<img src="{message.sender.avatarSrc}" alt="프로필 이지미" class="chatting-box-avatar">
+					<img src="{message.sender.avatarSrc}" alt="프로필 이미지" class="chatting-box-avatar">
 				</div>
 				<div>
 					<div>

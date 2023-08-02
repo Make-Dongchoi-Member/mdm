@@ -18,9 +18,9 @@
             URI에서 id 추출해서 방 정보 API 요청하고
             받은 데이터를 store에 있는 openedRoom에 저장
         */
-        myDataUpdate($roomList.find(item => item.id === $page.url.searchParams.get("id")) as Room);
-      
+       
         getRoomData();
+        myDataUpdate(Number($page.url.searchParams.get("id")) as number);
        
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
@@ -69,9 +69,10 @@
         $socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
     })
 
-    const myDataUpdate = (roomDetail: Room) => {
-        if (($myData.rooms).find(obj => obj.id === roomDetail.id)) return;
-        $myData.rooms = [...$myData.rooms, roomDetail];
+    const myDataUpdate = (roomId: number) => {
+        if (($myData.rooms).includes(roomId)) return;
+        $myData.rooms = [...$myData.rooms, roomId];
+        console.log("$myData.rooms", $myData.rooms);
     }
 
 </script>
