@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { modalStatesStore } from "../../../store";
 	import MatchStat from "./MatchStat.svelte";
 </script>
 
@@ -10,7 +11,7 @@
 		<button>
 			nickname
 		</button>
-		<button>
+		<button on:click={() => {$modalStatesStore.isLogoutModal = true}}>
 			LOGOUT
 		</button>
 	</div>

@@ -64,6 +64,7 @@ export interface ModalStates {
 	isRoomCreateModal: boolean;
 	isProfileModal: boolean;
 	isPasswordInputModal: boolean;
+	isLogoutModal: boolean;
 }
 
 export interface MyData extends UserData {
