@@ -79,9 +79,22 @@ export class ChatService {
     } else {
       const updateData = this.roomOutUpdateData(roomId, room);
       updateData.memberCount = room.memberCount - 1;
-      this.roomRepository.updateRoom(roomId, updateData);
+      await this.roomRepository.updateRoom(roomId, updateData);
     }
-    this.userRepository.removeRoom(userId, roomId);
+    await this.userRepository.removeRoom(userId, roomId);
+  }
+
+  async roomEnter(userId: number, roomId: number, password: string) {
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
+    if (room.roomtype === RoomType.LOCK)
+      await this.checkPassword(room, password);
+    this.roomRepository.updateRoom(roomId, {
+      members: () => `array_append("members", ${userId})`,
+    });
+    this.userRepository.updateUser(userId, {
+      rooms: () => `array_append("rooms", ${roomId})`,
+    });
   }
 
   private roomMembers(room: Rooms, users: Users[]) {
@@ -142,5 +155,13 @@ export class ChatService {
       result.members = () => `array_remove("members", ${room.members[0]})`;
     }
     return result;
+  }
+
+  private async checkPassword(room: Rooms, password: string) {
+    const isCorrectPassword = await this.roomRepository.checkRoomPassword(
+      password,
+      room.password,
+    );
+    if (!isCorrectPassword) throw new ForbiddenException();
   }
 }

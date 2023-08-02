@@ -50,6 +50,10 @@ export class RoomRepository extends Repository<Rooms> {
     });
   }
 
+  async checkRoomPassword(plainTextPassword: string, hash: string) {
+    return bcrypt.compare(plainTextPassword, hash);
+  }
+
   private async genRoomPassword(info: {
     password: string;
     roomtype: RoomType;

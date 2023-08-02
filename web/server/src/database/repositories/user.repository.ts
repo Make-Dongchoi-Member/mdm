@@ -3,6 +3,7 @@ import { Users } from '../entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
 import { PendingUser } from 'src/login/objects/pending-user.object';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @CustomRepository(Users)
 export class UserRepository extends Repository<Users> {
@@ -28,7 +29,7 @@ export class UserRepository extends Repository<Users> {
     return this.findBy({ id: In(ids) });
   }
 
-  async updateUser(id: number, updateData: Partial<Users>) {
+  async updateUser(id: number, updateData: QueryDeepPartialEntity<Users>) {
     const updateResult = await this.update(id, updateData);
 
     if (updateResult.affected === 0) {
