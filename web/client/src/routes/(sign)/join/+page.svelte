@@ -31,18 +31,18 @@
 		block = true;
 		nicknameSetAPI({data : {nickname}})
 		.then((res) => {
-				setTimeout(() => {
-					if (res) {
-						const status = res.status;
-						if (status === 201) {
-							goto('/');
-						} else {
-							isInvalidNickname = true;
-							block = false;
-						}
+			setTimeout(() => {
+				if (res) {
+					const status = res.status;
+					if (status === 201) {
+						goto('/');
+					} else {
+						isInvalidNickname = true;
+						block = false;
 					}
-				}, 1000)
-			});
+				}
+			}, 1000)
+		});
 	};
 
 	async function nicknameSetAPI(data: any) {

@@ -1,20 +1,37 @@
 <script lang="ts">
 	import { modalStatesStore, myData } from "../../../store";
     import { clickOutside, escapeKey } from "../../../actions";
+    import { goto } from "$app/navigation";
 
+	let isInvalidNickname: boolean = false;
+	let block: boolean = false;
 	let nickname: string = "";
+
+	//모달 창 닫기 이벤트 함수 정의해서, nickname 문자열 비워주는 등의 처리 할 것.
+
+	const focusEvent = () => {
+		isInvalidNickname = false;
+	}
 
 	const nicknameClickEvent = () => {
 		console.log(nickname);
-		nicknameSetAPI({data : {nickname}});
-		$myData.nickname = nickname;
-		$modalStatesStore.isNicknameModal = false;
-
-		/**
-		 * @TODO
-		 * 닉네임이 적절한지 확인
-		 * 닉네임 변경 API
-		*/
+		block = true;
+		nicknameSetAPI({data : {nickname}})
+		.then((res) => {
+			setTimeout(() => {
+				if (res) {
+					const status = res.status;
+					if (status === 201) {
+						$modalStatesStore.isNicknameModal = false;
+						$myData.nickname = nickname;
+						block = false;
+					} else {
+						isInvalidNickname = true;
+						block = false;
+					}
+				}
+			}, 1000)
+		});
 	};
 
 	async function nicknameSetAPI(data: any) {
@@ -43,7 +60,14 @@
 	</div>
 	<div class="modal-content">
 		<form>
-			<input type="text" maxlength="10" placeholder="put your new nickname" bind:value={nickname} required>
+			<input type="text"
+			maxlength="10"
+			placeholder="put your new nickname"
+			bind:value={nickname}
+			on:focus={focusEvent}
+			class={isInvalidNickname ? "invalid" : "valid"}
+			disabled={block ? true : false}
+			required>
 			<button on:click={nicknameClickEvent} type="submit"></button>
 		</form>
 	</div>
@@ -101,13 +125,13 @@
 		width: 280px;
 	}
 
-	input[type=text] {
+	.valid {
 		width: 300px;
 		height: 45px;
 		margin: 0;
 		padding: 0;
 		color: var(--text-color);
-		caret-color: var(--point-color);
+		caret-color: var(--intra-color);
 		border: 2px solid var(--text-color);
 		box-sizing: border-box;
 		background: none;
@@ -122,6 +146,34 @@
 
 	input:focus::placeholder {
 		color: transparent;
+	}
+
+	.invalid {
+		width: 300px;
+		height: 45px;
+		margin: 0;
+		padding: 0;
+		color: var(--text-color);
+		caret-color: var(--intra-color);
+		border: 2px solid rgb(200, 0, 0);
+		box-sizing: border-box;
+		background: none;
+		font-weight: 400;
+		text-align: center;
+	}
+
+	input[type=text]:disabled {
+		width: 300px;
+		height: 45px;
+		margin: 0;
+		padding: 0;
+		color: var(--border-color);
+		caret-color: var(--border-color);
+		border: 2px solid var(--border-color);
+		box-sizing: border-box;
+		background: none;
+		font-weight: 400;
+		text-align: center;
 	}
 
 	form {
