@@ -1,36 +1,33 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { modalStatesStore, myData, openedRoom } from "../../../../store";
-	import { page } from '$app/stores';
-    import { clickOutside, escapeKey } from "../../../../actions";
+	import { modalStatesStore, myData } from "../../../store";
+    import { clickOutside, escapeKey } from "../../../actions";
 
 	const outButtonEvent = () => {
 		/*
 			@TODO
-			방에서 나가는 API 요청
+			LOGOUT 했다는 API 요청
 		*/
 		
-		deleteRoomId($page.url.searchParams.get("id") as string);
-		goto("/chat");
-		$modalStatesStore.isRoomoutModal = false;
+		deleteToken();
+		goto("/signin");
+		$modalStatesStore.isLogoutModal = false;
 	}
 
-	function deleteRoomId(deleteID: string) {
-		console.log("$myData.rooms", $myData.rooms);
-		$myData.rooms = ($myData.rooms).filter((room) => room.id !== deleteID);
-		console.log("$myData.rooms", $myData.rooms);
+	const deleteToken = () => {
+		//delete the token
 	}
 </script>
 
-<div class="modal-container {$modalStatesStore.isRoomoutModal ? '' : 'hidden-container'}"
-	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomoutModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomoutModal = false}}>
+<div class="modal-container {$modalStatesStore.isLogoutModal ? '' : 'hidden-container'}"
+	use:clickOutside on:outclick={() => {$modalStatesStore.isLogoutModal = false}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isLogoutModal = false}}>
 	<div class="modal-title">
 		ARE YOU SURE?
 	</div>
 	<div class="modal-content">
 		<button on:click={outButtonEvent} class="yes-button">YES</button>
-		<button on:click={() => { $modalStatesStore.isRoomoutModal = false; }} class="no-button">NO</button>
+		<button on:click={() => { $modalStatesStore.isLogoutModal = false; }} class="no-button">NO</button>
 	</div>
 </div>
 
@@ -49,7 +46,7 @@
 		border-radius: 0.5rem;
 		
 		position: absolute;
-		top: 30%;
+		top: 26%;
 		left: 25%;
 	}
 

@@ -79,8 +79,8 @@
 		display: flex;
 		flex-direction: column;
 
-		background-color: var(--bg-color);
-		border: 1px solid var(--border-color);
+		background-color: var(--dark-color);
+		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
 
 		box-sizing: border-box;
@@ -110,7 +110,7 @@
 		
 	.alarm > button {
 		width: 30px;
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		text-align: center;
 		border: none;
 		border-radius: 70%;
@@ -170,19 +170,27 @@
 	}
 
 	.yes-button {
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		color: var(--point-color);
 		border: none;
 
-		font-size: 25px;
+		font-size: 21px;
 		font-weight: 400;
 	}
 
+	.yes-button:active {
+		padding-top: 0.2rem;
+	}
+
 	.no-button {
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		color: var(--text-color);
 		border: none;
 		margin-right: 10px;
+	}
+
+	.no-button:active {
+		padding-top: 0.2rem;
 	}
 
 	.modal-content-box::-webkit-scrollbar {

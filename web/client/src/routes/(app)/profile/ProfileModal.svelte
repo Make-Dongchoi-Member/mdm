@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { modalStatesStore } from "../../../store";
     import ModalSocial from "./ModalSocial.svelte";
-	import ProfileHistory from "./ProfileHistory.svelte";
 	import OtherInfo from "./OtherInfo.svelte";
     import { clickOutside, escapeKey } from "../../../actions";
+    import ModalHistory from "./ModalHistory.svelte";
 
 	interface tabButtons {
 		[index: string]: boolean;
@@ -53,7 +53,7 @@
 			{#if tabButtonSet.social}
 				<ModalSocial />
 			{:else if tabButtonSet.history}
-				<ProfileHistory />
+				<ModalHistory />
 			{/if}
 		</div>
 	</div>
@@ -69,8 +69,12 @@
 		border-radius: 70%;
 		font-size: 25px;
 		font-weight: 300;
-		background: none;
+		background-color: var(--dark-color);
 		outline: none;
+	}
+
+	.close-button:active {
+		padding-top: 0.2rem;
 	}
 
 	.modal-frame {
@@ -81,7 +85,7 @@
 		width: 860px;
 		height: 710px;
 
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
 		box-sizing: border-box;
@@ -121,6 +125,11 @@
 	button {
 		width: 150px;
 		margin-right: 15px;
+		background-color: var(--dark-color);
+	}
+
+	.button_area > button:hover {
+		background-color: var(--hover-color);
 	}
 
 	.selected {
