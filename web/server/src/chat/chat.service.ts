@@ -104,6 +104,7 @@ export class ChatService {
         user: {
           id: user.id,
           avatar: user.avatar,
+          nickname: user.nickName,
         },
         level: this.userLevel(room, user),
         isMuted: room.mute.includes(user.id),
