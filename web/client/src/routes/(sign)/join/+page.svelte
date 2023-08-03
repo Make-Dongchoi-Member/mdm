@@ -1,10 +1,12 @@
 <script lang='ts'>
-    import { onMount } from "svelte";
+	import { onMount } from "svelte";
 	import { myData } from "../../../store";
-    import type { MyData } from '../../../interfaces';
-    import { goto } from "$app/navigation";
+	import type { MyData } from '../../../interfaces';
+	import { goto } from "$app/navigation";
 
 	let isSigned: boolean = false;
+	let isInvalidNickname: boolean = false;
+	let block: boolean = false;
 	let nickname: string = "";
 	let profileSrc: string = "";
 
@@ -26,12 +28,21 @@
 	const nicknameClickEvent = () => {
 		console.log(nickname);
 		console.log(profileSrc);
-		nicknameSetAPI({data : {nickname}});
-		/**
-		 * @TODO
-		 * 닉네임이 적절한지 확인
-		 * 닉네임 변경 API
-		*/
+		block = true;
+		nicknameSetAPI({data : {nickname}})
+		.then((res) => {
+				setTimeout(() => {
+					if (res) {
+						const status = res.status;
+						if (status === 201) {
+							goto('/');
+						} else {
+							isInvalidNickname = true;
+							block = false;
+						}
+					}
+				}, 1000)
+			});
 	};
 
 	async function nicknameSetAPI(data: any) {
@@ -50,12 +61,16 @@
 		}
 	}
 
-	onMount(() => {
-        getMyData();
-    });
+	const focusEvent = () => {
+		isInvalidNickname = false;
+	}
 
-    const getMyData = async (): Promise<void> => {
-        try {
+	onMount(() => {
+		getMyData();
+	});
+
+	const getMyData = async (): Promise<void> => {
+		try {
 			const response = await fetch("http://localhost:3000/api/user/me", {
 				method: "GET",
 				credentials: 'include',
@@ -63,29 +78,44 @@
 					"Content-Type": "application/json",
 				},
 			});
-            if (response.status !== 200) {
-                goto("/signin");
-                return;
-            }
+			if (response.status !== 200) {
+				goto("/signin");
+				return;
+			}
 			const data: Promise<MyData> = response.json();
-            $myData = await data;
-            
-            isSigned = true;
+			$myData = await data;
+			console.log($myData.nickname);
+
+			
+			if ($myData.nickname) {
+				goto("/");
+			} else {
+				isSigned = true;
+			}
 		} catch (error) {
 			console.error("실패:", error);
 		}
-    }
+	}
 
 </script>
 
+{#if isSigned}
 <button type="button" class="profile_image" on:click={profileClickEvent}>
 	<img class="image" src={$myData.avatar} alt="profile image">
 </button>
 <input id="input-profile" type="file" accept="image/*" on:change={fileUpload} style="display: none;" />
 <form>
-	<input type="text" maxlength="10" placeholder="put your nickname" bind:value={nickname} required>
+	<input type="text"
+		maxlength="10"
+		placeholder="put your nickname"
+		bind:value={nickname}
+		on:focus={focusEvent}
+		class={isInvalidNickname ? "invalid" : "valid"}
+		disabled={block ? true : false}
+		required>
 	<button on:click={nicknameClickEvent} type="submit"></button>
 </form>
+{/if}
 
 <style>
 	.profile_image {
@@ -120,13 +150,13 @@
 		align-items: center;
 	}
 
-	input[type=text] {
+	.valid {
 		width: 300px;
 		height: 45px;
 		margin: 0;
 		padding: 0;
 		color: var(--text-color);
-		caret-color: var(--point-color);
+		caret-color: var(--intra-color);
 		border: 2px solid var(--text-color);
 		box-sizing: border-box;
 		background: none;
@@ -141,6 +171,34 @@
 
 	input:focus::placeholder {
 		color: transparent;
+	}
+
+	.invalid {
+		width: 300px;
+		height: 45px;
+		margin: 0;
+		padding: 0;
+		color: var(--text-color);
+		caret-color: var(--intra-color);
+		border: 2px solid rgb(200, 0, 0);
+		box-sizing: border-box;
+		background: none;
+		font-weight: 400;
+		text-align: center;
+	}
+
+	input[type=text]:disabled {
+		width: 300px;
+		height: 45px;
+		margin: 0;
+		padding: 0;
+		color: var(--border-color);
+		caret-color: var(--border-color);
+		border: 2px solid var(--border-color);
+		box-sizing: border-box;
+		background: none;
+		font-weight: 400;
+		text-align: center;
 	}
 
 	form > button {

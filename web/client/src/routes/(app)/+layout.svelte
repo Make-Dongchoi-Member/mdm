@@ -11,8 +11,6 @@
         getMyData();
     });
 
-	// $myData.id = "hhwang"; // 임시 닉네임, getMyData 활성화 시 이 부분 주석처리 할 것.
-
     const getMyData = async (): Promise<void> => {
         try {
 			const response = await fetch("http://localhost:3000/api/user/me", {
@@ -28,8 +26,12 @@
             }
 			const data: Promise<MyData> = response.json();
             $myData = await data;
-            
-            isSigned = true;
+
+			if ($myData.nickname) {
+				isSigned = true;
+			} else {
+				goto("/join");
+			}
 		} catch (error) {
 			console.error("실패:", error);
 		}
