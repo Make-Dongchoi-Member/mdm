@@ -1,19 +1,11 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Post,
-  Query,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { SetNicknameDto } from './dto/SetNicknameDto';
 import { SetStatusDto } from './dto/SetStatusDto';
 import { SetAvatarDto } from './dto/SetAvatarDto';
 import { SetSkinDto } from './dto/SetSkinDto';
+import { MyData, UserData } from 'src/types/interfaces';
 
 @Controller('api/user')
 export class UserController {
@@ -26,8 +18,8 @@ export class UserController {
    * << mydata: MyData
    */
   @Get('me')
-  async me(@UserId() userId: string) {
-    return await this.userService.getInfoById(+userId);
+  async me(@UserId() userId: string): Promise<MyData> {
+    return await this.userService.getMyData(+userId);
   }
 
   /**
@@ -37,9 +29,9 @@ export class UserController {
    * << result: UserData
    */
   @Get('info')
-  async check(@Query('nickname') nickname: string) {
+  async info(@Query('nickname') nickname: string): Promise<UserData> {
     // pipe로 쿼리 유효성 체크 필요
-    return await this.userService.getInfoByNickName(nickname);
+    return await this.userService.getUserData(nickname);
   }
 
   /**

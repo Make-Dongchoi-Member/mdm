@@ -3,6 +3,11 @@ import { Level, RoomType } from './enums';
 export interface UserData {
   id: number;
   avatar: string;
+  nickname: string;
+}
+
+export interface MyData extends UserData {
+  rooms: number[];
 }
 
 export interface Profile {

@@ -4,20 +4,33 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRepository } from 'src/database/repositories/user.repository';
+import { MyData, UserData } from 'src/types/interfaces';
 
 @Injectable()
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  async getInfoById(id: number) {
+  async getMyData(id: number) {
     const user = await this.userRepository.getUserById(id);
     if (!user) throw new NotFoundException(`user_id ${id} Not Found`);
-    return user;
+    const myData: MyData = {
+      id: user.id,
+      avatar: user.avatar,
+      nickname: user.nickName,
+      rooms: user.rooms,
+    };
+    return myData;
   }
 
-  async getInfoByNickName(nickName: string) {
+  async getUserData(nickName: string) {
     const user = await this.userRepository.getUserByNickname(nickName);
     if (!user) throw new NotFoundException(`nickname ${nickName} Not Found`);
+    const userData: UserData = {
+      id: user.id,
+      avatar: user.avatar,
+      nickname: user.nickName,
+    };
+    return userData;
   }
 
   async setNickname(id: number, nickName: string) {
