@@ -9,13 +9,13 @@
 			LOGOUT 했다는 API 요청
 		*/
 		
-		deleteToken();
+		deleteToken('access_token');
 		goto("/signin");
 		$modalStatesStore.isLogoutModal = false;
 	}
 
-	const deleteToken = () => {
-		//delete the token
+	const deleteToken = (name: string) => {
+		document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
 	}
 </script>
 
