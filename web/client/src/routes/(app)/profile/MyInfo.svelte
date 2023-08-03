@@ -9,7 +9,7 @@
 	</button>
 	<div class="personal_info">
 		<button on:click={() => {$modalStatesStore.isNicknameModal = true}}>
-			{$myData.nickName}
+			{$myData.nickname}
 		</button>
 		<button on:click={() => {$modalStatesStore.isLogoutModal = true}}>
 			LOGOUT
