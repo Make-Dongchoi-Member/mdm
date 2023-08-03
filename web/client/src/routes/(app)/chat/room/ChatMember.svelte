@@ -39,7 +39,7 @@
 <div class="members">
 	<div class="my-profile">
 		<div class="image-container">
-			<img src="{$myData.avatarSrc}" alt="프로필 이미지" class="profile-photo">
+			<img src="{$myData.avatar}" alt="프로필 이미지" class="profile-photo">
 		</div>
 		<div class="profile-id">
 			{$myData.id}

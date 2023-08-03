@@ -8,8 +8,8 @@ const socketStore = writable(socket);
 
 const myData: Writable<MyData> = writable({
 	id: "",
-	avatarSrc: "",
-	nickName: "",
+	avatar: "",
+	nickname: "",
 	rooms: [
 		// {id: "123", name:'room name', roomtype: RoomType.lock, memberCount: 4},
 		// {id: "456", name:'room name2', roomtype: RoomType.normal, memberCount: 999},

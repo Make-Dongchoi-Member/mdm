@@ -26,7 +26,7 @@
 		}
 		
 		const message: Message = {
-			sender: {id: $myData.id, avatarSrc: $myData.avatarSrc},
+			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
 			roomId: $page.url.searchParams.get("id") as string,
 			body: inputValue,
 			isDM: false,
@@ -62,12 +62,12 @@
 		{#each $openedRoom.history as message}
 			<div class={$myData.id === message.sender.id ? "chatting my-message" : "chatting"}>
 				<div>
-					<img src="{message.sender.avatarSrc}" alt="Profile Image" class="chatting-box-avatar">
+					<img src="{message.sender.avatar}" alt="Profile Image" class="chatting-box-avatar">
 				</div>
 				<div>
 					<div>
 						<div>
-							{message.sender.id}
+							{message.sender.nickname}
 						</div>
 						<div>
 							10:00

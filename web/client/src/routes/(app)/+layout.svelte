@@ -41,7 +41,7 @@
 	<nav class= "containerTop" >
 		<a href="/" >GAME</a>
 		<a href="/chat" >CHAT</a> 
-		<a href="/profile" >{$myData.nickName}</a>
+		<a href="/profile" >{$myData.nickname}</a>
 	</nav>
 	<div class="containerBody">
 		<slot></slot>

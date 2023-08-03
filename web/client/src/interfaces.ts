@@ -2,8 +2,8 @@ import type { Level, RoomType } from "./enums";
 
 export interface UserData {
 	id: string;
-	avatarSrc: string;
-	nickName: string;
+	avatar: string;
+	nickname: string;
 }
 
 export interface Notification {

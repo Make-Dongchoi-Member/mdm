@@ -1,11 +1,17 @@
 <script lang='ts'>
+    import { onMount } from "svelte";
+	import { myData } from "../../../store";
+    import type { MyData } from '../../../interfaces';
+    import { goto } from "$app/navigation";
+
+	let isSigned: boolean = false;
 	let nickname: string = "";
-	let profileSrc: string = "/asset/default_profile.png";
+	let profileSrc: string = "";
 
 	const profileClickEvent = () => {
 		(document.querySelector("#input-profile") as HTMLInputElement).click();
 	};
-
+	
 	const fileUpload = async (e: any) => {
 		profileSrc = e.target.files[0];
 		console.log(profileSrc);
@@ -19,8 +25,8 @@
 
 	const nicknameClickEvent = () => {
 		console.log(nickname);
+		console.log(profileSrc);
 		nicknameSetAPI({data : {nickname}});
-
 		/**
 		 * @TODO
 		 * 닉네임이 적절한지 확인
@@ -44,10 +50,36 @@
 		}
 	}
 
+	onMount(() => {
+        getMyData();
+    });
+
+    const getMyData = async (): Promise<void> => {
+        try {
+			const response = await fetch("http://localhost:3000/api/user/me", {
+				method: "GET",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+            if (response.status !== 200) {
+                goto("/signin");
+                return;
+            }
+			const data: Promise<MyData> = response.json();
+            $myData = await data;
+            
+            isSigned = true;
+		} catch (error) {
+			console.error("실패:", error);
+		}
+    }
+
 </script>
 
 <button type="button" class="profile_image" on:click={profileClickEvent}>
-	<img class="image" src={profileSrc} alt="profile image">
+	<img class="image" src={$myData.avatar} alt="profile image">
 </button>
 <input id="input-profile" type="file" accept="image/*" on:change={fileUpload} style="display: none;" />
 <form>

@@ -75,7 +75,7 @@
 <div class="other-profile">
 	<button on:click={menuShowEvent} class="profile-button">
 		<div class="image-container">
-			<img src="{value.user.avatarSrc}" alt="프로필 이미지" class="profile-photo">
+			<img src="{value.user.avatar}" alt="프로필 이미지" class="profile-photo">
 		</div>
 		<div class="profile-id">
 			{key}
