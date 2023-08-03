@@ -7,7 +7,7 @@
 	const nicknameClickEvent = () => {
 		console.log(nickname);
 		nicknameSetAPI({data : {nickname}});
-		$myData.nickName = nickname;
+		$myData.nickname = nickname;
 		$modalStatesStore.isNicknameModal = false;
 
 		/**
