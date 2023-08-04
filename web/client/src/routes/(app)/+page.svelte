@@ -3,12 +3,11 @@
 	import type { MyData } from '../../interfaces';
 	import { goto } from '$app/navigation';
 	import GameSetting from './game/GameSetting.svelte';
+    import GameCanvas from './game/GameCanvas.svelte';
 </script>
 
 <div class="game-box">
-	<canvas>
-
-	</canvas>
+	<GameCanvas />
 	<GameSetting />
 </div>
 
