@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { spaceKey } from '../../../actions';
 	import { gameSettingStore } from '../../../store';
-	
 
 	let scoreDiv: HTMLDivElement;
 	let canvas: HTMLCanvasElement;
@@ -29,14 +28,45 @@
 		x: number,
 		y: number,
 	}
+
+	interface BallColorRGB {
+		red: number,
+		green: number,
+		blue: number,
+	}
 	
-	let barHeightHard: number = 50;
-	let barHeightBasic: number = 120;
-	let speed: number = 2.5;
-	let myScore: number = 0;
-	let enemyScore: number = 0;
-	let pause: boolean = true;
-	let controlWithMouse: boolean = false;
+
+	interface GameState {
+		page: string,
+		pause: boolean,
+		controlWithMouse: boolean,
+		myScore: number,
+		enemyScore: number,
+		speed: number,
+		backgroundColor: string,
+		ballColor: BallColorRGB,
+		barColor: string,
+		basicModeBar: number,
+		hardModeBar: number,
+	}
+
+	let gameState:GameState = {
+		page: "wait",
+		pause: true,
+		controlWithMouse: false,
+		myScore: 5,
+		enemyScore: 5,
+		speed: 2.5,
+		backgroundColor: "#424242",
+		ballColor: {red: 200, green: 200, blue: 200},
+		barColor: $gameSettingStore.barColor,
+		basicModeBar: 120,
+		hardModeBar: 50,
+	}
+
+	let ballColorString: string = `rgb(${gameState.ballColor.red}, \
+										${gameState.ballColor.green}, \
+										${gameState.ballColor.blue})`
 
 	const ball: Ball = {
 		w: 6,
@@ -45,16 +75,16 @@
 		y: 0,
 		speedX: 3,
 		speedY: 3,
-		color: "rgba(200, 200, 200, 1)",
+		color: ballColorString,
 	}
 
 	const bar: Bar = {
 		w: 7,
-		h: barHeightBasic,
+		h: gameState.basicModeBar,
 		x: 10,
 		y: 180,
 		speed: 0,
-		color: $gameSettingStore.barColor,
+		color: gameState.barColor,
 	}
 
 	let ballPos: Position[] = new Array();
@@ -64,41 +94,66 @@
 		canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
 		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 	
-		canvas.width = 798;
+		canvas.width = 800;
 		canvas.height = 430;
 
 		canvas.addEventListener('click', () => {
-			if (controlWithMouse) {
-				controlWithMouse = false;
+			if (gameState.controlWithMouse) {
+				gameState.controlWithMouse = false;
+				gameState.pause = true;
 				document.exitPointerLock();
 			} else {
-				controlWithMouse = true;
+				gameState.controlWithMouse = true;
+				gameState.pause = false;
 				canvas.requestPointerLock();
 			}
 		});
 	});
 
 	function randomSpeed(): number {
-		return (Math.random() + speed);
+		return (Math.random() + gameState.speed);
 	}
 
+	const waitPage = () => {
+		ctx.fillStyle = gameState.backgroundColor;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		bar.h = ($gameSettingStore.gameMode === "hard") ?
+					gameState.hardModeBar : gameState.basicModeBar;
+		bar.y = (canvas.height - bar.h) / 2;
+		ctx.fillStyle = bar.color;
+		ctx.fillRect(bar.x, bar.y, bar.w, bar.h);
+
+		ctx.fillStyle = ballColorString;
+		ctx.font = "bold 50px Arial, sans-serif";
+		ctx.textAlign = "center";
+		ctx.fillText(`${ gameState.myScore } : ${ gameState.enemyScore }`,
+						canvas.width / 2, canvas.height / 2);
+	}
+
+	const gamePage = () => {
+		// 게임 진행 페이지
+	}
+
+
+
+
+
 	const draw = () => {
-		if (pause) {
+		if (gameState.pause) {
+			waitPage();
 			return;
 		}
+
+		bar.h = ($gameSettingStore.gameMode === "hard") ?
+					gameState.hardModeBar : gameState.basicModeBar;
 
 		ballPos.push({x: ball.x, y: ball.y});
 		if (ballPos.length > 35) {
 			ballPos.shift();
 		}
 
-		if ($gameSettingStore.gameMode === "hard") {
-			bar.h = barHeightHard;
-		} else if ($gameSettingStore.gameMode === "basic") {
-			bar.h = barHeightBasic;
-		}
-
-		ctx.fillStyle = "rgba(66, 66, 66)";
+		ctx.fillStyle = gameState.backgroundColor;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		bar.y += bar.speed;
@@ -127,8 +182,8 @@
 		if (ball.x < bar.x + bar.w && ball.x > bar.x
 			&& ball.y < bar.y + bar.h && ball.y > bar.y) {
 			if (ball.speedX < 0) {
-				myScore++;
-				scoreDiv.innerText = `${ myScore } : ${ enemyScore }`;
+				gameState.myScore++;
+				scoreDiv.innerText = `${ gameState.myScore } : ${ gameState.enemyScore }`;
 				ball.speedX = randomSpeed();
 				if (ball.speedY < 0) {
 					ball.speedY = randomSpeed() * -1;
@@ -139,13 +194,16 @@
 		}
 
 		if (ball.x < 0) {
-			enemyScore++;
+			gameState.enemyScore++;
 			gamePause();
 			setTimeout(gamePause, 2000);
 		}
 
 		for (const i in ballPos) {
-			ctx.fillStyle = `rgba(200, 200, 200, ${0.02 * +i})`;
+			ctx.fillStyle = `rgba(${gameState.ballColor.red}, \
+									${gameState.ballColor.green}, \
+									${gameState.ballColor.blue}, \
+									${0.02 * +i})`;
 			ctx.fillRect(ballPos[i].x, ballPos[i].y, ball.w, ball.h);
 		}
 		ctx.fillStyle = ball.color;
@@ -154,34 +212,24 @@
 
 		ctx.font = "bold 50px Arial, sans-serif";
 		ctx.textAlign = "center";
-		ctx.fillText(`${ myScore } : ${ enemyScore }`, canvas.width / 2, canvas.height / 2);
+		ctx.fillText(`${ gameState.myScore } : ${ gameState.enemyScore }`, canvas.width / 2, canvas.height / 2);
 
 	}
 
 	const gamePause = () => {
-		ctx.fillStyle = "rgba(66, 66, 66)";
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
 		ball.x = canvas.width;
 		ball.y = (canvas.height - ball.y) / 2;
-		ctx.fillStyle = ball.color;
-		ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
 		bar.y = (canvas.height - bar.h) / 2;
-		ctx.fillStyle = bar.color;
-		ctx.fillRect(bar.x, bar.y, bar.w, bar.h);
 		ballPos = new Array();
-		ctx.font = "bold 50px Arial, sans-serif";
-		ctx.textAlign = "center";
-		ctx.fillText(`${ myScore } : ${ enemyScore }`, canvas.width / 2, canvas.height / 2);
-		if (pause) {
-			pause = false;
+		if (gameState.pause) {
+			gameState.pause = false;
 		} else {
-			pause = true;
+			gameState.pause = true;
 		}
 	}
 	const handleMousePointer = (event: MouseEvent) => {
-		if (controlWithMouse) {
+		if (gameState.controlWithMouse) {
 			const pos = event.movementY;
-
 			bar.y += pos;
 		}
 	}
@@ -234,24 +282,35 @@
 
 </script>
 
-<div class="game-frame"
-	use:spaceKey on:spacekey={gamePause}>
-	<canvas id="game-canvas">Canvas</canvas>
+<div class="life">
+	<span>my life : {gameState.myScore}</span>
+	<span>enemy life : {gameState.enemyScore}</span>
 </div>
+<canvas id="game-canvas">Canvas</canvas>
 <div use:spaceKey on:spacekey={gamePause} id="score">
 	0 : 0
 </div>
-<button on:click={gamePause}>game start</button>
+<!--<button on:click={gamePause}>game start</button>-->
 
 <style>
 	#score {
 		display: none;
 	}
 
-	.game-frame {
-		border: 1px solid var(--border-color);
+	.life {
+		position: absolute;
+		top: 100px;
+
+		display: flex;
+		justify-content: space-between;
+
 		width: 800px;
-		height: 450px;
+
+		color: var(--point-color);
+	}
+
+	#game-canvas {
+		border: 1px solid var(--border-color);
 		box-sizing: border-box;
 	}
 </style>
