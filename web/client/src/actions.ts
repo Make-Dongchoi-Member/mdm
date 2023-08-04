@@ -32,7 +32,7 @@ export function escapeKey(node: any) {
 
 export function spaceKey(node: any) {
 	const spaceKeyDownEvent = (event: any) => {
-		if (event.key === 'Space') {
+		if (event.key === ' ') {
 			node.dispatchEvent(new CustomEvent("spacekey"));
 		}
 	};

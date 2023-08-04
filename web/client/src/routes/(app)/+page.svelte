@@ -19,11 +19,4 @@
 
 		height: 650px;
 	}
-
-	canvas {
-		border: 1px solid var(--border-color);
-		width: 800px;
-		height: 430px;
-		box-sizing: border-box;
-	}
 </style>
