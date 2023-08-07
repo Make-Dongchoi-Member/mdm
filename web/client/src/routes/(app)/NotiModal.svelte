@@ -27,7 +27,8 @@
 	]
 </script>
 
-<div class="modal-container {$modalStatesStore.isNotiModal ? 'flex-container' : 'hidden-container'}"
+<div class="modal-container"
+	style="{$modalStatesStore.isNotiModal ? 'display: flex;' : 'display: none;'}"
 	use:clickOutside on:outclick={() => {$modalStatesStore.isNotiModal = false}}
 	use:escapeKey on:esckey={() => {$modalStatesStore.isNotiModal = false}}>
 	<div class="modal-box">
@@ -89,11 +90,7 @@
 		top: 8px;
 		margin-left: 400px;
 	}
-
-	.hidden-container {
-		display: none;
-	}
-		
+	
 	.modal-title {
 		color: var(--point-color);
 		display:flex;

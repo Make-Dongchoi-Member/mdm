@@ -51,7 +51,8 @@
 	}
 </script>
 
-<div class="modal-container {$modalStatesStore.isNicknameModal ? '' : 'hidden-container'}"
+<div class="modal-container"
+	style="{$modalStatesStore.isNicknameModal ? 'display: flex;' : 'display: none;'}"
 	use:clickOutside on:outclick={() => {$modalStatesStore.isNicknameModal = false}}
 	use:escapeKey on:esckey={() => {$modalStatesStore.isNicknameModal = false}}>
 	<button class="close-button" on:click={() => {$modalStatesStore.isNicknameModal = false}}>&#215;</button>
@@ -88,12 +89,9 @@
 		border-radius: 0.5rem;
 		
 		position: absolute;
-		top: 19.5%;
-		left: 31%;
-	}
-
-	.hidden-container {
-		display: none;
+		
+		margin-top: 130px;
+		margin-left: 135px;
 	}
 
 	.close-button {

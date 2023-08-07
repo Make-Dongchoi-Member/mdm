@@ -19,7 +19,8 @@
 	}
 </script>
 
-<div class="modal-container {$modalStatesStore.isLogoutModal ? '' : 'hidden-container'}"
+<div class="modal-container"
+	style="{$modalStatesStore.isLogoutModal ? 'display: flex;' : 'display: none;'}"
 	use:clickOutside on:outclick={() => {$modalStatesStore.isLogoutModal = false}}
 	use:escapeKey on:esckey={() => {$modalStatesStore.isLogoutModal = false}}>
 	<div class="modal-title">
@@ -46,12 +47,9 @@
 		border-radius: 0.5rem;
 		
 		position: absolute;
-		top: 26%;
-		left: 25%;
-	}
 
-	.hidden-container {
-		display: none;
+		margin-top: 220px;
+		margin-left: 55px;
 	}
 
 	.modal-content {

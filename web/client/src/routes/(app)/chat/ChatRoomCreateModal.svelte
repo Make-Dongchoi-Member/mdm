@@ -114,11 +114,11 @@
 		return true;
 	}
 </script>
-  
-<div class="modal-container" style="display: block;">
+
+<div class="modal-container {$modalStatesStore.isRoomCreateModal ? '' : 'hidden'}">
 	<div class="modal-title">
 		<div>
-		NEW CHAT ROOM
+			NEW CHAT ROOM
 		</div>
 		<div class="close-button">
 			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false;}}>&#215;</button>
@@ -130,14 +130,14 @@
 				<input 
 					on:input={roomnameInputBoxEvent}
 					bind:value={roomNameInputValue}
-					class="roomname-inputbox" 
+					class="roomname-inputbox"
 					type="text" 
-					placeholder="ROOM NAME" 
+					placeholder="ROOM NAME"
 					maxlength=20
 					>
 			</div>
 			<div>
-				<button 
+				<button
 					on:click={privateButtonToggle}
 					class={isPrivate ? "private-button able" : "private-button disable"}
 					>
@@ -152,7 +152,7 @@
 					class="password-inputbox"
 					on:input={passwordInputBoxEvent}
 					bind:value={passwordInput}
-					type="password" 
+					type="password"
 					placeholder="PASSWORD IF YOU NEED"
 					maxlength=10
 					>
@@ -166,35 +166,41 @@
 				</button>
 			</div>
 			<div>
-				<button 
+				<button
 					class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
 					disabled={isMakeButtonActivation ? false : true}
 					on:click={makeButtonEvent} >
 					MAKE
-				</button>                
-			</div>                            
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
 
 <style>
+	
 	.modal-container {
 		position: absolute;
 		top: 100px;
-		left: 50%;
-		margin-left: -380px;
+		left: 23%;
+
 		width: 775px;
 		height: 150px;
+
 		z-index: 2;
-
+		
 		display: flex;
-
-		justify-content: center;
+		flex-direction: column;
+		
 		align-items: center;
-
-		background-color: var(--bg-color);
-		border: 1px solid var(--border-color);
+		
+		background-color: var(--dark-color);
+		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
+	}
+	
+	.hidden {
+		display: none;
 	}
 
 	.modal-title {
