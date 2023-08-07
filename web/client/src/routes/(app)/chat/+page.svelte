@@ -12,7 +12,6 @@
     onMount(() => {
         $modalStatesStore.isRoomCreateModal = false;
         getRoomList();
-		console.log($myData);
 		
     });
 

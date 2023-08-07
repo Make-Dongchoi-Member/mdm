@@ -28,8 +28,6 @@ export class ChatService {
     const userEnteredRooms = (
       await this.roomRepository.userEnteredRooms(userId)
     ).filter((e) => e.roomtype === RoomType.PRIVATE);
-    console.log(`public room ${publicRooms}`);
-    console.log(`private room ${userEnteredRooms}`);
     const roomList = Array<RoomListInfo>();
     [...publicRooms, ...userEnteredRooms].forEach((e) => {
       roomList.push({
