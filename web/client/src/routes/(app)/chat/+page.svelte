@@ -1,198 +1,256 @@
 <script lang="ts">
-    import Modal from './ChatRoomCreateModal.svelte';
-    import { modalStatesStore, myData } from '../../../store';
+    import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
+    import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
+    import { modalStatesStore, myData, roomList } from '../../../store';
+    import type { Room, RoomEnterDTO } from '../../../interfaces';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
-    import type { Room } from '../../../interfaces';
+    import { goto } from '$app/navigation';    
 
-    const roomlist: Room[] = [
-            {id: "123", name: 'room1(not enter)', roomtype: RoomType.lock, memberCount: 4},
-            {id: "456", name: 'room2(not enter)', roomtype: RoomType.normal, memberCount: 3},
-            {id: "7777", name: 'room3(not enter)', roomtype: RoomType.normal, memberCount: 121},
-            {id: "5454", name: 'room4(not enter)', roomtype: RoomType.normal, memberCount: 555},
-            {id: "3212", name: 'room5(not enter)', roomtype: RoomType.normal, memberCount: 77},
-            {id: "9797", name: 'room6(not enter)', roomtype: RoomType.lock, memberCount: 787}
-        ]
+    // let $roomlist: Map<number, Room> = new Map();
     
+    let roomEnterInfo: RoomEnterDTO = {roomId:"", userId:"", password:""};
+    let thisRoom: Room;
+        /*
+            @TODO
+            룸 리스트 요청 api 해야함.
+        */    
+    
+    const publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
     onMount(() => {
-    
-        
+
+        $modalStatesStore.isRoomCreateModal = false;
+        console.log("$myData.rooms", $myData.rooms);
+        console.log("publicRoomList", publicRoomlist);
         /*
             @TODO
         */
+        
 
+        getRoomList();
+        console.log("roomList", $roomList);
+ 
     });
 
+    const getRoomList = async () => {
+        const response = await fetch(`http://localhost:3000/api/chat/list`, {
+            method: "GET",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.rooms);
+            
+            for (let i = 0; i < data.rooms.length; i++) {
+                const element = data.rooms[i];
+                $roomList.set(element.id, element);                
+            }
+            $roomList = $roomList;
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
     }
- 
 
+    const passwordInputModalButton = () => {
+        $modalStatesStore.isPasswordInputModal = true;
+    }    
+
+    const roomEnter = (room: any) => {
+        // if ($myData.rooms.some(item => item === room.id)) {
+        //     goto(`/chat/room?id=${room.id}`);
+        //     return ;
+        // }
+        // const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
+        roomEnterInfo.roomId = room.id;
+        roomEnterInfo.userId = $myData.id;
+        if (room.roomtype === RoomType.LOCK) {            
+            passwordInputModalButton();
+        } else {
+            //     방들어가기 API 요청
+            //     roomEnterAPI(roomEnterIno)
+            const result: boolean = true;
+            goto(`/chat/room?id=${room.id}`);
+        }
+
+    }
+
+    const myRoomEnter = (roomNum: number) => {
+        if ($myData.rooms.includes(roomNum)) {
+            goto(`/chat/room?id=${roomNum}`);
+            return ;
+        }
+    }
+
+    function filterRoomsNotInNumbers($roomlist: Map<number, Room>, numbers: number[]): Map<number, Room> {
+        return new Map([...$roomlist].filter(([roomNumber, room]) => !numbers.includes(roomNumber)));
+    }
 </script>
 
-<Modal />
+
+<ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
+
+{#if $modalStatesStore.isRoomCreateModal}
+    <ChatRoomCreateModal />
+{/if}
+
 
 <div class="chatroom-box">
-    <div class="chat-title">
-        <div>
-            CHAT ROOM LIST
-        </div>
-        <div>
-            <button on:click={roomCreateModalButton}>+</button>
-        </div>
-    </div>
-    <div class="room-list">        
-        {#each $myData.rooms as room}
-            <a href="/chat/room?id={room.id}">
-                <div>
-                    {room.name}
-                </div>
-                {#if room.roomtype === RoomType.lock}
-                    <div>&#x1F512</div>
-                {:else}
-                    <div></div>
-                {/if}
-                <div>
-                    {room.memberCount}
-                </div>
-            </a>
-        {/each}
-        {#if $myData.rooms.length > 0}
-            <div class="divider">
-                
-            </div>
-        {/if}
-        {#each roomlist as room}
-            {#if (!$myData.rooms.includes(room))}                            
-                <a href="/chat/room?id={room.id}">
-                    <div>
-                        {room.name}
-                    </div>
-                    {#if room.roomtype === RoomType.lock}
-                        <div>&#x1F512</div>
-                    {:else}
-                        <div></div>
-                    {/if}
-                    <div>
-                        {room.memberCount}
-                    </div>
-                </a>
-            {/if}
-        {/each}
-    </div>
+	<div class="chat-title">
+		<div>
+			CHAT ROOM LIST
+		</div>
+		<div>
+			<button on:click={roomCreateModalButton}>+</button>
+		</div>
+	</div>
+	<div class="room-list">		
+		{#each $myData.rooms as roomNum}
+
+			<button on:click={()=>(myRoomEnter(roomNum))}>
+
+				<div>
+					{$roomList.get(roomNum)?.name}
+				</div>
+				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
+					<div>&#x1F512</div>
+				{:else}
+					<div></div>
+				{/if}
+				<div>
+					{$roomList.get(roomNum)?.memberCount}
+				</div>
+			</button>
+		{/each}
+		{#if $myData.rooms.length > 0 && publicRoomlist.size > 0}
+			<div class="divider">
+				
+			</div>
+		{/if}
+		{#each Array.from(publicRoomlist) as [roomId, room]}
+				<button on:click={()=>(roomEnter(room))}>
+
+					<div>
+						{room.name}
+					</div>
+					{#if room.roomtype === RoomType.LOCK}
+						<div>&#x1F512</div>
+					{:else}
+						<div></div>
+					{/if}
+					<div>
+						{room.memberCount}
+					</div>
+				</button>
+		{/each}
+	</div>
 </div>
 
 <style>
-    .chatroom-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+	.chatroom-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
-    .room-list {
-        width: 770px;
-        height: 380px;
-        overflow-y: auto;
-        overflow-x: hidden;
+	.room-list {
+		width: 800px;
+		height: 570px;
+		overflow-y: auto;
 
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-content: flex-start;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		align-content: flex-start;
+	}
 
-        margin-bottom: 20px;
-    }
+	.room-list::-webkit-scrollbar {
+		width: 6px;
+		height: 30px;
+	}
 
-    .room-list::-webkit-scrollbar {
-        width: 6px;
-        height: 30px;
-    }
+	.room-list::-webkit-scrollbar-track {
+		background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
+	}
 
-    .room-list::-webkit-scrollbar-track {
-        background-color: var(--bg-color); /* 스크롤바 트랙 배경색 설정 */
-    }
+	.room-list::-webkit-scrollbar-thumb {
+		background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
+		border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
+	}
 
-    .room-list::-webkit-scrollbar-thumb {
-        background-color: var(--border-color); /* 스크롤바 썸바 배경색 설정 */
-        border-radius: 4px; /* 스크롤바 썸바 테두리 설정 */
-    }
+	.room-list::-webkit-scrollbar-thumb:hover {
+		background-color: var(--text-color); /* 스크롤바 썸바 호버 배경색 설정 */
+	}
 
-    .room-list::-webkit-scrollbar-thumb:hover {
-        background-color: var(--text-color); /* 스크롤바 썸바 호버 배경색 설정 */
-    }
+	.chat-title {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		
+		width: 800px;
+		height: 80px;
+	}
+		
+	.chat-title > :nth-child(1) {
+		text-align: center;
+	}
 
-    .chat-title {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        
-        width: 760px;
-        margin-top : 80px;
-        margin-bottom: 20px;
-    }
-    
-    .chat-title > :nth-child(1) {        
-        flex-grow: 10;
-        text-align: center;
-    }
+	.chat-title > :nth-child(2) > button {
+		position: absolute;
+		right: 10px;
+		top: 25px;
+		font-size: 25px;
+		font-weight: 500;
+		background-color: var(--bg-color);
+		border: none;
+	}
 
-    .chat-title > :nth-child(2) > button {
-        font-size: 25px;
-        font-weight: 500;
-        flex-grow: 0;
-        text-align: right;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        border: none;
-        outline: none;
-    }
+	.room-list > button {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
 
-    a {
-        text-decoration: none;
-    }
+		height: 50px;
+		width: 380px;
+		margin-right: 10px;
+		margin-bottom: 10px;
+		outline: none;
+		border: 1px solid var(--border-color);
+		background-color: var(--bg-color);
+		color: var(--text-color);
+	}
 
-    .room-list > a {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
+	.room-list > button > :nth-child(1) {
+		
+		padding-left: 20px;
+	}
 
-        height: 40px;
-        width: 370px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        outline: none;
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-color);
-        color: var(--text-color);         
-    }
+	.room-list > button > :nth-child(2) {
+		display: flex;
+		padding-left: 5px;
+	}
 
-    .room-list > a > :nth-child(1) {
-        
-        padding-left: 10px;        
-    }
+	.room-list > button > :nth-child(3) {
+		flex-grow: 10;
+		text-align: right;
+		padding-right: 20px;
+	}
 
-    .room-list > a > :nth-child(2) {
-        display: flex;
-        padding-left: 5px;        
-    }
+	.room-list > button:hover {
+		background-color: var(--hover-color);
+	}
 
-    .room-list > a > :nth-child(3) {
-        flex-grow: 10;
-        text-align: right;
-        padding-right: 10px;
-    }
-
-    .room-list > a:hover {
-        background-color: var(--hover-color);
-    }
-
-    .divider {
-        width: 770px;
-        height: 20px;
-    }
-
-
+	.divider {
+		width: 770px;
+		height: 20px;
+	}
 </style>

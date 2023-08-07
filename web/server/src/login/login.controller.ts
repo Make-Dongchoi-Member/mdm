@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { Public } from './guards/login.jwt.public.decorator';
 import { APP_URL, DEV_URL } from 'src/configs/constants';
 
-@Controller('login')
+@Controller('api/login')
 @Public()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
@@ -37,7 +37,18 @@ export class LoginController {
     } else {
       // 로그인 url
       // url = 로그인 url
-      url = new ConfigService().get('APP_URL');
+      // @TODO
+      // token vaild check
+      const tokenValid = await this.loginService.tokenValidCheck(token);
+      if (tokenValid) {
+        if (new ConfigService().get('NODE_ENV') === 'prod') {
+          url = new ConfigService().get(APP_URL);
+        } else {
+          url = new ConfigService().get(DEV_URL);
+        }
+      } else {
+        url = await this.loginService.oAuth42AccessUrl();
+      }
     }
     return { url };
   }

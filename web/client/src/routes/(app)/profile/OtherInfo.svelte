@@ -1,11 +1,9 @@
 <script lang="ts">
-    import MatchStat from "./MatchStat.svelte";
-
-	
+	import MatchStat from "./MatchStat.svelte";
 </script>
 
 <div class="personal_box">
-	<button type="button" class="profile_image_circle">
+	<button type="button" class="profile_image_circle" disabled>
 		<img class="image" src="/asset/hhwang.png" alt="profile_image">
 	</button>
 	<div class="personal_info">
@@ -60,6 +58,11 @@
 		width: 150px;
 		height: 40px;
 		margin-bottom: 20px;
+		background-color: var(--dark-color);
+	}
+
+	.option_box > button:hover {
+		background-color: var(--hover-color);
 	}
 
 	.profile_image_circle {
@@ -73,12 +76,6 @@
 		align-items: center;
 		overflow: hidden;
 		margin: 20px;
-	}
-
-	.profile_image_circle:hover {
-		border: 2px solid white;
-		cursor: pointer;
-		opacity: 0.5;
 	}
 
 	.profile_image_circle > .image {
@@ -97,9 +94,6 @@
 	.personal_info > button {
 		width: 150px;
 		margin-bottom: 10px;
-	}
-
-	.personal_info > button:hover {
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 	}
 </style>

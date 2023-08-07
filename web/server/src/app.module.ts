@@ -9,9 +9,9 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './login/guards/login.jwt.guard';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
-import { ChatGateway } from './socket/chat.gateway';
-import { GameGateway } from './socket/game.gateway';
-import { EventsGateway } from './socket/event.gateway';
+import { AppGateway } from './app.gateway';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeORMConfig } from './configs/typeorm.config';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -28,20 +28,12 @@ if (process.env.NODE_ENV === 'prod') {
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    TypeOrmModule.forRoot(typeORMConfig),
     LoginModule,
     UserModule,
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtGuard,
-    },
-    EventsGateway,
-    ChatGateway,
-    GameGateway
-  ],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}

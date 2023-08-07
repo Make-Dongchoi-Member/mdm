@@ -1,8 +1,13 @@
-import { Level } from './enums';
+import { Level, RoomType } from './enums';
 
 export interface UserData {
   id: number;
   avatar: string;
+  nickname: string;
+}
+
+export interface MyData extends UserData {
+  rooms: number[];
 }
 
 export interface Profile {
@@ -13,7 +18,25 @@ export interface Profile {
 
 export interface Message {
   sender: UserData;
+  roomId: string;
   body: string;
   isDM: boolean;
   date: Date;
+}
+
+export interface RoomDetail {
+  id: string;
+  name: string;
+  roomtype: RoomType;
+  memberCount: number;
+  members: string;
+  history: Message[];
+}
+
+export interface RoomInfo {
+  roomId: string;
+  hostId: string;
+  roomname: string;
+  password: string;
+  roomtype: RoomType;
 }

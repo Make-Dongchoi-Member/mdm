@@ -8,13 +8,17 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { JwtModule } from '@nestjs/jwt';
 import { PendingUserService } from './objects/pending-user.service';
 import { DatabaseModule } from 'src/database/database.module';
-import { userProvider } from 'src/database/providers/user.provider';
 import {
   JWT_SECRET,
   MAILER_PASS,
   MAILER_USER,
   SMTP_HOST,
 } from 'src/configs/constants';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Users } from 'src/database/entities/user.entity';
+import { UserRepository } from 'src/database/repositories/user.repository';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './guards/login.jwt.guard';
 
 @Module({
   imports: [
@@ -49,9 +53,17 @@ import {
       }),
       inject: [ConfigService],
     }),
-    DatabaseModule,
+    TypeOrmModule.forFeature([Users]),
+    DatabaseModule.forCustomRepository([UserRepository]),
   ],
   controllers: [LoginController],
-  providers: [userProvider, LoginService, PendingUserService],
+  providers: [
+    LoginService,
+    PendingUserService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+  ],
 })
 export class LoginModule {}

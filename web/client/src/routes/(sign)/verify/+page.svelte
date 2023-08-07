@@ -1,13 +1,15 @@
 <script lang='ts'>
 	import {goto} from '$app/navigation';
+    import { onMount } from 'svelte';
 
-	let email: string = 'hhwang@student.42seoul.kr';
+	let resendLink: string = 'send the code again';
 	let isInvalid: boolean = false;
 	let block: boolean = false;
+	let isGotCookie: boolean = false;
 
 	async function emailCodeValidation(data: any) {
 		try {
-			const response = await fetch("http://localhost:3000/login/mailauth", {
+			const response = await fetch("http://localhost:3000/api/login/mailauth", {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -21,6 +23,10 @@
 		}
 	}
 
+	function deleteCookie(name: string) {
+		document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
+	}
+
 	function emailCodeCheckEvent(e: any) {
 		let code = e.target.value;
 		if (code.length === 6 && !block) { 
@@ -31,6 +37,7 @@
 					if (res) {
 						const status = res.status;
 						if (status === 201) {
+							deleteCookie('user_id');
 							goto('/join');
 						} else if (status === 500) {
 							alert('server error');
@@ -46,12 +53,26 @@
 			isInvalid = false;
 		}
 	}
+
+	onMount(() => {
+		checkUserIdCookie();
+	});
+
+	const checkUserIdCookie = async (): Promise<void> => {
+		const value: any = document.cookie.match('user_id=');
+		if (value) {
+			isGotCookie = true;
+			return;
+		} else {
+			deleteCookie('user_id');
+			goto("/join");
+			return;
+		}
+	}
 </script>
 
-<div class="inform">
-	<span class="simple_text">Check your EMAIL</span>
-	<a href="https://profile.intra.42.fr/" class="mail_address">{email}</a>
-</div>
+{#if isGotCookie}
+<div class="simple_text">Check your 42intra EMAIL</div>
 <input type="text"
 	maxlength="6"
 	placeholder="put your verification code"
@@ -59,33 +80,25 @@
 	disabled={block ? true : false}
 	on:input={emailCodeCheckEvent}
 	required>
+<div class="resend-link">
+	<span>Do you have any problem?</span>
+	<span>&#8594;</span>
+	<a href="http://localhost:3000/api/login" class="mail_address">{resendLink}</a>
+</div>
+{/if}
 
 <style>
-	.inform {
-		width: 400px;
-		height: 200px;
-		box-sizing: border-box;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		margin-bottom: 30px;
-	}
-
 	.simple_text {
-		margin-top: 130px;
+		line-height: 350px;
+		width: 400px;
+		height: 260px;
 		font-size: 30px;
-		margin-bottom: 5px;
 	}
 
 	.mail_address {
 		color: var(--text-color);
 		font-size: 16px;
 		text-decoration: underline;
-	}
-
-	.inform > a:hover {
-		color: var(--intra-color);
-		cursor: pointer;
 	}
 	
 	.valid {
@@ -137,5 +150,14 @@
 
 	input:focus::placeholder {
 		color: transparent;
+	}
+
+	.resend-link {
+		padding-top: 10px;
+	}
+
+	.resend-link > a:hover {
+		color: var(--intra-color);
+		cursor: pointer;
 	}
 </style>

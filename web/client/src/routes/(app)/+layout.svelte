@@ -1,127 +1,166 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
     import { modalStatesStore, myData } from '../../store';
+    import type { MyData } from '../../interfaces';
+    import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
 
+    let isSigned: boolean = false;
+
+    onMount(() => {
+        getMyData();
+    });
+
+    const getMyData = async (): Promise<void> => {
+        try {
+			const response = await fetch("http://localhost:3000/api/user/me", {
+				method: "GET",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+            if (response.status !== 200) {
+                goto("/signin");
+                return;
+            }
+			const data: Promise<MyData> = response.json();
+            $myData = await data;
+
+			if ($myData.nickname) {
+				isSigned = true;
+			} else {
+				goto("/join");
+			}
+		} catch (error) {
+			console.error("실패:", error);
+		}
+    }
 </script>
 
+{#if isSigned}
 <div class="container">
-    <nav class= "containerTop" >
-        <a href="/" >GAME</a>
-        <a href="/chat" >CHAT</a> 
-        <a href="/profile" >{$myData.id}</a>
-    </nav>
-    <div class="containerBody">
-        <slot></slot>
-    </div>
+	<nav class= "containerTop" >
+		<a href="/" >GAME</a>
+		<a href="/chat" >CHAT</a> 
+		<a href="/profile" >{$myData.nickname}</a>
+	</nav>
+	<div class="containerBody">
+		<slot></slot>
+	</div>
 </div>
 <div class="alarm">
-    <button on:click={() => { $modalStatesStore.isNotiModal = true; }}>
-        &#x1F4E2;
-    </button>
+	<button on:click={() => { $modalStatesStore.isNotiModal = true; }}>
+		&#x1F4E2;
+	</button>
 </div>
 <NotiModal />
+{/if}
 
 <style>
-    @import url('https://rsms.me/inter/inter.css'); /* font */
-    :global(*) { 
-        font-family: 'Inter', sans-serif;
-        font-weight: 200;
-        font-size: 16px;
-    }
+	@import url('https://rsms.me/inter/inter.css'); /* font */
+	:global(*) { 
+		font-family: 'Inter', sans-serif;
+		font-weight: 200;
+		font-size: 16px;
+	}
 
-    :global(img) {
-        -webkit-user-drag: none;
-    }
+	:global(img) {
+		-webkit-user-drag: none;
+	}
 
-    :root {
-        --bg-color: #424242;
-        --text-color: #d2d2d2;
-        --border-color: #848484;
-        --point-color: #FF6231;
-        --hover-color: rgba(255, 98, 49, 0.4);
-        --intra-color: #00BABC;
-    }
+	:root {
+		--bg-color: #424242;
+		--text-color: #d2d2d2;
+		--border-color: #848484;
+		--point-color: #FF6231;
+		--hover-color: rgba(255, 98, 49, 0.4);
+		--intra-color: #00BABC;
+		--dark-color: #3E3E3E;
+	}
 
-    :global(body) {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        width: 100vw;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
+	:global(body) {
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		width: 100vw;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		box-sizing: border-box;
+	}
 
-    
-    :global(button) {
-        height: 30px;
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        border: 1px solid var(--border-color);
-    }
-    
-    :global(button:hover) {
-        background-color: var(--hover-color);
-    }
-    
-    .alarm {
-        display: flex;
-        justify-content: flex-end;
-        width: 900px;
-        position: absolute;
-        top: 7px;
+		
+	:global(button) {
+		height: 30px;
+		background-color: var(--bg-color);
+		color: var(--text-color);
+		border: 1px solid var(--border-color);
+		outline: none;
+	}
+		
+	:global(button:hover) {
+		background-color: var(--hover-color);
+	}
+		
+	.alarm {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		width: 880px;
+		height: 50px;
+		position: absolute;
 		z-index: 0;
-    }
+		margin-top: 130px;
+	}
 
-    .alarm > button {
-        padding-right: 10px;
-        border: none;
-    }
+	.alarm > button {
+		border: 1px solid var(--border-color);
+		border-radius: 70%;
+		text-align: center;
+	}
 
-    .alarm > button:hover {
-        background-color: var(--bg-color);
-    }
-
-    .container {
-        width: 800px;
-        border: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+	.container {
+		width: 800px;
+		/* border: 1px solid var(--border-color); */
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		z-index: 1;
-    }
+	}
 
-    .containerBody {
+	.containerBody {
 		width: 800px;
 		height: 650px;
 		margin-top: 80px;
 	}
 
-    nav {
-        border: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        text-align: center;
-    }
+	nav {
+		/* border: 1px solid var(--border-color); */
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		text-align: center;
 
-    nav > a {
-        width: 100px;
-        color: var(--text-color);
-        padding: 10px 10px 10px 10px;
-        text-decoration: none;
-    }
+		height: 50px;
+	}
 
-    nav > a:hover {
-        color: var(--point-color);
-        padding: 10px 10px 10px 10px;
-        text-decoration: none;
-    }
+	nav > a {
+		width: 100px;
+		color: var(--text-color);
+		padding: 10px 10px 10px 10px;
+		text-decoration: none;
+	}
 
-    /* .icon-transform {
-        transform: scale(1.2);
-    } */
+	nav > a:hover {
+		color: var(--point-color);
+		padding: 10px 10px 10px 10px;
+		text-decoration: none;
+	}
 
-
+	/* .icon-transform {
+		transform: scale(1.2);
+	} */
 </style>
