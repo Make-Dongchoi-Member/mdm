@@ -35,8 +35,9 @@ const modalStatesStore: Writable<ModalStates> = writable({
 });
 
 const openedRoom: Writable<RoomDetail> = writable({
-	id: "",
-	name: "",
+	roomId: "",
+	hostId: "",
+	roomname: "",
 	roomtype: RoomType.NORMAL,
 	memberCount: 0,
 	members: new Map([

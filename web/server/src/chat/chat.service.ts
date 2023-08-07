@@ -45,8 +45,9 @@ export class ChatService {
     const users = await this.userRepository.getUserList(ids);
     const members = this.roomMembers(room, users);
     const roomDetail: RoomDetail = {
-      id: room.id.toString(),
-      name: room.name,
+      roomId: room.id.toString(),
+      hostId: room.host.toString(),
+      roomname: room.name,
       roomtype: room.roomtype,
       memberCount: room.memberCount,
       members,

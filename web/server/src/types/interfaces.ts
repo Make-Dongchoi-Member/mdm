@@ -25,8 +25,9 @@ export interface Message {
 }
 
 export interface RoomDetail {
-  id: string;
-  name: string;
+  roomId: string;
+  hostId: string;
+  roomname: string;
   roomtype: RoomType;
   memberCount: number;
   members: string;

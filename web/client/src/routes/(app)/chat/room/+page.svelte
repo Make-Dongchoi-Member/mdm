@@ -89,7 +89,7 @@
                 <a href="/chat">&#11013;</a>
             </div>
             <div class="chat-room-name">
-                {roomName}
+                {$openedRoom.roomname}
             </div>
             {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
                 <div class="chat-setting-button">
