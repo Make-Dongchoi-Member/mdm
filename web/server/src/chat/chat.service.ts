@@ -6,7 +6,7 @@ import {
 import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
-import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
+import { Profile, RoomDetail, RoomInfo, RoomListInfo } from 'src/types/interfaces';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -25,13 +25,13 @@ export class ChatService {
     ).filter((e) => {
       e.roomtype === RoomType.PRIVATE;
     });
-    const roomList = Array<RoomInfo>();
+    const roomList = Array<RoomListInfo>();
     [...publicRooms, ...userEnteredRooms].forEach((e) => {
       roomList.push({
         roomId: e.id.toString(),
         hostId: e.host.toString(),
         roomname: e.name,
-        password: '',
+        memberCount: e.memberCount,
         roomtype: e.roomtype,
       });
     });
@@ -45,8 +45,9 @@ export class ChatService {
     const users = await this.userRepository.getUserList(ids);
     const members = this.roomMembers(room, users);
     const roomDetail: RoomDetail = {
-      id: room.id.toString(),
-      name: room.name,
+      roomId: room.id.toString(),
+      hostId: room.host.toString(),
+      roomname: room.name,
       roomtype: room.roomtype,
       memberCount: room.memberCount,
       members,

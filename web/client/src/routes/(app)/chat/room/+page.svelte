@@ -2,16 +2,14 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom, roomList, myLevel } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
-    import type { Profile, SetRequestDTO, Room } from '../../../../interfaces';
     import { goto } from '$app/navigation';
 
-    const roomName: string = $openedRoom.name;
     onMount(() => {
         /*
             @TODO
@@ -21,7 +19,7 @@
        
         getRoomData();
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-       
+		console.log("mydata.rooms : ", $myData.rooms);
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
         $socketStore.on("chat/join", (data: any) => {
@@ -57,10 +55,16 @@
 			},
 		})
 		.then(response => response.json())
-		.then(data => {
-			data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
-			$openedRoom = data.openedRoom;
-			$myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
+		.then(data => {			
+			$openedRoom.hostId = data.openedRoom.hostId;
+			$openedRoom.roomId = data.openedRoom.roomId;
+			$openedRoom.roomname = data.openedRoom.roomname;
+			$openedRoom.roomtype = data.openedRoom.roomtype;
+			$openedRoom.history = data.openedRoom.history;
+			$openedRoom.memberCount = data.openedRoom.memberCount;
+			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+			$openedRoom = $openedRoom;
+			// $myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
 		})
 		.catch(error => console.error('Error:', error));
 	}
@@ -88,7 +92,7 @@
                 <a href="/chat">&#11013;</a>
             </div>
             <div class="chat-room-name">
-                {roomName}
+                {$openedRoom.roomname}
             </div>
             {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
                 <div class="chat-setting-button">

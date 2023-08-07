@@ -40,7 +40,7 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
+			console.log("data", data);
 			
 			goto(`/chat/room?id=${data.roomId}`);
 			$modalStatesStore.isRoomCreateModal = false;
