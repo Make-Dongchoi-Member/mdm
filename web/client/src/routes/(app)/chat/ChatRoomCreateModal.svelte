@@ -79,36 +79,35 @@
 
 	const passwordInputBoxEvent = (e: any) => {
 		e.target.value = e.target.value.replace(/\s/g, '');
+		passwordInput = e.target.value;		
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
 	const privateButtonToggle = () => {
-		const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
 		isPrivate = !isPrivate;
 		if (isPrivate) {
-			passwordInputBox.value = "";
+			passwordInput = "";
 		}
 		isPassword = false;
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
 	const passwordButtonToggle = () => {
-		const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
 		isPassword = !isPassword;
+		console.log("isPassword : ", isPassword);
 		if (!isPassword) {
-			passwordInputBox.value = "";
+			passwordInput = "";
 		}
 		isPrivate = false;
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
 	const makeButtonActivationEvent = () => {
-		const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();
-		const password: string = (document.querySelector(".password-inputbox") as HTMLInputElement).value;
+		const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();			
 		if (roomname === "") {
 			return false;
 		}
-		if (isPassword && password === "") {
+		if (isPassword && passwordInput === "") {
 			return false;
 		}
 		return true;
