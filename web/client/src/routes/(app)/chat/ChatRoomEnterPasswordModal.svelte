@@ -7,9 +7,9 @@
 
     let isMakeButtonActivation: boolean = false;
     let passwordValue: string = "";
-    export let roomEnterInfo: RoomEnterDTO;
-    export let thisRoom: Room;
-    
+
+    export let postRoomEnter: Function;
+    export let selectedRoomId: string;
 
     onMount(() => {     
         const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
@@ -25,19 +25,14 @@
     });
 
     const makeButtonEvent = () => {               
-        roomEnterInfo.password = passwordValue;        
-
         // /*
         //     @TODO
         //     방 입장 api실행. 비밀번호 넣어서 실행.
         //     */        
         // // roomEnterAPI()
-        
-        const result: boolean = true; //api 결과값
-        if (result) {
-            $modalStatesStore.isPasswordInputModal = false;            
-            goto(`/chat/room?id=${roomEnterInfo.roomId}`);
-        } 
+        postRoomEnter(selectedRoomId, passwordValue);
+        $modalStatesStore.isPasswordInputModal = false;            
+        goto(`/chat/room?id=${selectedRoomId}`);
     }
 
     const passwordInputBoxEvent = (e: any) => {
@@ -46,7 +41,6 @@
         isMakeButtonActivation = makeButtonActivationEvent(e.target.value);
     }
 
-
     const makeButtonActivationEvent = (password: string) => {
         if (password === "") {
             return false;
@@ -54,40 +48,37 @@
         return true;            
     }
 
-    
-    
-
 </script>
-  
-    <div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}">
-            <div class="modal-title">
-                <div>
-                PASSWORD
-                </div>
-                <div class="close-button">
-                    <button on:click={() => { $modalStatesStore.isPasswordInputModal = false; }}>&#215;</button>
-                </div>
-            </div>
-            <div class="modal-content">
-                    <div class="password-option">
-                        <input                         
-                            class="password-inputbox"
-                            on:input={passwordInputBoxEvent}                            
-                            type="password" 
-                            placeholder="PASSWORD INPUT"
-                            maxlength=10
-                            >
-                    </div>
-                    <div>
-                        <button 
-                            class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
-                            disabled={isMakeButtonActivation ? false : true}
-                            on:click={makeButtonEvent} >
-                            OK
-                        </button>                
-                    </div>           
-            </div>
+
+<div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}">
+    <div class="modal-title">
+        <div>
+            PASSWORD
+        </div>
+        <div class="close-button">
+            <button on:click={() => { $modalStatesStore.isPasswordInputModal = false; }}>&#215;</button>
+        </div>
     </div>
+    <div class="modal-content">
+        <div class="password-option">
+            <input                         
+                class="password-inputbox"
+                on:input={passwordInputBoxEvent}                            
+                type="password" 
+                placeholder="PASSWORD INPUT"
+                maxlength=10
+                >
+        </div>
+        <div>
+            <button 
+                class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
+                disabled={isMakeButtonActivation ? false : true}
+                on:click={makeButtonEvent} >
+                OK
+            </button>                
+        </div>           
+    </div>
+</div>
   
 <style>
     .modal-container {
@@ -97,7 +88,6 @@
         margin-left: -200px;
         width: 400px;
         height: 150px;
-
         
         /* justify-content: center;
         align-items: center; */
@@ -105,8 +95,6 @@
         background-color: var(--bg-color);
         border: 1px solid var(--border-color);
     }
-
-
 
     .modal-title {      
         display: flex;
@@ -142,7 +130,6 @@
         margin-bottom: 25px;
     }
 
-    
     .password-inputbox {
         background-color: var(--bg-color);
         border: 1px solid var(--border-color);
@@ -150,7 +137,6 @@
         height: 38px;
         width: 220px;
     }
-
 
     .make-button {
         width: 80px;
@@ -172,8 +158,5 @@
     .make-button.disable:hover {
         background-color: var(--bg-color);
     }
-
-    
-
 </style>
   

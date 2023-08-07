@@ -6,7 +6,12 @@ import {
 import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
-import { Profile, RoomDetail, RoomInfo, RoomListInfo } from 'src/types/interfaces';
+import {
+  Profile,
+  RoomDetail,
+  RoomInfo,
+  RoomListInfo,
+} from 'src/types/interfaces';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -22,9 +27,9 @@ export class ChatService {
     const publicRooms = await this.roomRepository.publicRooms();
     const userEnteredRooms = (
       await this.roomRepository.userEnteredRooms(userId)
-    ).filter((e) => {
-      e.roomtype === RoomType.PRIVATE;
-    });
+    ).filter((e) => e.roomtype === RoomType.PRIVATE);
+    console.log(`public room ${publicRooms}`);
+    console.log(`private room ${userEnteredRooms}`);
     const roomList = Array<RoomListInfo>();
     [...publicRooms, ...userEnteredRooms].forEach((e) => {
       roomList.push({

@@ -5,32 +5,15 @@
     import type { Room, RoomEnterDTO } from '../../../interfaces';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
-    import { goto } from '$app/navigation';    
+    import { goto } from '$app/navigation'; 
+	
+	let selectedRoomId: string;
 
-    // let $roomlist: Map<number, Room> = new Map();
-    
-    let roomEnterInfo: RoomEnterDTO = {roomId:"", userId:"", password:""};
-    let thisRoom: Room;
-        /*
-            @TODO
-            룸 리스트 요청 api 해야함.
-        */    
-    
-    let publicRoomlist: Map<number, Room> = new Map();
-	
-	
     onMount(() => {
-
         $modalStatesStore.isRoomCreateModal = false;
-        /*
-            @TODO
-        */
-        
-
         getRoomList();
+		console.log($myData);
 		
-		// publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
- 
     });
 
     const getRoomList = async () => {
@@ -43,8 +26,8 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log("getRoomList :", data.rooms);
-            
+			console.log("data", data);
+			
             for (let i = 0; i < data.rooms.length; i++) {
                 const element = data.rooms[i];
                 $roomList.set(Number(element.roomId), element);         
@@ -55,10 +38,10 @@
         .catch(error => console.error('Error:', error));
     }
 
-	const postRoomEnter = () => {
+	const postRoomEnter = (roomId: string, password: string) => {
 		const data = {
-			roomId: "",
-			password: "",
+			roomId,
+			password,
 		}
 		const response = fetch(`http://localhost:3000/api/room/enter`, {
             method: "POST",
@@ -80,22 +63,13 @@
     }    
 
     const roomEnter = (room: Room) => {
-        // if ($myData.rooms.some(item => item === room.id)) {
-        //     goto(`/chat/room?id=${room.id}`);
-        //     return ;
-        // }
-        // const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
-        roomEnterInfo.roomId = room.roomId;
-        roomEnterInfo.userId = $myData.id;
         if (room.roomtype === RoomType.LOCK) {            
+			selectedRoomId = room.roomId;
             passwordInputModalButton();
         } else {
-            //     방들어가기 API 요청
-            //     roomEnterAPI(roomEnterIno)
-            const result: boolean = true;
+			postRoomEnter(room.roomId, "");
             goto(`/chat/room?id=${room.roomId}`);
         }
-
     }
 
     const myRoomEnter = (roomNum: number) => {
@@ -104,14 +78,9 @@
             return ;
         }
     }
-
-    function filterRoomsNotInNumbers($roomlist: Map<number, Room>, numbers: number[]): Map<number, Room> {
-        return new Map([...$roomlist].filter(([roomNumber, room]) => !numbers.includes(roomNumber)));
-    }
 </script>
 
-
-<ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
+<ChatRoomEnterPasswordModal {postRoomEnter} {selectedRoomId}/>
 
 {#if $modalStatesStore.isRoomCreateModal}
     <ChatRoomCreateModal />
