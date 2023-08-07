@@ -16,18 +16,22 @@
             룸 리스트 요청 api 해야함.
         */    
     
-    const publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
+    let publicRoomlist: Map<number, Room> = new Map();
+	
+	
     onMount(() => {
 
         $modalStatesStore.isRoomCreateModal = false;
         console.log("$myData.rooms", $myData.rooms);
-        console.log("publicRoomList", publicRoomlist);
         /*
             @TODO
         */
         
 
         getRoomList();
+		publicRoomlist = $roomList;
+		// publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
+		console.log("publicRoomlist: ", publicRoomlist);	
         console.log("roomList", $roomList);
  
     });
