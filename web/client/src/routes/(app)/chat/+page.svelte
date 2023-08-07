@@ -39,10 +39,12 @@
 
 	const postRoomEnter = (roomId: string, password: string) => {
 		const data = {
-			roomId,
-			password,
+			data: {
+				roomId,
+				password,
+			}
 		}
-		const response = fetch(`http://localhost:3000/api/room/enter`, {
+		const response = fetch(`http://localhost:3000/api/chat/room/enter`, {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -50,7 +52,23 @@
             },
 			body: JSON.stringify(data),
         })
-        .catch(error => console.error('Error:', error));
+		.then((response) => {
+			if (response.status === 403) {
+
+				/**
+				 * @TODO
+				 * password 틀린 경우 처리
+				*/
+				console.log("403!!!!!!!!!!");
+				
+			} else if (response.status === 201) {
+				$modalStatesStore.isPasswordInputModal = false;
+            	goto(`/chat/room?id=${selectedRoomId}`);
+			}
+		})
+        .catch((error) => {
+			console.log("Error: ", error);
+		});
 	}
 
     const roomCreateModalButton = () => {
@@ -62,12 +80,11 @@
     }    
 
     const roomEnter = (room: Room) => {
-        if (room.roomtype === RoomType.LOCK) {            
+        if (room.roomtype === RoomType.LOCK) {
 			selectedRoomId = room.roomId;
             passwordInputModalButton();
         } else {
 			postRoomEnter(room.roomId, "");
-            goto(`/chat/room?id=${room.roomId}`);
         }
     }
 
