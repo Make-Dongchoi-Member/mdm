@@ -86,6 +86,7 @@
         margin-left: -200px;
         width: 400px;
         height: 150px;
+        z-index: 2;
         
         /* justify-content: center;
         align-items: center; */
