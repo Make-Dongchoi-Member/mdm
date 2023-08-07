@@ -42,13 +42,15 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data.rooms);
+            console.log("getRoomList :", data.rooms);
             
             for (let i = 0; i < data.rooms.length; i++) {
                 const element = data.rooms[i];
-                $roomList.set(element.id, element);                
+                $roomList.set(Number(element.roomId), element);         
+				console.log("element : ", element);
             }
             $roomList = $roomList;
+			console.log("getRoomList Map :", $roomList);
         })
         .catch(error => console.error('Error:', error));
     }
@@ -115,7 +117,7 @@
 			<button on:click={()=>(myRoomEnter(roomNum))}>
 
 				<div>
-					{$roomList.get(roomNum)?.name}
+					{$roomList.get(roomNum)?.roomname}
 				</div>
 				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
 					<div>&#x1F512</div>

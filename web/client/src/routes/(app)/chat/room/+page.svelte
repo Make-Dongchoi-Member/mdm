@@ -21,7 +21,7 @@
        
         getRoomData();
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-       
+		console.log("mydata.rooms : ", $myData.rooms);
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
         $socketStore.on("chat/join", (data: any) => {
@@ -57,8 +57,9 @@
 			},
 		})
 		.then(response => response.json())
-		.then(data => {
-			data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+		.then(data => {			
+			console.log("data : ", data);
+			data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));			
 			$openedRoom = data.openedRoom;
 			$myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
 		})
