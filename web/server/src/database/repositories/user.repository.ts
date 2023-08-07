@@ -4,6 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
 import { PendingUser } from 'src/login/objects/pending-user.object';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { Relation } from 'src/types/enums';
 
 @CustomRepository(Users)
 export class UserRepository extends Repository<Users> {
@@ -50,5 +51,16 @@ export class UserRepository extends Repository<Users> {
 
   async removeRoom(userId: number, roomId: number) {
     this.update(userId, { rooms: () => `array_remove("rooms", ${roomId})` });
+  }
+
+  async getRelation(userId: number, otherId: number) {
+    const user = await this.getUserById(userId);
+    if (user.friends.includes(otherId)) {
+      return Relation.FRIEND;
+    } else if (user.blocks.includes(otherId)) {
+      return Relation.BLOCK;
+    } else {
+      return Relation.NONE;
+    }
   }
 }

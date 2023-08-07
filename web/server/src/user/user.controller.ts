@@ -5,7 +5,6 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserId } from 'src/decorators/user-id.decorator';
@@ -13,7 +12,7 @@ import { SetNicknameDto } from './dto/SetNicknameDto';
 import { SetStatusDto } from './dto/SetStatusDto';
 import { SetAvatarDto } from './dto/SetAvatarDto';
 import { SetSkinDto } from './dto/SetSkinDto';
-import { MyData, UserData } from 'src/types/interfaces';
+import { MyData, OtherUserData, UserData } from 'src/types/interfaces';
 import { InfoValidPipe } from './pipes/info.valid.pipe';
 import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
 
@@ -40,9 +39,10 @@ export class UserController {
    */
   @Get('info')
   async info(
+    @UserId(ParseIntPipe) userId: number,
     @Query('nickname', InfoValidPipe) nickname: string,
-  ): Promise<UserData> {
-    return await this.userService.getUserData(nickname);
+  ): Promise<OtherUserData> {
+    return await this.userService.getUserData(userId, nickname);
   }
 
   /**
@@ -99,5 +99,17 @@ export class UserController {
     @Body('data') data: SetSkinDto,
   ) {
     await this.userService.setSkin(userId, data.skin);
+  }
+
+  /**
+   * 친구신청 TEST
+   * 사용금지
+   */
+  @Post('friend/request')
+  async friendRequest(
+    @UserId(ParseIntPipe) userId: number,
+    @Query('nickname', InfoValidPipe) nickname: string,
+  ) {
+    await this.userService.friendRequest(userId, nickname);
   }
 }

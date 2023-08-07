@@ -1,4 +1,4 @@
-import { Level, RoomType } from './enums';
+import { Level, Relation, RoomType } from './enums';
 
 export interface UserData {
   id: number;
@@ -8,6 +8,11 @@ export interface UserData {
 
 export interface MyData extends UserData {
   rooms: number[];
+  friends: FriendData[];
+}
+
+export interface OtherUserData extends UserData {
+  relation: Relation;
 }
 
 export interface Profile {
@@ -39,4 +44,9 @@ export interface RoomInfo {
   roomname: string;
   password: string;
   roomtype: RoomType;
+}
+
+export interface FriendData {
+  nickname: string;
+  avatar: string;
 }
