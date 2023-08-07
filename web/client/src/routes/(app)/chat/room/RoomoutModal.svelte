@@ -17,7 +17,7 @@
 
 	function deleteRoomId(deleteID: string) {
 		console.log("$myData.rooms", $myData.rooms);
-		$myData.rooms = ($myData.rooms).filter((room) => room.id !== deleteID);
+		$myData.rooms = ($myData.rooms).filter((room) => String(room) !== deleteID);
 		console.log("$myData.rooms", $myData.rooms);
 	}
 </script>
