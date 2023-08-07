@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { modalStatesStore, myData } from "../../../store";
     import { clickOutside, escapeKey } from "../../../actions";
-    import { goto } from "$app/navigation";
 
 	let isInvalidNickname: boolean = false;
 	let block: boolean = false;
 	let nickname: string = "";
-	let changing: boolean = false;
+	let onChanging: boolean = false;
 
 	const focusEvent = () => {
 		isInvalidNickname = false;
@@ -15,7 +14,7 @@
 	const nicknameClickEvent = () => {
 		console.log(nickname);
 		block = true;
-		changing = true;
+		onChanging = true;
 		nicknameSetAPI({data : {nickname}})
 		.then((res) => {
 			setTimeout(() => {
@@ -30,7 +29,7 @@
 						block = false;
 					}
 				}
-				changing = false;
+				onChanging = false;
 			}, 1000)
 		});
 	};
@@ -52,7 +51,7 @@
 	}
 
 	const modalCloseEvent = () => {
-		if (!changing) {
+		if (!onChanging) {
 			$modalStatesStore.isNicknameModal = false
 			nickname = "";
 			block = false;
