@@ -12,11 +12,11 @@ import {
 import { LoginService } from './login.service';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { Public } from './guards/login.jwt.public.decorator';
+import { JwtPublic } from './guards/login.jwt.public.decorator';
 import { APP_URL, DEV_URL } from 'src/configs/constants';
 
 @Controller('api/login')
-@Public()
+@JwtPublic()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
 
@@ -33,7 +33,6 @@ export class LoginController {
     if (!token) {
       // oauth42로 redirect
       url = await this.loginService.oAuth42AccessUrl();
-      console.log(url);
     } else {
       // 로그인 url
       // url = 로그인 url
@@ -64,8 +63,7 @@ export class LoginController {
   @Get('oauth42')
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
-    // const url = new ConfigService().get('APP_URL') + '/mailauth';
-    let url;
+    let url: string;
     if (new ConfigService().get('NODE_ENV') === 'prod') {
       url = new ConfigService().get(APP_URL) + '/verify';
     } else {
@@ -78,8 +76,6 @@ export class LoginController {
       // email 인증 url로 redirect
       const user = await this.loginService.generatePendingUser(code);
       res.cookie('user_id', user.id);
-      // res.header('user_id', `${user.id}`);
-      // res.header('user_email', user.email);
     }
     return { url };
   }
@@ -92,15 +88,12 @@ export class LoginController {
    */
   @Post('mailauth')
   async mailAuth(
-    // @Query('user_id') userId: string,
     @Body('emailCode') code: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
     const userId = req.cookies['user_id'];
-    if (!userId) {
-      throw new BadRequestException();
-    }
+    if (!userId) throw new BadRequestException();
     const accessToken = await this.loginService.verifyEmailCode(+userId, code);
     res.cookie('access_token', accessToken);
 
