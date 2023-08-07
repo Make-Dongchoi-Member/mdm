@@ -113,10 +113,7 @@
 
 <ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
 
-{#if $modalStatesStore.isRoomCreateModal}
-    <ChatRoomCreateModal />
-{/if}
-
+<ChatRoomCreateModal />
 
 <div class="chatroom-box">
 	<div class="chat-title">
