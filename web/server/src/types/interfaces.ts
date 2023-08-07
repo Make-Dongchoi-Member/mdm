@@ -40,3 +40,11 @@ export interface RoomInfo {
   password: string;
   roomtype: RoomType;
 }
+
+export interface RoomListInfo {
+  roomId: string;
+  hostId: string;
+  roomname: string;
+  memberCount: number;
+  roomtype: RoomType;
+}
