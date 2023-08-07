@@ -25,19 +25,23 @@
 		{sender: 'jaewchoi', body: 'GO TO MATCH'},
 		{sender: 'sooyokim', body: 'GO TO MATCH'},
 	]
+
+	const modalCloseEvent = () => {
+		$modalStatesStore.isNotiModal = false
+	}
 </script>
 
 <div class="modal-container"
 	style="{$modalStatesStore.isNotiModal ? 'display: flex;' : 'display: none;'}"
-	use:clickOutside on:outclick={() => {$modalStatesStore.isNotiModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isNotiModal = false}}>
+	use:clickOutside on:outclick={modalCloseEvent}
+	use:escapeKey on:esckey={modalCloseEvent}>
 	<div class="modal-box">
 		<div class="modal-title">
 			<div>
 				NOTIFICATION
 			</div>
 			<div class="alarm">
-				<button on:click={() => { $modalStatesStore.isNotiModal = false; }}>
+				<button on:click={modalCloseEvent}>
 					&#x1F4E2;
 				</button>
 			</div>
@@ -90,7 +94,7 @@
 		top: 8px;
 		margin-left: 400px;
 	}
-	
+
 	.modal-title {
 		color: var(--point-color);
 		display:flex;

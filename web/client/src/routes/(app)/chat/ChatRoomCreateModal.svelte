@@ -5,6 +5,7 @@
 	import { page } from "$app/stores";
 	import type { PostCreateDTO, RoomInfoDTO } from '../../../interfaces';
 	import { RoomType } from '../../../enums';
+	import { clickOutside, escapeKey } from '../../../actions';
 
 	let isPrivate: boolean = false;
 	let isPassword: boolean = false;
@@ -115,7 +116,10 @@
 	}
 </script>
 
-<div class="modal-container {$modalStatesStore.isRoomCreateModal ? '' : 'hidden'}">
+<div class="modal-container"
+	style="{$modalStatesStore.isRoomCreateModal ? 'display: flex;' : 'display: none;'}"
+	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomCreateModal = false}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomCreateModal = false}}>
 	<div class="modal-title">
 		<div>
 			NEW CHAT ROOM
@@ -178,7 +182,6 @@
 </div>
 
 <style>
-	
 	.modal-container {
 		position: absolute;
 		top: 100px;
@@ -197,10 +200,6 @@
 		background-color: var(--dark-color);
 		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
-	}
-	
-	.hidden {
-		display: none;
 	}
 
 	.modal-title {

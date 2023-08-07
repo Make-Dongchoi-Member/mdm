@@ -6,8 +6,7 @@
 	let isInvalidNickname: boolean = false;
 	let block: boolean = false;
 	let nickname: string = "";
-
-	//모달 창 닫기 이벤트 함수 정의해서, nickname 문자열 비워주는 등의 처리 할 것.
+	let changing: boolean = false;
 
 	const focusEvent = () => {
 		isInvalidNickname = false;
@@ -16,6 +15,7 @@
 	const nicknameClickEvent = () => {
 		console.log(nickname);
 		block = true;
+		changing = true;
 		nicknameSetAPI({data : {nickname}})
 		.then((res) => {
 			setTimeout(() => {
@@ -30,6 +30,7 @@
 						block = false;
 					}
 				}
+				changing = false;
 			}, 1000)
 		});
 	};
@@ -49,13 +50,22 @@
 			console.error("실패:", error);
 		}
 	}
+
+	const modalCloseEvent = () => {
+		if (!changing) {
+			$modalStatesStore.isNicknameModal = false
+			nickname = "";
+			block = false;
+			isInvalidNickname = false;
+		}
+	}
 </script>
 
 <div class="modal-container"
 	style="{$modalStatesStore.isNicknameModal ? 'display: flex;' : 'display: none;'}"
-	use:clickOutside on:outclick={() => {$modalStatesStore.isNicknameModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isNicknameModal = false}}>
-	<button class="close-button" on:click={() => {$modalStatesStore.isNicknameModal = false}}>&#215;</button>
+	use:clickOutside on:outclick={modalCloseEvent}
+	use:escapeKey on:esckey={modalCloseEvent}>
+	<button class="close-button" on:click={modalCloseEvent}>&#215;</button>
 	<div class="modal-title">
 		NEW NICKNAME
 	</div>
