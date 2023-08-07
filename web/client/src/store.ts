@@ -40,11 +40,11 @@ const openedRoom: Writable<RoomDetail> = writable({
 	roomtype: RoomType.NORMAL,
 	memberCount: 0,
 	members: new Map([
-		["jaewchoi", { user: {id: "jaewchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.MEMBER, isMuted: false }],
-		["hhwang", { user: {id: "hhwang", avatarSrc: "/asset/hhwang.png"}, level: Level.MEMBER, isMuted: false }],
-		["sooyokim", { user: {id: "sooyokim", avatarSrc: "/asset/default_profile.png"}, level: Level.ADMIN, isMuted: true }],
-		["seonhoki", { user: {id: "seonhoki", avatarSrc: "/asset/hhwang.png"}, level: Level.HOST, isMuted: false }],
-		["dongchoi", { user: {id: "dongchoi", avatarSrc: "/asset/default_profile.png"}, level: Level.ADMIN, isMuted: false }],
+		["jaewchoi", { user: {id: "jaewchoi", avatar: "/asset/default_profile.png", nickname: "jaewchoi"}, level: Level.MEMBER, isMuted: false }],
+		["hhwang", { user: {id: "hhwang", avatar: "/asset/hhwang.png", nickname: "hhwang"}, level: Level.MEMBER, isMuted: false }],
+		["sooyokim", { user: {id: "sooyokim", avatar: "/asset/default_profile.png", nickname: "sooyokim"}, level: Level.ADMIN, isMuted: true }],
+		["seonhoki", { user: {id: "seonhoki", avatar: "/asset/hhwang.png", nickname: "seonhoki"}, level: Level.HOST, isMuted: false }],
+		["dongchoi", { user: {id: "dongchoi", avatar: "/asset/default_profile.png", nickname: "dongchoi"}, level: Level.ADMIN, isMuted: false }],
 	]),
 	history: [],
 });
