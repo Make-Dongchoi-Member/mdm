@@ -9,11 +9,11 @@
     let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK;  
     let isPasswordChanged: boolean = false;
     let isMakeButtonActivation: boolean = false;
-    let roomNameInputValue: string = $openedRoom.name;
+    let roomNameInputValue: string = $openedRoom.roomname;
     const initialRoomInfo: RoomInfoDTO = { 
-        roomId: $openedRoom.id,
+        roomId: $openedRoom.roomId,
         hostId: $myData.id,
-        roomname: $openedRoom.name,
+        roomname: $openedRoom.roomname,
         password:"initialpw",
         roomtype: $openedRoom.roomtype,
     };    

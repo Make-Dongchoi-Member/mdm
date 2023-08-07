@@ -11,7 +11,7 @@
     import type { Profile, SetRequestDTO, Room } from '../../../../interfaces';
     import { goto } from '$app/navigation';
 
-    const roomName: string = $openedRoom.name;
+    const roomName: string = $openedRoom.roomname;
     onMount(() => {
         /*
             @TODO

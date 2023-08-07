@@ -22,17 +22,14 @@
     onMount(() => {
 
         $modalStatesStore.isRoomCreateModal = false;
-        console.log("$myData.rooms", $myData.rooms);
         /*
             @TODO
         */
         
 
         getRoomList();
-		publicRoomlist = $roomList;
+		
 		// publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
-		console.log("publicRoomlist: ", publicRoomlist);	
-        console.log("roomList", $roomList);
  
     });
 
@@ -51,7 +48,6 @@
             for (let i = 0; i < data.rooms.length; i++) {
                 const element = data.rooms[i];
                 $roomList.set(Number(element.roomId), element);         
-				console.log("element : ", element);
             }
             $roomList = $roomList;
 			console.log("getRoomList Map :", $roomList);
@@ -67,13 +63,13 @@
         $modalStatesStore.isPasswordInputModal = true;
     }    
 
-    const roomEnter = (room: any) => {
+    const roomEnter = (room: Room) => {
         // if ($myData.rooms.some(item => item === room.id)) {
         //     goto(`/chat/room?id=${room.id}`);
         //     return ;
         // }
         // const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
-        roomEnterInfo.roomId = room.id;
+        roomEnterInfo.roomId = room.roomId;
         roomEnterInfo.userId = $myData.id;
         if (room.roomtype === RoomType.LOCK) {            
             passwordInputModalButton();
@@ -81,7 +77,7 @@
             //     방들어가기 API 요청
             //     roomEnterAPI(roomEnterIno)
             const result: boolean = true;
-            goto(`/chat/room?id=${room.id}`);
+            goto(`/chat/room?id=${room.roomId}`);
         }
 
     }
@@ -138,21 +134,22 @@
 				
 			</div>
 		{/if}
-		{#each Array.from(publicRoomlist) as [roomId, room]}
-				<button on:click={()=>(roomEnter(room))}>
-
+		{#each $roomList as room}
+			{#if !$myData.rooms.includes(Number(room[1].roomId))}
+				<button on:click={()=>(roomEnter(room[1]))}>
 					<div>
-						{room.name}
+						{room[1].roomname}
 					</div>
-					{#if room.roomtype === RoomType.LOCK}
+					{#if room[1].roomtype === RoomType.LOCK}
 						<div>&#x1F512</div>
 					{:else}
 						<div></div>
 					{/if}
 					<div>
-						{room.memberCount}
+						{room[1].memberCount}
 					</div>
 				</button>
+			{/if}
 		{/each}
 	</div>
 </div>

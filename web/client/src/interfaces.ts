@@ -30,10 +30,11 @@ export interface Profile {
 }
 
 export interface Room {
-	id: string;
-	name: string;
-	roomtype: RoomType;
+	roomId: string;
+	hostId: string;
+	roomname: string;
 	memberCount: number;
+	roomtype: RoomType;
 }
 
 export type RoomList = Map<number, Room>;
