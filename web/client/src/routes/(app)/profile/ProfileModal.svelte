@@ -60,23 +60,6 @@
 </div>
 
 <style>
-	.close-button {
-		position: absolute;
-		width: 0;
-		top: 0px;
-		right: 3px;
-		border: none;
-		border-radius: 70%;
-		font-size: 25px;
-		font-weight: 300;
-		background-color: var(--dark-color);
-		outline: none;
-	}
-
-	.close-button:active {
-		padding-top: 0.2rem;
-	}
-
 	.modal-frame {
 		display: flex;
 		justify-content: center;
@@ -99,6 +82,23 @@
 	.modal-container {
 		width: 800px;
 		height: 650px;
+	}
+
+	.close-button {
+		position: absolute;
+		width: 0;
+		top: 0px;
+		right: 3px;
+		border: none;
+		border-radius: 70%;
+		font-size: 25px;
+		font-weight: 300;
+		background-color: var(--dark-color);
+		outline: none;
+	}
+
+	.close-button:active {
+		padding-top: 0.2rem;
 	}
 
 	.info_container {

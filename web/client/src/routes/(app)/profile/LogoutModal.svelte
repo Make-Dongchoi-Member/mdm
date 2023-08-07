@@ -3,7 +3,7 @@
 	import { modalStatesStore, myData } from "../../../store";
     import { clickOutside, escapeKey } from "../../../actions";
 
-	const outButtonEvent = () => {
+	const logoutEvent = () => {
 		/*
 			@TODO
 			LOGOUT 했다는 API 요청
@@ -11,23 +11,28 @@
 		
 		deleteToken('access_token');
 		goto("/signin");
-		$modalStatesStore.isLogoutModal = false;
+		modalCloseEvent();
 	}
 
 	const deleteToken = (name: string) => {
 		document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
 	}
+
+	const modalCloseEvent = () => {
+		$modalStatesStore.isLogoutModal = false
+	}
 </script>
 
-<div class="modal-container {$modalStatesStore.isLogoutModal ? '' : 'hidden-container'}"
-	use:clickOutside on:outclick={() => {$modalStatesStore.isLogoutModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isLogoutModal = false}}>
+<div class="modal-container"
+	style="{$modalStatesStore.isLogoutModal ? 'display: flex;' : 'display: none;'}"
+	use:clickOutside on:outclick={modalCloseEvent}
+	use:escapeKey on:esckey={modalCloseEvent}>
 	<div class="modal-title">
 		ARE YOU SURE?
 	</div>
 	<div class="modal-content">
-		<button on:click={outButtonEvent} class="yes-button">YES</button>
-		<button on:click={() => { $modalStatesStore.isLogoutModal = false; }} class="no-button">NO</button>
+		<button on:click={logoutEvent} class="yes-button">YES</button>
+		<button on:click={modalCloseEvent} class="no-button">NO</button>
 	</div>
 </div>
 
@@ -46,12 +51,9 @@
 		border-radius: 0.5rem;
 		
 		position: absolute;
-		top: 26%;
-		left: 25%;
-	}
 
-	.hidden-container {
-		display: none;
+		margin-top: 220px;
+		margin-left: 55px;
 	}
 
 	.modal-content {
