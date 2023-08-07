@@ -55,6 +55,22 @@
         .catch(error => console.error('Error:', error));
     }
 
+	const postRoomEnter = () => {
+		const data = {
+			roomId: "",
+			password: "",
+		}
+		const response = fetch(`http://localhost:3000/api/room/enter`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+			body: JSON.stringify(data),
+        })
+        .catch(error => console.error('Error:', error));
+	}
+
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
     }
