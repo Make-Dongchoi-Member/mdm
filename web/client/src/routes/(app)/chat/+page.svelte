@@ -129,7 +129,7 @@
 				</div>
 			</button>
 		{/each}
-		{#if $myData.rooms.length > 0 && publicRoomlist.size > 0}
+		{#if $myData.rooms.length > 0}
 			<div class="divider">
 				
 			</div>

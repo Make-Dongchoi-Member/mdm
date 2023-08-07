@@ -2,16 +2,14 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom, roomList, myLevel } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
-    import type { Profile, SetRequestDTO, Room } from '../../../../interfaces';
     import { goto } from '$app/navigation';
 
-    const roomName: string = $openedRoom.roomname;
     onMount(() => {
         /*
             @TODO
@@ -58,10 +56,15 @@
 		})
 		.then(response => response.json())
 		.then(data => {			
-			console.log("data : ", data);
-			data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));			
-			$openedRoom = data.openedRoom;
-			$myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
+			$openedRoom.hostId = data.openedRoom.hostId;
+			$openedRoom.roomId = data.openedRoom.roomId;
+			$openedRoom.roomname = data.openedRoom.roomname;
+			$openedRoom.roomtype = data.openedRoom.roomtype;
+			$openedRoom.history = data.openedRoom.history;
+			$openedRoom.memberCount = data.openedRoom.memberCount;
+			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+			$openedRoom = $openedRoom;
+			// $myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
 		})
 		.catch(error => console.error('Error:', error));
 	}
