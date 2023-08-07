@@ -11,6 +11,7 @@
     let isMakeButtonActivation: boolean = false;
     let roomNameInputValue: string = $openedRoom.name;
     const initialRoomInfo: RoomInfoDTO = { 
+        roomId: $openedRoom.id,
         hostId: $myData.id,
         roomname: $openedRoom.name,
         password:"initialpw",
