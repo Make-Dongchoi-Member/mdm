@@ -185,6 +185,7 @@
 		margin-left: -380px;
 		width: 775px;
 		height: 150px;
+		z-index: 2;
 
 		display: flex;
 
