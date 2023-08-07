@@ -10,6 +10,10 @@ import { MyData, UserData } from 'src/types/interfaces';
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
+  /**
+   * @TODO
+   * 친구목록, 게임횟수, 승리횟수, 히스토리[상대, 승리여부, 시간]
+   */
   async getMyData(id: number) {
     const user = await this.userRepository.getUserById(id);
     if (!user) throw new NotFoundException(`user_id ${id} Not Found`);
@@ -21,7 +25,10 @@ export class UserService {
     };
     return myData;
   }
-
+  /**
+   * @TODO
+   * 나와의 관계, 게임횟수, 승리횟수, 히스토리[상대, 승리여부, 시간]
+   */
   async getUserData(nickName: string) {
     const user = await this.userRepository.getUserByNickname(nickName);
     if (!user) throw new NotFoundException(`nickname ${nickName} Not Found`);

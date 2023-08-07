@@ -66,7 +66,6 @@ export class LoginService {
   }
 
   async verifyEmailCode(userId: number, emailCode: string) {
-    console.log(`verifyEmailCode start`);
     const user = this.pendingUsers.verify(userId, emailCode);
     const access_token = await this.generateJwtToken(user);
     await this.userRepository.saveNewUser(user);

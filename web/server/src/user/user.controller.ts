@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  ParseIntPipe,
+  Post,
+  Query,
+  UsePipes,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { SetNicknameDto } from './dto/SetNicknameDto';
@@ -6,6 +14,8 @@ import { SetStatusDto } from './dto/SetStatusDto';
 import { SetAvatarDto } from './dto/SetAvatarDto';
 import { SetSkinDto } from './dto/SetSkinDto';
 import { MyData, UserData } from 'src/types/interfaces';
+import { InfoValidPipe } from './pipes/info.valid.pipe';
+import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
 
 @Controller('api/user')
 export class UserController {
@@ -18,8 +28,8 @@ export class UserController {
    * << mydata: MyData
    */
   @Get('me')
-  async me(@UserId() userId: string): Promise<MyData> {
-    return await this.userService.getMyData(+userId);
+  async me(@UserId(ParseIntPipe) userId: number): Promise<MyData> {
+    return await this.userService.getMyData(userId);
   }
 
   /**
@@ -29,8 +39,9 @@ export class UserController {
    * << result: UserData
    */
   @Get('info')
-  async info(@Query('nickname') nickname: string): Promise<UserData> {
-    // pipe로 쿼리 유효성 체크 필요
+  async info(
+    @Query('nickname', InfoValidPipe) nickname: string,
+  ): Promise<UserData> {
     return await this.userService.getUserData(nickname);
   }
 
@@ -42,10 +53,10 @@ export class UserController {
    */
   @Post('set/nickname')
   async setNickname(
-    @UserId() userId: string,
-    @Body('data') data: SetNicknameDto,
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data', SetNicknameValidPipe) data: SetNicknameDto,
   ) {
-    await this.userService.setNickname(+userId, data.nickname);
+    await this.userService.setNickname(userId, data.nickname);
   }
 
   /**
@@ -55,8 +66,11 @@ export class UserController {
    * <<
    */
   @Post('set/status')
-  async setStatus(@UserId() userId: string, @Body('data') data: SetStatusDto) {
-    await this.userService.setStatus(+userId, data.status);
+  async setStatus(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: SetStatusDto,
+  ) {
+    await this.userService.setStatus(userId, data.status);
   }
 
   /**
@@ -66,8 +80,11 @@ export class UserController {
    * <<
    */
   @Post('set/avatar')
-  async setAvatar(@UserId() userId: string, @Body('data') data: SetAvatarDto) {
-    await this.userService.setAvatar(+userId, data.avatar);
+  async setAvatar(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: SetAvatarDto,
+  ) {
+    await this.userService.setAvatar(userId, data.avatar);
   }
 
   /**
@@ -77,7 +94,10 @@ export class UserController {
    * <<
    */
   @Post('set/skin')
-  async setSkin(@UserId() userId: string, @Body('data') data: SetSkinDto) {
-    await this.userService.setSkin(+userId, data.skin);
+  async setSkin(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: SetSkinDto,
+  ) {
+    await this.userService.setSkin(userId, data.skin);
   }
 }
