@@ -12,6 +12,7 @@ import { ChatModule } from './chat/chat.module';
 import { AppGateway } from './app.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './configs/typeorm.config';
+import { GameModule } from './game/game.module';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -32,6 +33,7 @@ if (process.env.NODE_ENV === 'prod') {
     LoginModule,
     UserModule,
     ChatModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

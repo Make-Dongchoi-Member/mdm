@@ -49,3 +49,20 @@ export interface RoomListInfo {
   memberCount: number;
   roomtype: RoomType;
 }
+
+export interface Rect {
+  w: number;
+  h: number;
+  x: number;
+  y: number;
+  color: string;
+}
+
+export interface Ball extends Rect {
+  speedX: number;
+  speedY: number;
+}
+
+export interface Bar extends Rect {
+  speed: number;
+}

@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { spaceKey } from '../../../actions';
-	import { gameSettingStore } from '../../../store';
+	import { gameSettingStore, socketStore } from '../../../store';
+	import type { GameData } from '../../../interfaces';
 
 	let scoreDiv: HTMLDivElement;
 	let canvas: HTMLCanvasElement;
@@ -52,7 +53,7 @@
 
 	let gameState:GameState = {
 		page: "wait",
-		pause: true,
+		pause: false,
 		controlWithMouse: false,
 		myScore: 5,
 		enemyScore: 5,
@@ -78,7 +79,7 @@
 		color: ballColorString,
 	}
 
-	const bar: Bar = {
+	let bar: Bar = {
 		w: 7,
 		h: gameState.basicModeBar,
 		x: 10,
@@ -106,6 +107,17 @@
 				gameState.controlWithMouse = true;
 				gameState.pause = false;
 				canvas.requestPointerLock();
+			}
+		});
+
+		$socketStore.on("game", (arg: GameData) => {
+			bar = {
+				w: 7,
+			h: gameState.basicModeBar,
+			x: 10,
+			y: arg.bar.y,
+			speed: 0,
+			color: gameState.barColor,
 			}
 		});
 	});
@@ -167,7 +179,7 @@
 
 		ball.x += ball.speedX;
 		ball.y += ball.speedY;
-
+		
 		if (ball.x > canvas.width - ball.w) {
 			ball.speedX = randomSpeed() * -1;
 			if (ball.speedY < 0) {
@@ -192,24 +204,25 @@
 				}
 			}
 		}
-
+		
 		if (ball.x < 0) {
 			gameState.enemyScore++;
 			gamePause();
-			setTimeout(gamePause, 2000);
+			// gamePause();
+			// setTimeout(gamePause, 2000);
 		}
 
 		for (const i in ballPos) {
 			ctx.fillStyle = `rgba(${gameState.ballColor.red}, \
-									${gameState.ballColor.green}, \
-									${gameState.ballColor.blue}, \
-									${0.02 * +i})`;
+			${gameState.ballColor.green}, \
+			${gameState.ballColor.blue}, \
+			${0.02 * +i})`;
 			ctx.fillRect(ballPos[i].x, ballPos[i].y, ball.w, ball.h);
 		}
 		ctx.fillStyle = ball.color;
 		ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
-
-
+		
+		
 		ctx.font = "bold 50px Arial, sans-serif";
 		ctx.textAlign = "center";
 		ctx.fillText(`${ gameState.myScore } : ${ gameState.enemyScore }`, canvas.width / 2, canvas.height / 2);
@@ -231,6 +244,14 @@
 		if (gameState.controlWithMouse) {
 			const pos = event.movementY;
 			bar.y += pos;
+
+			const gameData: GameData = {
+			ball: ball,
+			bar: bar,
+			}
+
+			$socketStore.emit("game", gameData);
+
 		}
 	}
 
