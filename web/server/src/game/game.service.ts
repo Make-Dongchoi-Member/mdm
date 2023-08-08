@@ -65,7 +65,7 @@ export class GameService {
     }
     if (
       ball.x < BAR_W &&
-      ball.x > BAR_W &&
+      ball.x > BAR_W && // 여기서부터 다시 고민해봅시다.
       ball.y < bar.y + bar.h &&
       ball.y > bar.y
     ) {
