@@ -5,31 +5,13 @@
     import type { Room, RoomEnterDTO } from '../../../interfaces';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
-    import { goto } from '$app/navigation';    
+    import { goto } from '$app/navigation'; 
+	
+	let selectedRoomId: string;
 
-    // let $roomlist: Map<number, Room> = new Map();
-    
-    let roomEnterInfo: RoomEnterDTO = {roomId:"", userId:"", password:""};
-    let thisRoom: Room;
-        /*
-            @TODO
-            룸 리스트 요청 api 해야함.
-        */    
-    
-    const publicRoomlist = filterRoomsNotInNumbers($roomList, $myData.rooms); 
     onMount(() => {
-
         $modalStatesStore.isRoomCreateModal = false;
-        console.log("$myData.rooms", $myData.rooms);
-        console.log("publicRoomList", publicRoomlist);
-        /*
-            @TODO
-        */
-        
-
         getRoomList();
-        console.log("roomList", $roomList);
- 
     });
 
     const getRoomList = async () => {
@@ -42,16 +24,50 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data.rooms);
-            
+			console.log("get room list", data);
+			$roomList.clear();
             for (let i = 0; i < data.rooms.length; i++) {
                 const element = data.rooms[i];
-                $roomList.set(element.id, element);                
+                $roomList.set(Number(element.roomId), element);
             }
             $roomList = $roomList;
+
         })
         .catch(error => console.error('Error:', error));
     }
+
+	const postRoomEnter = (roomId: string, password: string) => {
+		const data = {
+			data: {
+				roomId,
+				password,
+			}
+		}
+		const response = fetch(`http://localhost:3000/api/chat/room/enter`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+			body: JSON.stringify(data),
+        })
+		.then((response) => {
+			if (response.status === 403) {
+
+				/**
+				 * @TODO
+				 * password 틀린 경우 처리
+				*/
+				
+			} else if (response.status === 201) {
+				$modalStatesStore.isPasswordInputModal = false;
+            	goto(`/chat/room?id=${roomId}`);
+			}
+		})
+        .catch((error) => {
+			console.log("Error: ", error);
+		});
+	}
 
     const roomCreateModalButton = () => {
         $modalStatesStore.isRoomCreateModal = true;
@@ -61,23 +77,13 @@
         $modalStatesStore.isPasswordInputModal = true;
     }    
 
-    const roomEnter = (room: any) => {
-        // if ($myData.rooms.some(item => item === room.id)) {
-        //     goto(`/chat/room?id=${room.id}`);
-        //     return ;
-        // }
-        // const password: string = room.roomtype === RoomType.lock ? "password 모달에서 값 받기" : "";
-        roomEnterInfo.roomId = room.id;
-        roomEnterInfo.userId = $myData.id;
-        if (room.roomtype === RoomType.LOCK) {            
+    const roomEnter = (room: Room) => {
+        if (room.roomtype === RoomType.LOCK) {
+			selectedRoomId = room.roomId;
             passwordInputModalButton();
         } else {
-            //     방들어가기 API 요청
-            //     roomEnterAPI(roomEnterIno)
-            const result: boolean = true;
-            goto(`/chat/room?id=${room.id}`);
+			postRoomEnter(room.roomId, "");
         }
-
     }
 
     const myRoomEnter = (roomNum: number) => {
@@ -86,19 +92,11 @@
             return ;
         }
     }
-
-    function filterRoomsNotInNumbers($roomlist: Map<number, Room>, numbers: number[]): Map<number, Room> {
-        return new Map([...$roomlist].filter(([roomNumber, room]) => !numbers.includes(roomNumber)));
-    }
 </script>
 
+<ChatRoomEnterPasswordModal {postRoomEnter} {selectedRoomId}/>
 
-<ChatRoomEnterPasswordModal {roomEnterInfo} {thisRoom}/>
-
-{#if $modalStatesStore.isRoomCreateModal}
-    <ChatRoomCreateModal />
-{/if}
-
+<ChatRoomCreateModal />
 
 <div class="chatroom-box">
 	<div class="chat-title">
@@ -115,7 +113,7 @@
 			<button on:click={()=>(myRoomEnter(roomNum))}>
 
 				<div>
-					{$roomList.get(roomNum)?.name}
+					{$roomList.get(roomNum)?.roomname}
 				</div>
 				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
 					<div>&#x1F512</div>
@@ -127,26 +125,27 @@
 				</div>
 			</button>
 		{/each}
-		{#if $myData.rooms.length > 0 && publicRoomlist.size > 0}
+		{#if $myData.rooms.length > 0}
 			<div class="divider">
 				
 			</div>
 		{/if}
-		{#each Array.from(publicRoomlist) as [roomId, room]}
-				<button on:click={()=>(roomEnter(room))}>
-
+		{#each $roomList as room}
+			{#if !$myData.rooms.includes(Number(room[1].roomId))}
+				<button on:click={()=>(roomEnter(room[1]))}>
 					<div>
-						{room.name}
+						{room[1].roomname}
 					</div>
-					{#if room.roomtype === RoomType.LOCK}
+					{#if room[1].roomtype === RoomType.LOCK}
 						<div>&#x1F512</div>
 					{:else}
 						<div></div>
 					{/if}
 					<div>
-						{room.memberCount}
+						{room[1].memberCount}
 					</div>
 				</button>
+			{/if}
 		{/each}
 	</div>
 </div>

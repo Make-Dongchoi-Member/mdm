@@ -78,7 +78,7 @@
 			<img src="{value.user.avatar}" alt="프로필 이미지" class="profile-photo">
 		</div>
 		<div class="profile-id">
-			{key}
+			{value.user.nickname}
 		</div>
 		{#if value.isMuted}
 			<div>&#128263;</div>

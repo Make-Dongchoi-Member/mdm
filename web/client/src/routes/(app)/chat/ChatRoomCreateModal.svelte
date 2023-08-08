@@ -5,6 +5,7 @@
 	import { page } from "$app/stores";
 	import type { PostCreateDTO, RoomInfoDTO } from '../../../interfaces';
 	import { RoomType } from '../../../enums';
+	import { clickOutside, escapeKey } from '../../../actions';
 
 	let isPrivate: boolean = false;
 	let isPassword: boolean = false;
@@ -40,8 +41,6 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
-			
 			goto(`/chat/room?id=${data.roomId}`);
 			$modalStatesStore.isRoomCreateModal = false;
 		})
@@ -79,46 +78,48 @@
 
 	const passwordInputBoxEvent = (e: any) => {
 		e.target.value = e.target.value.replace(/\s/g, '');
+		passwordInput = e.target.value;		
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
 	const privateButtonToggle = () => {
-		const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
 		isPrivate = !isPrivate;
 		if (isPrivate) {
-			passwordInputBox.value = "";
+			passwordInput = "";
 		}
 		isPassword = false;
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
 	const passwordButtonToggle = () => {
-		const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
 		isPassword = !isPassword;
+		console.log("isPassword : ", isPassword);
 		if (!isPassword) {
-			passwordInputBox.value = "";
+			passwordInput = "";
 		}
 		isPrivate = false;
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
 	const makeButtonActivationEvent = () => {
-		const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();
-		const password: string = (document.querySelector(".password-inputbox") as HTMLInputElement).value;
+		const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();			
 		if (roomname === "") {
 			return false;
 		}
-		if (isPassword && password === "") {
+		if (isPassword && passwordInput === "") {
 			return false;
 		}
 		return true;
 	}
 </script>
-  
-<div class="modal-container" style="display: block;">
+
+<div class="modal-container"
+	style="{$modalStatesStore.isRoomCreateModal ? 'display: flex;' : 'display: none;'}"
+	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomCreateModal = false}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomCreateModal = false}}>
 	<div class="modal-title">
 		<div>
-		NEW CHAT ROOM
+			NEW CHAT ROOM
 		</div>
 		<div class="close-button">
 			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false;}}>&#215;</button>
@@ -130,14 +131,14 @@
 				<input 
 					on:input={roomnameInputBoxEvent}
 					bind:value={roomNameInputValue}
-					class="roomname-inputbox" 
+					class="roomname-inputbox"
 					type="text" 
-					placeholder="ROOM NAME" 
+					placeholder="ROOM NAME"
 					maxlength=20
 					>
 			</div>
 			<div>
-				<button 
+				<button
 					on:click={privateButtonToggle}
 					class={isPrivate ? "private-button able" : "private-button disable"}
 					>
@@ -152,7 +153,7 @@
 					class="password-inputbox"
 					on:input={passwordInputBoxEvent}
 					bind:value={passwordInput}
-					type="password" 
+					type="password"
 					placeholder="PASSWORD IF YOU NEED"
 					maxlength=10
 					>
@@ -166,13 +167,13 @@
 				</button>
 			</div>
 			<div>
-				<button 
+				<button
 					class={isMakeButtonActivation ? 'make-button able' : 'make-button disable'}
 					disabled={isMakeButtonActivation ? false : true}
 					on:click={makeButtonEvent} >
 					MAKE
-				</button>                
-			</div>                            
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -181,18 +182,20 @@
 	.modal-container {
 		position: absolute;
 		top: 100px;
-		left: 50%;
-		margin-left: -380px;
+		left: 23%;
+
 		width: 775px;
 		height: 150px;
 
+		z-index: 2;
+		
 		display: flex;
-
-		justify-content: center;
+		flex-direction: column;
+		
 		align-items: center;
-
-		background-color: var(--bg-color);
-		border: 1px solid var(--border-color);
+		
+		background-color: var(--dark-color);
+		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
 	}
 

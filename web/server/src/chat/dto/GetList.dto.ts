@@ -1,5 +1,5 @@
-import { RoomInfo } from 'src/types/interfaces';
+import { RoomListInfo } from 'src/types/interfaces';
 
 export class GetListDTO {
-  rooms: RoomInfo[];
+  rooms: RoomListInfo[];
 }

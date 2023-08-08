@@ -2,26 +2,17 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom, roomList, myLevel } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
-    import type { Profile, SetRequestDTO, Room } from '../../../../interfaces';
     import { goto } from '$app/navigation';
 
-    const roomName: string = $openedRoom.name;
     onMount(() => {
-        /*
-            @TODO
-            URI에서 id 추출해서 방 정보 API 요청하고
-            받은 데이터를 store에 있는 openedRoom에 저장
-        */
-       
         getRoomData();
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-       
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
         $socketStore.on("chat/join", (data: any) => {
@@ -58,9 +49,16 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			data.openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
-			$openedRoom = data.openedRoom;
-			$myLevel = data.openedRoom.members.get(`${$myData.id}`).level as Level;
+			console.log(data);
+			
+			$openedRoom.hostId = data.openedRoom.hostId;
+			$openedRoom.roomId = data.openedRoom.roomId;
+			$openedRoom.roomname = data.openedRoom.roomname;
+			$openedRoom.roomtype = data.openedRoom.roomtype;
+			$openedRoom.history = data.openedRoom.history;
+			$openedRoom.memberCount = data.openedRoom.memberCount;
+			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+			$openedRoom = $openedRoom;
 		})
 		.catch(error => console.error('Error:', error));
 	}
@@ -72,7 +70,6 @@
     const myDataUpdate = (roomId: number) => {
         if (($myData.rooms).includes(roomId)) return;
         $myData.rooms = [...$myData.rooms, roomId];
-        console.log("$myData.rooms", $myData.rooms);
     }
 
 </script>
@@ -88,7 +85,7 @@
                 <a href="/chat">&#11013;</a>
             </div>
             <div class="chat-room-name">
-                {roomName}
+                {$openedRoom.roomname}
             </div>
             {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
                 <div class="chat-setting-button">

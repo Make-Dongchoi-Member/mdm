@@ -5,20 +5,36 @@
     import { clickOutside, escapeKey } from "../../../../actions";
 
 	const outButtonEvent = () => {
-		/*
-			@TODO
-			방에서 나가는 API 요청
-		*/
-		
-		deleteRoomId($page.url.searchParams.get("id") as string);
-		goto("/chat");
-		$modalStatesStore.isRoomoutModal = false;
+		const data = {
+			data: {
+				roomId: $page.url.searchParams.get("id") as string,
+			}
+		}
+		const response = fetch(`http://localhost:3000/api/chat/room/out`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+			body: JSON.stringify(data),
+        })
+		.then((response) => {
+			if (response.status === 201) {
+				deleteRoomId($page.url.searchParams.get("id") as string);
+				goto("/chat");
+				$modalStatesStore.isRoomoutModal = false;
+			} else {
+				console.log(response.status);
+			}
+		})
+        .catch((error) => {
+			console.log("Error: ", error);
+		});
 	}
 
 	function deleteRoomId(deleteID: string) {
-		console.log("$myData.rooms", $myData.rooms);
-		$myData.rooms = ($myData.rooms).filter((room) => room.id !== deleteID);
-		console.log("$myData.rooms", $myData.rooms);
+		$myData.rooms = ($myData.rooms).filter((room) => String(room) !== deleteID);
+		$myData = $myData;
 	}
 </script>
 

@@ -42,7 +42,7 @@
 			<img src="{$myData.avatar}" alt="프로필 이미지" class="profile-photo">
 		</div>
 		<div class="profile-id">
-			{$myData.id}
+			{$myData.nickname}
 		</div>
 		{#if $myLevel === Level.HOST}
 			<div>&#128081;</div>

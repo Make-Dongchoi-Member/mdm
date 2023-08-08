@@ -6,7 +6,12 @@ import {
 import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
-import { Profile, RoomDetail, RoomInfo } from 'src/types/interfaces';
+import {
+  Profile,
+  RoomDetail,
+  RoomInfo,
+  RoomListInfo,
+} from 'src/types/interfaces';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -22,16 +27,14 @@ export class ChatService {
     const publicRooms = await this.roomRepository.publicRooms();
     const userEnteredRooms = (
       await this.roomRepository.userEnteredRooms(userId)
-    ).filter((e) => {
-      e.roomtype === RoomType.PRIVATE;
-    });
-    const roomList = Array<RoomInfo>();
+    ).filter((e) => e.roomtype === RoomType.PRIVATE);
+    const roomList = Array<RoomListInfo>();
     [...publicRooms, ...userEnteredRooms].forEach((e) => {
       roomList.push({
         roomId: e.id.toString(),
         hostId: e.host.toString(),
         roomname: e.name,
-        password: '',
+        memberCount: e.memberCount,
         roomtype: e.roomtype,
       });
     });
@@ -45,8 +48,9 @@ export class ChatService {
     const users = await this.userRepository.getUserList(ids);
     const members = this.roomMembers(room, users);
     const roomDetail: RoomDetail = {
-      id: room.id.toString(),
-      name: room.name,
+      roomId: room.id.toString(),
+      hostId: room.host.toString(),
+      roomname: room.name,
       roomtype: room.roomtype,
       memberCount: room.memberCount,
       members,
@@ -91,6 +95,7 @@ export class ChatService {
       await this.checkPassword(room, password);
     this.roomRepository.updateRoom(roomId, {
       members: () => `array_append("members", ${userId})`,
+      memberCount: room.memberCount + 1,
     });
     this.userRepository.updateUser(userId, {
       rooms: () => `array_append("rooms", ${roomId})`,
@@ -150,7 +155,7 @@ export class ChatService {
     if (room.admin.length !== 0) {
       result.host = room.admin[0];
       result.admin = () => `array_remove("admin", ${room.admin[0]})`;
-    } else {
+    } else if (room.members.length !== 0) {
       result.host = room.members[0];
       result.members = () => `array_remove("members", ${room.members[0]})`;
     }

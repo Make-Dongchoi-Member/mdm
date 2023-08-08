@@ -5,14 +5,15 @@
     import type { RoomInfoDTO } from '../../../../interfaces';
     
     
-    let isPrivate: boolean = $openedRoom.roomtype === RoomType.private;
-    let isPassword: boolean = $openedRoom.roomtype === RoomType.lock;  
+    let isPrivate: boolean = $openedRoom.roomtype === RoomType.PRIVATE;
+    let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK;  
     let isPasswordChanged: boolean = false;
     let isMakeButtonActivation: boolean = false;
-    let roomNameInputValue: string = $openedRoom.name;
+    let roomNameInputValue: string = $openedRoom.roomname;
     const initialRoomInfo: RoomInfoDTO = { 
+        roomId: $openedRoom.roomId,
         hostId: $myData.id,
-        roomname: $openedRoom.name,
+        roomname: $openedRoom.roomname,
         password:"initialpw",
         roomtype: $openedRoom.roomtype,
     };    
@@ -33,10 +34,10 @@
 
         $modalStatesStore.isSettingModal = false;
         roomnameInputBox.value = initialRoomInfo.roomname;
-        passwordInputBox.value = $openedRoom.roomtype === RoomType.lock ? initialRoomInfo.password : "";
+        passwordInputBox.value = $openedRoom.roomtype === RoomType.LOCK ? initialRoomInfo.password : "";
         isMakeButtonActivation = false;
-        isPrivate = $openedRoom.roomtype === RoomType.private ? true : false;
-        isPassword = $openedRoom.roomtype === RoomType.lock ? true : false;
+        isPrivate = $openedRoom.roomtype === RoomType.PRIVATE ? true : false;
+        isPassword = $openedRoom.roomtype === RoomType.LOCK ? true : false;
     }
 
     const changeButtonEvent = () => {
@@ -83,7 +84,7 @@
             passwordInputBox.value = "";
             isPasswordChanged = false;
         }
-        if (initialRoomInfo.roomtype === RoomType.lock && isPassword) {
+        if (initialRoomInfo.roomtype === RoomType.LOCK && isPassword) {
             passwordInputBox.value = initialRoomInfo.password;
         }
         isPrivate = false;         
@@ -93,12 +94,12 @@
     const makeButtonActivationEvent = () => {
         const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();
         const password: string = (document.querySelector(".password-inputbox") as HTMLInputElement).value;
-        if ((initialRoomInfo.roomtype === RoomType.private && !isPrivate)
-                || (initialRoomInfo.roomtype !== RoomType.private && isPrivate)) {
+        if ((initialRoomInfo.roomtype === RoomType.PRIVATE && !isPrivate)
+                || (initialRoomInfo.roomtype !== RoomType.PRIVATE && isPrivate)) {
             return true;
         }
-        if ((initialRoomInfo.roomtype === RoomType.lock && !isPassword)
-                || (initialRoomInfo.roomtype !== RoomType.lock && isPassword && password !== "")
+        if ((initialRoomInfo.roomtype === RoomType.LOCK && !isPassword)
+                || (initialRoomInfo.roomtype !== RoomType.LOCK && isPassword && password !== "")
                 || (password !== "" && isPasswordChanged)
                 ) {
             return true;
@@ -149,7 +150,7 @@
             <div class="password-option">
                 <input 
                     class="password-inputbox"
-                    value={$openedRoom.roomtype === RoomType.lock ? "initialpw" : "" }
+                    value={$openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" }
                     disabled={isPrivate || !isPassword ? true : false}
                     on:input={passwordInputBoxEvent}
                     on:click={passwordInitialEvent}                    
