@@ -9,3 +9,9 @@ export enum RoomType {
   LOCK = 'lock',
   PRIVATE = 'private',
 }
+
+export enum GameState {
+  READY,
+  GAMING,
+  END,
+}

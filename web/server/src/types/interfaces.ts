@@ -1,4 +1,4 @@
-import { Level, RoomType } from './enums';
+import { GameState, Level, RoomType } from './enums';
 
 export interface UserData {
   id: number;
@@ -50,19 +50,20 @@ export interface RoomListInfo {
   roomtype: RoomType;
 }
 
-export interface Rect {
-  w: number;
-  h: number;
+export interface Ball {
   x: number;
   y: number;
-  color: string;
+  speedX : number;
+  speedY : number;
 }
 
-export interface Ball extends Rect {
-  speedX: number;
-  speedY: number;
+export interface Bar {
+  y: number;
 }
 
-export interface Bar extends Rect {
-  speed: number;
+export interface GameStatus {
+  ball: Ball,
+  barA : Bar,
+  barB : Bar,
+  state : GameState,
 }

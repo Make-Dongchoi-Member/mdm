@@ -112,7 +112,7 @@
 
 		$socketStore.on("game", (arg: GameData) => {
 			bar = {
-				w: 7,
+			w: 7,
 			h: gameState.basicModeBar,
 			x: 10,
 			y: arg.bar.y,
