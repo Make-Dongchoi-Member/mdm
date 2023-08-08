@@ -12,7 +12,6 @@
     onMount(() => {
         $modalStatesStore.isRoomCreateModal = false;
         getRoomList();
-		
     });
 
     const getRoomList = async () => {
@@ -25,14 +24,14 @@
         })
         .then(response => response.json())
         .then(data => {
-			console.log("data", data);
-			
+			console.log("get room list", data);
+			$roomList.clear();
             for (let i = 0; i < data.rooms.length; i++) {
                 const element = data.rooms[i];
-                $roomList.set(Number(element.roomId), element);         
+                $roomList.set(Number(element.roomId), element);
             }
             $roomList = $roomList;
-			console.log("getRoomList Map :", $roomList);
+
         })
         .catch(error => console.error('Error:', error));
     }
@@ -59,11 +58,10 @@
 				 * @TODO
 				 * password 틀린 경우 처리
 				*/
-				console.log("403!!!!!!!!!!");
 				
 			} else if (response.status === 201) {
 				$modalStatesStore.isPasswordInputModal = false;
-            	goto(`/chat/room?id=${selectedRoomId}`);
+            	goto(`/chat/room?id=${roomId}`);
 			}
 		})
         .catch((error) => {

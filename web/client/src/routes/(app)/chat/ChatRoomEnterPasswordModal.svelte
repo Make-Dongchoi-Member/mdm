@@ -1,9 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { modalStatesStore } from '../../../store';
-    import { goto } from '$app/navigation';
-    import { myData } from '../../../store';
-    import type { Room, RoomEnterDTO } from '../../../interfaces';
 
     let isMakeButtonActivation: boolean = false;
     let passwordValue: string = "";

@@ -95,6 +95,7 @@ export class ChatService {
       await this.checkPassword(room, password);
     this.roomRepository.updateRoom(roomId, {
       members: () => `array_append("members", ${userId})`,
+      memberCount: room.memberCount + 1,
     });
     this.userRepository.updateUser(userId, {
       rooms: () => `array_append("rooms", ${roomId})`,
@@ -155,7 +156,7 @@ export class ChatService {
     if (room.admin.length !== 0) {
       result.host = room.admin[0];
       result.admin = () => `array_remove("admin", ${room.admin[0]})`;
-    } else {
+    } else if (room.members.length !== 0) {
       result.host = room.members[0];
       result.members = () => `array_remove("members", ${room.members[0]})`;
     }

@@ -11,15 +11,8 @@
     import { goto } from '$app/navigation';
 
     onMount(() => {
-        /*
-            @TODO
-            URI에서 id 추출해서 방 정보 API 요청하고
-            받은 데이터를 store에 있는 openedRoom에 저장
-        */
-       
         getRoomData();
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-		console.log("mydata.rooms : ", $myData.rooms);
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
         $socketStore.on("chat/join", (data: any) => {
@@ -55,7 +48,9 @@
 			},
 		})
 		.then(response => response.json())
-		.then(data => {			
+		.then(data => {
+			console.log(data);
+			
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;
 			$openedRoom.roomname = data.openedRoom.roomname;
@@ -75,7 +70,6 @@
     const myDataUpdate = (roomId: number) => {
         if (($myData.rooms).includes(roomId)) return;
         $myData.rooms = [...$myData.rooms, roomId];
-        console.log("$myData.rooms", $myData.rooms);
     }
 
 </script>
