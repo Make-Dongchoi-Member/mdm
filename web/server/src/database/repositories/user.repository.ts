@@ -19,11 +19,11 @@ export class UserRepository extends Repository<Users> {
   }
 
   async getUserById(id: number) {
-    return this.findOneBy({ id });
+    return this.findOne({ where: { id }, relations: { record: true } });
   }
 
   async getUserByNickname(nickName: string) {
-    return this.findOneBy({ nickName });
+    return this.findOne({ where: { nickName }, relations: { record: true } });
   }
 
   async getUserList(ids: number[]) {

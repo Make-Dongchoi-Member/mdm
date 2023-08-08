@@ -8,13 +8,13 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserId } from 'src/decorators/user-id.decorator';
-import { SetNicknameDto } from './dto/SetNicknameDto';
 import { SetStatusDto } from './dto/SetStatusDto';
 import { SetAvatarDto } from './dto/SetAvatarDto';
 import { SetSkinDto } from './dto/SetSkinDto';
 import { MyData, OtherUserData, UserData } from 'src/types/interfaces';
 import { InfoValidPipe } from './pipes/info.valid.pipe';
 import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
+import { UserNicknameDto } from './dto/UserNickname.dto';
 
 @Controller('api/user')
 export class UserController {
@@ -54,7 +54,7 @@ export class UserController {
   @Post('set/nickname')
   async setNickname(
     @UserId(ParseIntPipe) userId: number,
-    @Body('data', SetNicknameValidPipe) data: SetNicknameDto,
+    @Body('data', SetNicknameValidPipe) data: UserNicknameDto,
   ) {
     await this.userService.setNickname(userId, data.nickname);
   }
@@ -102,6 +102,55 @@ export class UserController {
   }
 
   /**
+   * @TODO
+   * 친구 신청 API -> 알림
+   * 게임 신청 API -> 알림
+   * 로그아웃 요청 API
+   */
+
+  /**
+   * 친구 삭제 API 요청
+   * POST(/api/user/friend/delete)
+   * >> nickname: string
+   * <<
+   */
+  @Post('friend/delete')
+  async friendDelete(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: UserNicknameDto,
+  ) {
+    await this.userService.friendDelete(userId, data.nickname);
+  }
+
+  /**
+   * 차단 요청 API
+   * POST(/api/usr/block/request)
+   * >> nickname: string
+   * <<
+   */
+  @Post('block/request')
+  async blockRequest(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: UserNicknameDto,
+  ) {
+    await this.userService.blockRequest(userId, data.nickname);
+  }
+
+  /**
+   * 차단 취소 요청 API
+   * POST(/api/usr/block/cancel)
+   * >> nickname: string
+   * <<
+   */
+  @Post('block/cancel')
+  async blockCancel(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: UserNicknameDto,
+  ) {
+    await this.userService.blockCancel(userId, data.nickname);
+  }
+
+  /**
    * 친구신청 TEST
    * 사용금지
    */
@@ -111,5 +160,17 @@ export class UserController {
     @Query('nickname', InfoValidPipe) nickname: string,
   ) {
     await this.userService.friendRequest(userId, nickname);
+  }
+
+  /**
+   * 게임 추가 TEST
+   * 사용금지
+   */
+  @Post('game')
+  async addGame(
+    @UserId(ParseIntPipe) userId: number,
+    @Query('nickname', InfoValidPipe) nickname: string,
+  ) {
+    await this.userService.addGame(userId, nickname);
   }
 }

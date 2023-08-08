@@ -5,8 +5,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { LoginModule } from './login/login.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtGuard } from './login/guards/login.jwt.guard';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { AppGateway } from './app.gateway';

@@ -13,14 +13,17 @@ export class GameHistory extends BaseEntity {
   id: number;
 
   @Column()
-  enemy: number;
-
-  @Column()
   win: boolean;
 
   @Column()
   date: Date;
 
-  @ManyToOne(() => Users, (user) => user.histories)
+  @ManyToOne(() => Users, (user) => user.record, { cascade: true, eager: true })
   user: Users;
+
+  @ManyToOne(() => Users, (user) => user.recordForEnemy, {
+    cascade: true,
+    eager: true,
+  })
+  enemy: Users;
 }
