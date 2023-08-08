@@ -3,12 +3,11 @@
 	import type { MyData } from '../../interfaces';
 	import { goto } from '$app/navigation';
 	import GameSetting from './game/GameSetting.svelte';
+    import GameCanvas from './game/GameCanvas.svelte';
 </script>
 
 <div class="game-box">
-	<canvas>
-
-	</canvas>
+	<GameCanvas />
 	<GameSetting />
 </div>
 
@@ -19,12 +18,5 @@
 		justify-content: space-between;
 
 		height: 650px;
-	}
-
-	canvas {
-		border: 1px solid var(--border-color);
-		width: 800px;
-		height: 430px;
-		box-sizing: border-box;
 	}
 </style>

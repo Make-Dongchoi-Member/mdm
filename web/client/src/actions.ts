@@ -29,3 +29,19 @@ export function escapeKey(node: any) {
 		}
 	};
 }
+
+export function spaceKey(node: any) {
+	const spaceKeyDownEvent = (event: any) => {
+		if (event.key === ' ') {
+			node.dispatchEvent(new CustomEvent("spacekey"));
+		}
+	};
+
+	document.addEventListener("keydown", spaceKeyDownEvent, true);
+
+	return {
+		destroy() {
+			document.removeEventListener("keydown", spaceKeyDownEvent, true);
+		}
+	};
+}
