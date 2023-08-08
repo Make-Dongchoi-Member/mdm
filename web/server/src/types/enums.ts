@@ -9,3 +9,9 @@ export enum RoomType {
   LOCK = 'lock',
   PRIVATE = 'private',
 }
+
+export enum Relation {
+  FRIEND = 'friend',
+  BLOCK = 'block',
+  NONE = 'none',
+}

@@ -107,7 +107,6 @@ export class ChatService {
     for (const user of users) {
       const profile: Profile = {
         user: {
-          id: user.id,
           avatar: user.avatar,
           nickname: user.nickName,
         },

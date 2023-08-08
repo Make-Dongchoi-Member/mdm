@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { GameHistory } from './game-history.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -25,4 +26,16 @@ export class Users extends BaseEntity {
 
   @Column('int', { array: true, default: [] })
   rooms: number[];
+
+  @Column('int', { array: true, default: [] })
+  friends: number[];
+
+  @Column('int', { array: true, default: [] })
+  blocks: number[];
+
+  @OneToMany(() => GameHistory, (history) => history.user)
+  record: GameHistory[];
+
+  @OneToMany(() => GameHistory, (history) => history.enemy)
+  recordForEnemy: GameHistory[];
 }
