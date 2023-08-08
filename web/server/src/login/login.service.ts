@@ -49,8 +49,7 @@ export class LoginService {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.config.get(JWT_SECRET),
       });
-      if (this.userRepository.findOneBy({ id: +payload.sub }) === null)
-        throw new Error();
+      await this.userRepository.findOneByOrFail({ id: +payload.sub });
     } catch (e) {
       return false;
     }
