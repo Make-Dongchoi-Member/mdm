@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { modalStatesStore, myData, openedRoom } from "../../../../store";
+	import { modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
 	import { page } from '$app/stores';
     import { clickOutside, escapeKey } from "../../../../actions";
 
@@ -23,6 +23,7 @@
 				deleteRoomId($page.url.searchParams.get("id") as string);
 				goto("/chat");
 				$modalStatesStore.isRoomoutModal = false;
+				$socketStore.emit("chat/out", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 			} else {
 				console.log(response.status);
 			}

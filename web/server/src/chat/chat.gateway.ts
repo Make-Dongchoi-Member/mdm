@@ -7,6 +7,10 @@ import { Socket, Server } from 'socket.io';
 import { JoinChatRoomDTO } from './dto/JoinChatRoom.dto';
 import { SetRequestDTO } from './dto/SetRequest.dto';
 import { MessageDTO } from './dto/Message.dto';
+import { EnterChatRoomDTO } from './dto/EnterChatRoom.dto';
+import { ChatService } from './chat.service';
+import { OutChatRoomDTO } from './dto/OutChatRoom.dto';
+import { LeaveChatRoomDTO } from './dto/LeaveChatRoom.dto';
 
 @WebSocketGateway({
   cors: {
@@ -15,19 +19,29 @@ import { MessageDTO } from './dto/Message.dto';
   },
 })
 export class ChatGateway {
+  constructor(private readonly chatService: ChatService) {}
+
   @WebSocketServer() io: Server;
 
   @SubscribeMessage('chat/join')
   handleJoinRoom(client: Socket, data: JoinChatRoomDTO) {
-    console.log('chat/join', data);
+    client.join(data.roomId);
+  }
+
+  @SubscribeMessage('chat/enter')
+  async handleEnterRoom(client: Socket, data: EnterChatRoomDTO) {
+    console.log('chat/enter', data);
+
     /*
-            @TODO
-            유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
-            방 참가 권한 체크
-        */
+      @TODO
+      유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
+      방 참가 권한 체크
+    */
+
+    const enterUser = await this.chatService.getEnterUser(Number(data.userId));
 
     client.join(data.roomId);
-    client.broadcast.to(data.roomId).emit('chat/join', data);
+    client.broadcast.to(data.roomId).emit('chat/enter', enterUser);
   }
 
   @SubscribeMessage('chat/message')
@@ -35,11 +49,11 @@ export class ChatGateway {
     console.log('chat/message', data);
 
     /*
-            @TODO
-            유저의 소켓 아이디와 메시지 보낸 유저 아이디의 쌍이 맞는지 확인
-            룸 아이디가 맞는지 확인
-            방 참가 권한 체크
-        */
+        @TODO
+        유저의 소켓 아이디와 메시지 보낸 유저 아이디의 쌍이 맞는지 확인
+        룸 아이디가 맞는지 확인
+        방 참가 권한 체크
+    */
 
     client.broadcast.to(data.message.roomId).emit('chat/message', data);
   }
@@ -122,8 +136,20 @@ export class ChatGateway {
     client.to(data.roomId).emit('chat/set-kick', data);
   }
 
+  @SubscribeMessage('chat/out')
+  handleOutRoom(client: Socket, data: OutChatRoomDTO) {
+    console.log('chat/out', data);
+    /*
+            @TODO
+            유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
+            방에 있는 유저인지 체크
+        */
+
+    client.broadcast.to(data.roomId).emit('chat/out', data);
+  }
+
   @SubscribeMessage('chat/leave')
-  handleLeaveRoom(client: Socket, data: JoinChatRoomDTO) {
+  handleLeaveRoom(client: Socket, data: LeaveChatRoomDTO) {
     console.log('chat/leave', data);
     /*
             @TODO
@@ -132,6 +158,5 @@ export class ChatGateway {
         */
 
     client.leave(data.roomId);
-    client.broadcast.to(data.roomId).emit('chat/leave', data);
   }
 }

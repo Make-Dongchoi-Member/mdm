@@ -23,6 +23,20 @@ export class ChatService {
     private userRepository: UserRepository,
   ) {}
 
+  async getEnterUser(userId: number) {
+    const userdata = await this.userRepository.getUserById(userId);
+    const res = {
+      user: {
+        id: userdata.id,
+        avatar: userdata.avatar,
+        nickname: userdata.nickName,
+      },
+      level: Level.MEMBER,
+      isMuted: false,
+    };
+    return res;
+  }
+
   async getRoomListOfUser(userId: number) {
     const publicRooms = await this.roomRepository.publicRooms();
     const userEnteredRooms = (

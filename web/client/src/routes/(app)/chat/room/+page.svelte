@@ -15,16 +15,13 @@
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 
-        $socketStore.on("chat/join", (data: any) => {
-            /**
-             * @TODO
-             * 방에 참가한 사용자를 사용자 목록에 추가하기
-            */
-            console.log("join:", data);
+		$socketStore.on("chat/enter", (data: any) => {
+		    $openedRoom.members.set(data.user.id, data);
+			$openedRoom = $openedRoom;
         });
 
-        $socketStore.on("chat/leave", (data: any) => {
-			console.log("chat/leave", data);
+        $socketStore.on("chat/out", (data: any) => {
+			console.log("chat/out", data);
 
 			$openedRoom.members.delete(data.userId);
 			$openedRoom = $openedRoom;
@@ -49,7 +46,6 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
 			
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;
