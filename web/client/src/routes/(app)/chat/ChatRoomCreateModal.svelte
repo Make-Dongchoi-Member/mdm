@@ -181,7 +181,8 @@
 	.modal-container {
 		position: absolute;
 		top: 100px;
-		left: 23%;
+		left: 50%;
+		margin-left: -330px;
 
 		width: 775px;
 		height: 150px;
@@ -196,6 +197,7 @@
 		background-color: var(--dark-color);
 		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
+		
 	}
 
 	.modal-title {
@@ -204,8 +206,13 @@
 		justify-content: space-between;
 		align-items: center;
 
-		margin-left: 20px;
+		width: 100%;
+		margin-left: 80px;
 		margin-top: 10px;
+	}
+
+	.close-button {
+		margin-right: 30px;
 	}
 
 	.close-button > button {
@@ -213,7 +220,7 @@
 		font-weight: 500;
 		flex-grow: 0;
 		text-align: right;
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		color: var(--text-color);
 		border: none;
 		outline: none;
