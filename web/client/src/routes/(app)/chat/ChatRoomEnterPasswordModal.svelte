@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { modalStatesStore } from '../../../store';
+    import { clickOutside, escapeKey } from '../../../actions';
 
     let isMakeButtonActivation: boolean = false;
     let passwordValue: string = "";
@@ -45,7 +46,9 @@
 
 </script>
 
-<div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}">
+<div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}"
+    use:clickOutside on:outclick={() => {$modalStatesStore.isPasswordInputModal = false}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isPasswordInputModal = false}}>
     <div class="modal-title">
         <div>
             PASSWORD
@@ -88,8 +91,9 @@
         /* justify-content: center;
         align-items: center; */
 
-        background-color: var(--bg-color);
-        border: 1px solid var(--border-color);
+        background-color: var(--dark-color);
+        border: 1px solid var(--point-color);
+        border-radius: 0.5rem;
     }
 
     .modal-title {      
@@ -108,7 +112,7 @@
         font-weight: 500;
         flex-grow: 0;
         text-align: right;
-        background-color: var(--bg-color);
+        background-color: var(--dark-color);
         color: var(--text-color);
         border: none;
         outline: none;

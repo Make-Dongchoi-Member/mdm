@@ -73,6 +73,7 @@
 	}
 
 	const roomnameInputBoxEvent = (e: any) => {
+		roomNameInputValue = e.target.value.trim();
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
@@ -101,8 +102,7 @@
 	}
 
 	const makeButtonActivationEvent = () => {
-		const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();			
-		if (roomname === "") {
+		if (roomNameInputValue === "") {
 			return false;
 		}
 		if (isPassword && passwordInput === "") {
@@ -182,7 +182,7 @@
 		position: absolute;
 		top: 100px;
 		left: 50%;
-		margin-left: -330px;
+		margin-left: -375px;
 
 		width: 775px;
 		height: 150px;
