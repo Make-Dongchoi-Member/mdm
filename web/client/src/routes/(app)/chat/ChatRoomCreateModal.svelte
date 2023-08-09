@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { modalStatesStore, myData } from '../../../store';
 	import { goto } from '$app/navigation';
-	import { page } from "$app/stores";
 	import type { PostCreateDTO, RoomInfoDTO } from '../../../interfaces';
 	import { RoomType } from '../../../enums';
 	import { clickOutside, escapeKey } from '../../../actions';
@@ -13,22 +11,7 @@
 	let roomNameInputValue: string = "";
 	let passwordInput: string = "";
 
-	onMount(() => {
-		const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
-		const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
-		const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
-		const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
-		
-		makeButton.disabled = !isMakeButtonActivation;
 
-		closeButton.addEventListener("click", () => {
-			roomnameInputBox.value = "";
-			passwordInputBox.value = "";
-			isMakeButtonActivation = false;
-			isPrivate = false;
-			isPassword = false;
-		});
-	});
 
 	async function createRoom(data: any) {
 		const response = await fetch("http://localhost:3000/api/chat/create", {
@@ -110,18 +93,28 @@
 		}
 		return true;
 	}
+
+	const initialInput = () => {
+		roomNameInputValue = ""; 
+		passwordInput = "";
+		isMakeButtonActivation = false;
+		if (isPrivate)
+			passwordButtonToggle();
+		if (isPassword) 
+			passwordButtonToggle();
+	}
 </script>
 
 <div class="modal-container"
 	style="{$modalStatesStore.isRoomCreateModal ? 'display: flex;' : 'display: none;'}"
-	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomCreateModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomCreateModal = false}}>
+	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomCreateModal = false; initialInput();}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomCreateModal = false; initialInput();}}>
 	<div class="modal-title">
 		<div>
 			NEW CHAT ROOM
 		</div>
 		<div class="close-button">
-			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false;}}>&#215;</button>
+			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false; initialInput();}}>&#215;</button>
 		</div>
 	</div>
 	<div class="modal-content">
