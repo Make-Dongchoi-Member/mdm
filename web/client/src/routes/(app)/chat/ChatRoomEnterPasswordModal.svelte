@@ -1,21 +1,11 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { modalStatesStore } from '../../../store';
     import { clickOutside, escapeKey } from '../../../actions';
 
     let isMakeButtonActivation: boolean = false;
     let passwordValue: string = "";
-
     export let postRoomEnter: Function;
     export let selectedRoomId: string;
-
-    onMount(() => {     
-        const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
-        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
-        const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
-        
-        makeButton.disabled = !isMakeButtonActivation;        
-    });
 
     const makeButtonEvent = () => {               
         /*
