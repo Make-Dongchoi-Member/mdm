@@ -17,7 +17,6 @@
         makeButton.disabled = !isMakeButtonActivation;        
 
         closeButton.addEventListener("click", () => {
-            passwordInputBox.value = "";
             isMakeButtonActivation = false;
         });
     });
@@ -47,8 +46,8 @@
 </script>
 
 <div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}"
-    use:clickOutside on:outclick={() => {$modalStatesStore.isPasswordInputModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isPasswordInputModal = false}}>
+    use:clickOutside on:outclick={() => {$modalStatesStore.isPasswordInputModal = false; passwordValue = "";}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isPasswordInputModal = false; passwordValue = "";}}>
     <div class="modal-title">
         <div>
             PASSWORD
@@ -61,7 +60,8 @@
         <div class="password-option">
             <input                         
                 class="password-inputbox"
-                on:input={passwordInputBoxEvent}                            
+                on:input={passwordInputBoxEvent}
+                bind:value={passwordValue}
                 type="password" 
                 placeholder="PASSWORD INPUT"
                 maxlength=10
