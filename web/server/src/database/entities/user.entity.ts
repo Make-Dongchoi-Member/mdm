@@ -1,5 +1,6 @@
 import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { GameHistory } from './game-history.entity';
+import { MessageEntity } from './message.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -38,4 +39,7 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => GameHistory, (history) => history.enemy)
   recordForEnemy: GameHistory[];
+
+  @OneToMany(() => MessageEntity, (message) => message.sender)
+  message: MessageEntity[];
 }

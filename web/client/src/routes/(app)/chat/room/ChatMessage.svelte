@@ -10,6 +10,7 @@
 		document.body.addEventListener("keypress", enterKeyPressEvent);
 
 		$socketStore.on("chat/message", (data: { message: Message; }) => {
+			data.message.date = new Date(data.message.date);
 			pushNewMessage(data.message);
 		});
 	});
@@ -35,7 +36,7 @@
 			roomId: $page.url.searchParams.get("id") as string,
 			body: inputValue,
 			isDM: false,
-			date: "10:00",
+			date: new Date(),
 		};
 
 		/*
@@ -60,12 +61,23 @@
 		}, 1);
 	}
 
+	function formatDateToTimeString(date: Date) {
+		let hours = date.getHours();
+		let minutes = date.getMinutes();
+
+		// 시간과 분이 10 미만인 경우 앞에 '0'을 붙여 두 자릿수로 만든다.
+		const hoursStr: string = `${(hours < 10) ? '0' + hours : hours}`;
+		const minutesStr: string = `${(minutes < 10) ? '0' + minutes : minutes}`;
+
+		return hoursStr + ':' + minutesStr;
+	}
+
 </script>
 
 <div class="chat-main-box">
 	<div class="chatting-box">
 		{#each $openedRoom.history as message}
-			<div class={$myData.id === message.sender.id ? "chatting my-message" : "chatting"}>
+			<div class={$myData.nickname === message.sender.nickname ? "chatting my-message" : "chatting"}>
 				<div>
 					<img src="{message.sender.avatar}" alt="Profile Image" class="chatting-box-avatar">
 				</div>
@@ -75,7 +87,7 @@
 							{message.sender.nickname}
 						</div>
 						<div>
-							10:00
+							{formatDateToTimeString(message.date)}
 						</div>
 					</div>
 					<div>

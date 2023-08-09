@@ -7,14 +7,17 @@ import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
 import {
+  Message,
   Profile,
   RoomDetail,
   RoomInfo,
   RoomListInfo,
+  UserData,
 } from 'src/types/interfaces';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { MessageEntity } from 'src/database/entities/message.entity';
 
 @Injectable()
 export class ChatService {
@@ -68,7 +71,7 @@ export class ChatService {
       roomtype: room.roomtype,
       memberCount: room.memberCount,
       members,
-      history: room.messages,
+      history: room.messages.map(this.convertMessageEntityToMessage),
     };
     return roomDetail;
   }
@@ -182,5 +185,19 @@ export class ChatService {
       room.password,
     );
     if (!isCorrectPassword) throw new ForbiddenException();
+  }
+
+  private convertMessageEntityToMessage(entity: MessageEntity): Message {
+    const sender: UserData = {
+      avatar: entity.sender.avatar,
+      nickname: entity.sender.nickName,
+    };
+    return {
+      sender,
+      roomId: entity.roomId,
+      body: entity.body,
+      isDM: entity.isDM,
+      date: entity.date,
+    };
   }
 }

@@ -20,7 +20,7 @@ export interface Message {
   roomId: string;
   body: string;
   isDM: boolean;
-  date: string;
+  date: Date;
 }
 
 export interface Profile {

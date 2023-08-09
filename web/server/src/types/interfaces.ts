@@ -1,13 +1,13 @@
 import { Level, Relation, RoomType } from './enums';
 
 export interface UserData {
+  id?: number;
   avatar: string;
   nickname: string;
   record?: Record[];
 }
 
 export interface MyData extends UserData {
-  id: number;
   rooms: number[];
   friends: FriendData[];
 }

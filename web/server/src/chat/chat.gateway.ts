@@ -11,6 +11,8 @@ import { EnterChatRoomDTO } from './dto/EnterChatRoom.dto';
 import { ChatService } from './chat.service';
 import { OutChatRoomDTO } from './dto/OutChatRoom.dto';
 import { LeaveChatRoomDTO } from './dto/LeaveChatRoom.dto';
+import { RoomRepository } from 'src/database/repositories/room.repository';
+import { UserRepository } from 'src/database/repositories/user.repository';
 
 @WebSocketGateway({
   cors: {
@@ -19,7 +21,11 @@ import { LeaveChatRoomDTO } from './dto/LeaveChatRoom.dto';
   },
 })
 export class ChatGateway {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly roomRepository: RoomRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   @WebSocketServer() io: Server;
 
@@ -45,7 +51,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('chat/message')
-  handleMessage(client: Socket, data: MessageDTO) {
+  async handleMessage(client: Socket, data: MessageDTO) {
     console.log('chat/message', data);
 
     /*
@@ -54,7 +60,10 @@ export class ChatGateway {
         룸 아이디가 맞는지 확인
         방 참가 권한 체크
     */
-
+    const sender = await this.userRepository.getUserById(
+      data.message.sender.id,
+    );
+    this.roomRepository.pushMessage(sender, data.message);
     client.to(data.message.roomId).emit('chat/message', data);
   }
 

@@ -9,7 +9,7 @@
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
-  	import type { Profile } from '../../../../interfaces';
+  	import type { Message, Profile } from '../../../../interfaces';
 
     onMount(() => {
         getRoomData();
@@ -52,12 +52,18 @@
 		})
 		.then(response => response.json())
 		.then(data => {
+			console.log(data);
+			
 			
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;
 			$openedRoom.roomname = data.openedRoom.roomname;
 			$openedRoom.roomtype = data.openedRoom.roomtype;
-			$openedRoom.history = data.openedRoom.history;
+			$openedRoom.history = data.openedRoom.history.map((m: any): Message => {
+				m.date = new Date(m.date);
+				return m;
+			});
+
 			$openedRoom.memberCount = data.openedRoom.memberCount;
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
 			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
