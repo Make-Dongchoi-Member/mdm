@@ -6,12 +6,13 @@ import {
   BAR_W,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
+  GAME_LIFE,
 } from 'src/configs/constants';
 
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameState } from 'src/types/enums';
-import { Ball, Bar, GameStatus } from 'src/types/interfaces';
+import { Ball, Bar, GameStatus, PlayerInfo } from 'src/types/interfaces';
 
 @Injectable()
 export class GameService {
@@ -31,6 +32,7 @@ export class GameService {
     };
     const barA: Bar = {
       y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
+      h: BAR_BASIC_H,
     };
     const barB = barA;
     const gameStatus: GameStatus = {
@@ -38,6 +40,8 @@ export class GameService {
       barA,
       barB,
       state: GameState.READY,
+      lifeA: GAME_LIFE,
+      lifeB: GAME_LIFE,
     };
     this.gameRoomMap.set(socketRoom, gameStatus);
   }
@@ -49,37 +53,73 @@ export class GameService {
     const ball = gameStatus.ball;
     const barA = gameStatus.barA;
     const barB = gameStatus.barB;
+
     ball.x += ball.speedX;
     ball.y += ball.speedY;
 
-    if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
-      ball.speedX = this.randomSpeed() * -1;
-      if (ball.speedY < 0) {
-        ball.speedY = this.randomSpeed() * -1;
-      } else {
-        ball.speedY = this.randomSpeed();
-      }
+    //공이 왼쪽 벽에 부딪혔을 때의 조건
+    if (ball.x < 0) {
+      --gameStatus.lifeA;
+      gameStatus.state = GameState.READY;
     }
+
+    //공이 오른쪽 벽에 부딪혔을 때의 조건
+    if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
+      --gameStatus.lifeB;
+      gameStatus.state = GameState.READY;
+    }
+
+    //공이 위, 아래 벽에 부딪혔을 때의 조건
     if (ball.y < 0 || ball.y > CANVAS_WIDTH - BALL_SIZE) {
       ball.speedY *= -1;
     }
+
+    //공이 왼쪽 막대에 부딪혔을 때의 조건
     if (
       ball.x < BAR_W &&
-      ball.x > BAR_W && // 여기서부터 다시 고민해봅시다.
-      ball.y < bar.y + bar.h &&
-      ball.y > bar.y
+      ball.x > 0 &&
+      ball.y < barA.y + barA.h &&
+      ball.y > barA.y
     ) {
       if (ball.speedX < 0) {
-        gameState.myScore++;
-        scoreDiv.innerText = `${gameState.myScore} : ${gameState.enemyScore}`;
-        ball.speedX = randomSpeed();
+        ball.speedX = this.randomSpeed();
         if (ball.speedY < 0) {
-          ball.speedY = randomSpeed() * -1;
+          ball.speedY = this.randomSpeed() * -1;
         } else {
-          ball.speedY = randomSpeed();
+          ball.speedY = this.randomSpeed();
         }
       }
     }
+
+    //공이 오른쪽 막대에 부딪혔을 때의 조건
+    if (
+      ball.x > CANVAS_WIDTH - BAR_W &&
+      ball.x < CANVAS_WIDTH &&
+      ball.y < barB.y + barB.h &&
+      ball.y > barB.y
+    ) {
+      if (ball.speedX > 0) {
+        ball.speedX = this.randomSpeed() * -1;
+        if (ball.speedY < 0) {
+          ball.speedY = this.randomSpeed() * -1;
+        } else {
+          ball.speedY = this.randomSpeed();
+        }
+      }
+    }
+
+    this.gameRoomMap.set(socketRoom, gameStatus);
+    // emit
+  }
+
+  barPosition(socketRoom: string, pos: number, isLeft: boolean) {
+    const gameStatus = this.gameRoomMap.get(socketRoom);
+    if (isLeft) {
+      gameStatus.barA.y += pos;
+    } else {
+      gameStatus.barB.y += pos;
+    }
+    this.gameRoomMap.set(socketRoom, gameStatus);
   }
 
   private randomSpeed(): number {
