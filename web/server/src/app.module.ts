@@ -10,6 +10,8 @@ import { ChatModule } from './chat/chat.module';
 import { AppGateway } from './app.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './configs/typeorm.config';
+import { DatabaseModule } from './database/database.module';
+import { UserRepository } from './database/repositories/user.repository';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -30,6 +32,7 @@ if (process.env.NODE_ENV === 'prod') {
     LoginModule,
     UserModule,
     ChatModule,
+    DatabaseModule.forCustomRepository([UserRepository]),
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

@@ -2,29 +2,27 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
+  import type { Profile } from '../../../../interfaces';
 
     onMount(() => {
         getRoomData();
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
-        $socketStore.on("chat/join", (data: any) => {
-            /**
-             * @TODO
-             * 방에 참가한 사용자를 사용자 목록에 추가하기
-            */
-            console.log("join:", data);
+		$socketStore.on("chat/enter", (data: any) => {
+		    $openedRoom.members.set(data.user.id, data);
+			$openedRoom = $openedRoom;
         });
 
-        $socketStore.on("chat/leave", (data: any) => {
-			console.log("chat/leave", data);
+        $socketStore.on("chat/out", (data: any) => {
+			console.log("chat/out", data);
 
 			$openedRoom.members.delete(data.userId);
 			$openedRoom = $openedRoom;
@@ -49,7 +47,6 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
 			
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;
@@ -58,6 +55,12 @@
 			$openedRoom.history = data.openedRoom.history;
 			$openedRoom.memberCount = data.openedRoom.memberCount;
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+
+			console.log("member:", $openedRoom.members);
+			console.log($myData.id, $openedRoom.members.get($myData.id));
+			
+
+			$openedRoom.myLevel = ($openedRoom.members.get($myData.id) as Profile).level;
 			$openedRoom = $openedRoom;
 		})
 		.catch(error => console.error('Error:', error));
@@ -70,6 +73,7 @@
     const myDataUpdate = (roomId: number) => {
         if (($myData.rooms).includes(roomId)) return;
         $myData.rooms = [...$myData.rooms, roomId];
+
     }
 
 </script>
@@ -87,7 +91,7 @@
             <div class="chat-room-name">
                 {$openedRoom.roomname}
             </div>
-            {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
+            {#if $openedRoom.myLevel === Level.HOST}
                 <div class="chat-setting-button">
                     <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
                 </div>

@@ -93,7 +93,6 @@
 
 	const passwordButtonToggle = () => {
 		isPassword = !isPassword;
-		console.log("isPassword : ", isPassword);
 		if (!isPassword) {
 			passwordInput = "";
 		}

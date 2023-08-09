@@ -1,6 +1,6 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
-    import { modalStatesStore, myData } from '../../store';
+    import { modalStatesStore, myData, socketStore } from '../../store';
     import type { MyData } from '../../interfaces';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
@@ -29,6 +29,7 @@
 
 			if ($myData.nickname) {
 				isSigned = true;
+				$socketStore.connect();
 			} else {
 				goto("/join");
 			}

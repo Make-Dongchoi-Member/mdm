@@ -95,7 +95,9 @@ export class LoginController {
     const userId = req.cookies['user_id'];
     if (!userId) throw new BadRequestException();
     const accessToken = await this.loginService.verifyEmailCode(+userId, code);
-    res.cookie('access_token', accessToken);
+    res.cookie('access_token', accessToken, {
+      // sameSite: 'none',
+    });
 
     return res.send();
   }
