@@ -55,13 +55,9 @@
 			$openedRoom.history = data.openedRoom.history;
 			$openedRoom.memberCount = data.openedRoom.memberCount;
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
-
-			console.log("member:", $openedRoom.members);
-			console.log($myData.id, $openedRoom.members.get($myData.id));
-			
-
-			$openedRoom.myLevel = ($openedRoom.members.get($myData.id) as Profile).level;
+			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
+			
 		})
 		.catch(error => console.error('Error:', error));
 	}
