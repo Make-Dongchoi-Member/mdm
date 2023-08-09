@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { myData, openedRoom, socketStore } from '../../../../store';
 	import type { Message } from '../../../../interfaces';
 	import { page } from '$app/stores';
@@ -12,6 +12,11 @@
 		$socketStore.on("chat/message", (data: { message: Message; }) => {
 			pushNewMessage(data.message);
 		});
+	});
+
+	onDestroy(() => {
+		document.body.removeEventListener("keypress", enterKeyPressEvent);
+		$socketStore.off("chat/message");
 	});
 
 	const enterKeyPressEvent = (e: any) => {

@@ -55,7 +55,7 @@ export class ChatGateway {
         방 참가 권한 체크
     */
 
-    client.broadcast.to(data.message.roomId).emit('chat/message', data);
+    client.to(data.message.roomId).emit('chat/message', data);
   }
 
   @SubscribeMessage('chat/set-admin')

@@ -3,7 +3,7 @@
 	import ProfileButton from './ProfileButton.svelte';
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
 	onMount(() => {
 		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
@@ -34,6 +34,14 @@
 			$openedRoom = $openedRoom;
 		});
 	});
+
+	onDestroy(() => {
+		$socketStore.off("chat/set-admin");
+		$socketStore.off("chat/unset-admin");
+		$socketStore.off("chat/set-mute");
+		$socketStore.off("chat/unset-mute");
+	});
+
 </script>
 
 <div class="members">

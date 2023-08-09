@@ -34,7 +34,12 @@
 				goto("/chat");
 			}
 		});
+	});
 
+	onDestroy(() => {
+		$socketStore.off("chat/enter");
+		$socketStore.off("chat/out");
+		$socketStore.off("chat/set-kick");
 	});
 
 	const getRoomData = async () => {
