@@ -36,8 +36,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/enter')
   async handleEnterRoom(client: Socket, data: EnterChatRoomDTO) {
-    console.log('chat/enter', data);
-
     /*
       @TODO
       유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
@@ -52,8 +50,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/message')
   async handleMessage(client: Socket, data: MessageDTO) {
-    console.log('chat/message', data);
-
     /*
         @TODO
         유저의 소켓 아이디와 메시지 보낸 유저 아이디의 쌍이 맞는지 확인
@@ -69,7 +65,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/set-admin')
   handleSetAdmin(client: Socket, data: SetRequestDTO) {
-    console.log('chat/set-admin', data);
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -84,7 +79,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/set-mute')
   handleSetMute(client: Socket, data: SetRequestDTO) {
-    console.log('chat/set-mute', data);
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -99,7 +93,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/unset-admin')
   handleUnsetAdmin(client: Socket, data: SetRequestDTO) {
-    console.log('chat/unset-admin', data);
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -114,7 +107,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/unset-mute')
   handleUnsetMute(client: Socket, data: SetRequestDTO) {
-    console.log('chat/unset-mute', data);
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -129,7 +121,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/set-kick')
   handleSetKick(client: Socket, data: SetRequestDTO) {
-    console.log('chat/set-kick', data);
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -147,7 +138,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/out')
   handleOutRoom(client: Socket, data: OutChatRoomDTO) {
-    console.log('chat/out', data);
     /*
             @TODO
             유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
@@ -159,7 +149,6 @@ export class ChatGateway {
 
   @SubscribeMessage('chat/leave')
   handleLeaveRoom(client: Socket, data: LeaveChatRoomDTO) {
-    console.log('chat/leave', data);
     /*
             @TODO
             유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
