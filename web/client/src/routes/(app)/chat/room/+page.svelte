@@ -9,7 +9,7 @@
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
-  import type { Profile } from '../../../../interfaces';
+  	import type { Profile } from '../../../../interfaces';
 
     onMount(() => {
         getRoomData();

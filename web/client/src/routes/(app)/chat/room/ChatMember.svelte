@@ -49,7 +49,7 @@
 		{:else if $openedRoom.myLevel === Level.ADMIN}
 			<div>&#128736;</div>
 		{:else if $openedRoom.myLevel === Level.MEMBER}
-			<div>{$openedRoom.myLevel}</div>
+			<div></div>
 		{/if}
 	</div>
 	<div class="other-profile-container">
