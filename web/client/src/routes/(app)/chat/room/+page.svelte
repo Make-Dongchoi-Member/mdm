@@ -134,7 +134,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		width:530px;
+		width: 560px;
 		/* margin-left: 10px; */
 	}
 

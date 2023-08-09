@@ -192,8 +192,9 @@
         justify-content: center;
         align-items: center;
 
-        background-color: var(--bg-color);
-        border: 1px solid var(--border-color);
+		background-color: var(--dark-color);
+		border: 1px solid var(--point-color);
+		border-radius: 0.5rem;
     }
 
     .modal-title {      
