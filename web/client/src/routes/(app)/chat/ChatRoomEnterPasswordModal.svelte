@@ -15,10 +15,6 @@
         const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
         
         makeButton.disabled = !isMakeButtonActivation;        
-
-        closeButton.addEventListener("click", () => {
-            isMakeButtonActivation = false;
-        });
     });
 
     const makeButtonEvent = () => {               
@@ -43,17 +39,22 @@
         return true;            
     }
 
+    const initialInput = () => {
+        passwordValue = "";
+		isMakeButtonActivation = false;
+	}
+
 </script>
 
 <div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}"
-    use:clickOutside on:outclick={() => {$modalStatesStore.isPasswordInputModal = false; passwordValue = "";}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isPasswordInputModal = false; passwordValue = "";}}>
+    use:clickOutside on:outclick={() => {$modalStatesStore.isPasswordInputModal = false; initialInput();}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isPasswordInputModal = false; initialInput();}}>
     <div class="modal-title">
         <div>
             PASSWORD
         </div>
         <div class="close-button">
-            <button on:click={() => { $modalStatesStore.isPasswordInputModal = false; }}>&#215;</button>
+            <button on:click={() => { $modalStatesStore.isPasswordInputModal = false; initialInput();}}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">
