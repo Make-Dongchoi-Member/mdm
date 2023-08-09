@@ -108,7 +108,9 @@
 </div>
 
 <style>
+
 	.profile-button {
+		width: 100%;
 		height: 40px;
         display: flex;
         flex-direction: row;
@@ -116,8 +118,9 @@
         align-items: center;
         border: 1px solid var(--border-color);
 		padding: 4px 10px 4px 10px;
-		margin: 0 5% 5% 5%;
+		
 		box-sizing: border-box;
+		margin-bottom: 5px;
     }
 
 	.profile-id {
