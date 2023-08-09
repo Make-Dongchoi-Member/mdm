@@ -44,6 +44,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
 const openedRoom: Writable<RoomDetail> = writable({
   roomId: "",
   hostId: "",
+  myLevel: Level.MEMBER,
   roomname: "",
   roomtype: RoomType.NORMAL,
   memberCount: 0,
@@ -68,59 +69,6 @@ const roomList: Writable<RoomList> = writable(
   ])
 );
 
-const myLevel: Writable<Level> = writable(Level.MEMBER);
-
-/*
-
-	@API
-	
-	* 내 정보 API 요청
-	GET("/api/user?id=[userid]")
-	>> userId: string
-	<< mydata: MyData
-
-	* room List 목록 요청
-	GET("/api/chat/list")
-	>> userId: string
-	<< rooms: Room[]
-
-	* Chatting방 생성 API 요청
-	POST("/api/chat/create")
-	>> roomInfoDTO: RoomInfoDTO
-	<< roomId: string
-	
-	* 들어간 방의 정보 API 요청
-	POST("/api/chat/room")
-	>> userId: string, roomId: string
-	<< openedRoom: RoomDetail
-
-	* 방 정보 수정 API 요청
-	POST(/api/chat/room/update)
-	>> roomInfoDTO: RoomInfoDTO
-	<< result: boolean
-
-	* 초대할 대상 존재 여부 확인 API 요청
-	GET(/api/user/check?id=[userid])
-	>> userId
-	<< result: boolean
-
-	* 방 나가기 API 요청
-	POST(/api/chat/room/out)
-	>> userId: string, roomId: string
-	<< result: boolean
-
-	(나중에)
-	* profile 정보 API 요청
-	GET
-	>> userId: string
-	<< result: profile 관련 interface(아직 미 생성함)
-
-	* 방 들어가기 API 요청
-	POST
-	>> roomId: string, userId: string, password: string
-	<< result: boolean
-*/
-
 export {
   gameSettingStore,
   modalStatesStore,
@@ -128,5 +76,4 @@ export {
   openedRoom,
   socketStore,
   roomList,
-  myLevel,
 };

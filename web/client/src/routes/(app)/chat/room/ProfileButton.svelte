@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { myData, socketStore, openedRoom, myLevel } from '../../../../store';
+    import { myData, socketStore, openedRoom } from '../../../../store';
     import { page } from '$app/stores';
     import { onDestroy } from 'svelte';
 	
@@ -46,8 +46,8 @@
 			@TODO
 			채팅금지 SOCKET 요청
 		*/
-		if ($myLevel === Level.MEMBER) return ;
-		if ($myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		if (!value.isMuted) {
 			$socketStore.emit("chat/set-mute", requestData);
 		} else {
@@ -60,8 +60,8 @@
 			@TODO
 			강퇴 SOCKET 요청
 		*/
-		if ($myLevel === Level.MEMBER) return ;
-		if ($myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		$socketStore.emit("chat/set-kick", requestData);
 	}
 
@@ -96,10 +96,10 @@
 	{#if isClicked}
 		<div class="menu-list">
 			<button on:click={profileClickEvent}>PROFILE</button>
-			{#if $myLevel === Level.HOST}
+			{#if $openedRoom.myLevel === Level.HOST}
 				<button on:click={adminClickEvent}>ADMIN</button>
 			{/if}
-			{#if $myLevel === Level.HOST || ($myLevel === Level.ADMIN && value.level === Level.MEMBER)}
+			{#if $openedRoom.myLevel === Level.HOST || ($openedRoom.myLevel === Level.ADMIN && value.level === Level.MEMBER)}
 				<button on:click={muteClickEvent}>MUTE</button>
 				<button on:click={kickClickEvent}>KICK</button>
 			{/if}

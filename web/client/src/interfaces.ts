@@ -42,6 +42,7 @@ export type RoomList = Map<number, Room>;
 export interface RoomDetail extends Room {
   members: Map<string, Profile>;
   history: Message[];
+  myLevel: Level;
 }
 
 export interface RoomInfoDTO {

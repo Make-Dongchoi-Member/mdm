@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { myData, openedRoom, socketStore, myLevel } from '../../../../store';
+	import { myData, openedRoom, socketStore } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
@@ -44,12 +44,12 @@
 		<div class="profile-id">
 			{$myData.nickname}
 		</div>
-		{#if $myLevel === Level.HOST}
+		{#if $openedRoom.myLevel === Level.HOST}
 			<div>&#128081;</div>
-		{:else if $myLevel === Level.ADMIN}
+		{:else if $openedRoom.myLevel === Level.ADMIN}
 			<div>&#128736;</div>
-		{:else if $myLevel === Level.MEMBER}
-			<div></div>
+		{:else if $openedRoom.myLevel === Level.MEMBER}
+			<div>{$openedRoom.myLevel}</div>
 		{/if}
 	</div>
 	<div class="other-profile-container">
