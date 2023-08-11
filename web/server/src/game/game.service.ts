@@ -58,7 +58,7 @@ export class GameService {
     this.gameRoomMap.set(gameRoom.roomKey, gameStatus);
   }
 
-  startGame(socketRoom: string) {
+  setGame(socketRoom: string) {
     const gameStatus = this.gameRoomMap.get(socketRoom);
     const ball: Ball = {
       x: (CANVAS_WIDTH - BALL_SIZE) / 2,
@@ -67,7 +67,6 @@ export class GameService {
       speedY: BALL_SPEED,
     };
     gameStatus.ball = ball;
-    gameStatus.state = GameState.GAMING;
     this.gameRoomMap.set(socketRoom, gameStatus);
   }
 
@@ -88,25 +87,25 @@ export class GameService {
     ball.x += ball.speedX;
     ball.y += ball.speedY;
 
-    console.log(ball, barA, barB);
+    // console.log(ball, barA, barB);
 
     //공이 왼쪽 벽에 부딪혔을 때의 조건
     if (ball.x < 0) {
-      console.log('left wall');
+      // console.log('left wall');
       gameStatus.playerA.life = gameStatus.playerA.life - 1;
-      gameStatus.state = GameState.READY;
+      gameStatus.state = GameState.PAUSE;
     }
 
     //공이 오른쪽 벽에 부딪혔을 때의 조건
     else if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
-      console.log('right wall');
+      // console.log('right wall');
       gameStatus.playerB.life = gameStatus.playerB.life - 1;
-      gameStatus.state = GameState.READY;
+      gameStatus.state = GameState.PAUSE;
     }
 
     //공이 위, 아래 벽에 부딪혔을 때의 조건
     else if (ball.y < 0 || ball.y > CANVAS_HEIGHT - BALL_SIZE) {
-      console.log('up down wall');
+      // console.log('up down wall');
       ball.speedY *= -1;
     }
 
@@ -117,7 +116,7 @@ export class GameService {
       ball.y < barA.y + barA.h &&
       ball.y > barA.y
     ) {
-      console.log('left bar');
+      // console.log('left bar');
       if (ball.speedX < 0) {
         ball.speedX = this.randomSpeed();
         if (ball.speedY < 0) {
@@ -135,7 +134,7 @@ export class GameService {
       ball.y < barB.y + barB.h &&
       ball.y > barB.y
     ) {
-      console.log('right bar');
+      // console.log('right bar');
       if (ball.speedX > 0) {
         ball.speedX = this.randomSpeed() * -1;
         if (ball.speedY < 0) {
@@ -162,7 +161,7 @@ export class GameService {
     } else {
       gameStatus.playerB.bar.y += pos;
     }
-    console.log(gameStatus);
+    // console.log(gameStatus);
     this.gameRoomMap.set(socketRoom, gameStatus);
   }
 

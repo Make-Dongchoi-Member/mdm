@@ -13,5 +13,6 @@ export enum RoomType {
 export enum GameState {
   READY,
   GAMING,
+  PAUSE,
   END,
 }

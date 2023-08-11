@@ -56,27 +56,47 @@ export class GameGateway {
 
   @SubscribeMessage('game/start')
   handleGameStart(client: Socket, data: GameStartDTO) {
-    this.gameService.startGame(data.roomKey);
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
-    if (
-      data.nickname === gameStatus.playerA.nickname &&
-      gameStatus.playerA.life === GAME_LIFE &&
-      gameStatus.playerB.life === GAME_LIFE
-    )
-      setInterval(this.gameMain, 5, data.roomKey, this.gameService, this.io);
+    if (data.nickname !== gameStatus.playerA.nickname) return;
+    if (gameStatus.state === GameState.PAUSE) {
+      this.gameService.setGame(data.roomKey);
+    } else if (gameStatus.state === GameState.READY) {
+      const id = setInterval(
+        this.gameMain,
+        4,
+        data.roomKey,
+        this.gameService,
+        this.io,
+        this.gameManager,
+      );
+      this.gameManager.saveIntervalID(data.roomKey, id);
+    }
+    this.gameService.setGameState(data.roomKey, GameState.GAMING);
   }
 
   @SubscribeMessage('game/bar')
   handleGameBarMove(client: Socket, data: GameBarDTO) {
-    // console.log(data)
+    // console.log(data
     this.gameService.barPosition(data.roomKey, data.pos, data.nickname);
   }
 
-  private gameMain(roomKey: string, gs: GameService, io: Server) {
+  private gameMain(
+    roomKey: string,
+    gs: GameService,
+    io: Server,
+    gm: GameRoomManager,
+  ) {
     // console.log(gs, io)
     gs.play(roomKey);
-    const gmaeStatus = gs.getGameStatusByKey(roomKey);
-    if (gmaeStatus.state === GameState.GAMING)
-      io.to(roomKey).emit('game/play', gmaeStatus);
+    const gameStatus = gs.getGameStatusByKey(roomKey);
+    if (gameStatus.state === GameState.GAMING) {
+      io.to(roomKey).emit('game/play', gameStatus);
+    } else if (gameStatus.state === GameState.PAUSE) {
+      io.to(roomKey).emit('game/play', gameStatus);
+      if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
+        clearInterval(gm.getIntervalID(roomKey));
+        gs.setGameState(roomKey, GameState.END);
+      }
+    }
   }
 }
