@@ -168,15 +168,16 @@ export class ChatService {
   }
 
   private roomOutChangeHost(room: Rooms) {
-    let result: QueryDeepPartialEntity<Rooms>;
     if (room.admin.length !== 0) {
-      result.host = room.admin[0];
-      result.admin = () => `array_remove("admin", ${room.admin[0]})`;
-    } else if (room.members.length !== 0) {
-      result.host = room.members[0];
-      result.members = () => `array_remove("members", ${room.members[0]})`;
+      return {
+        host: room.admin[0],
+        admin: () => `array_remove("admin", ${room.admin[0]})`,
+      };
     }
-    return result;
+    return {
+      host: room.members[0],
+      members: () => `array_remove("members", ${room.members[0]})`,
+    };
   }
 
   private async checkPassword(room: Rooms, password: string) {

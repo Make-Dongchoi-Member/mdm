@@ -23,9 +23,7 @@
 
         $socketStore.on("chat/out", (data: any) => {
 			console.log("chat/out", data);
-
-			$openedRoom.members.delete(data.userId);
-			$openedRoom = $openedRoom;
+			getRoomData();
 		});
 
 		$socketStore.on("chat/set-kick", (data: any) => {
