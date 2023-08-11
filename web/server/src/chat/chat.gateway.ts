@@ -42,7 +42,10 @@ export class ChatGateway {
       방 참가 권한 체크
     */
 
-    const enterUser = await this.chatService.getEnterUser(Number(data.userId));
+    const enterUser = await this.chatService.getEnterUser(
+      +data.roomId,
+      +data.userId,
+    );
 
     client.join(data.roomId);
     client.broadcast.to(data.roomId).emit('chat/enter', enterUser);
@@ -144,13 +147,13 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('chat/out')
-  handleOutRoom(client: Socket, data: OutChatRoomDTO) {
+  async handleOutRoom(client: Socket, data: OutChatRoomDTO) {
     /*
             @TODO
             유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
             방에 있는 유저인지 체크
         */
-
+    await this.chatService.roomOut(+data.userId, +data.roomId);
     client.broadcast.to(data.roomId).emit('chat/out', data);
   }
 

@@ -26,8 +26,9 @@ export class ChatService {
     private userRepository: UserRepository,
   ) {}
 
-  async getEnterUser(userId: number) {
+  async getEnterUser(roomId: number, userId: number) {
     const userdata = await this.userRepository.getUserById(userId);
+    const room = await this.roomRepository.getRoomById(roomId);
     const res = {
       user: {
         id: userdata.id,
@@ -35,7 +36,7 @@ export class ChatService {
         nickname: userdata.nickName,
       },
       level: Level.MEMBER,
-      isMuted: false,
+      isMuted: room.mute.includes(userId),
     };
     return res;
   }

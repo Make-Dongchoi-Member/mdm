@@ -17,17 +17,19 @@
         $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
-		    $openedRoom.members.set(data.user.id, data);
+		    $openedRoom.members.set(`${data.user.id}`, data);
 			$openedRoom = $openedRoom;
         });
 
         $socketStore.on("chat/out", (data: any) => {
-			getRoomData();
+			$openedRoom.members.delete(`${data.userId}`);
+			$openedRoom = $openedRoom;
 		});
 
 		$socketStore.on("chat/set-kick", (data: any) => {
 			if ($myData.id === data.targetId) {
-				console.log("chat/set-kick", data);
+				$myData.rooms = ($myData.rooms).filter((room) => String(room) !== $page.url.searchParams.get("id"));
+				$myData = $myData;
 				goto("/chat");
 			} else {
 				getRoomData();
@@ -83,6 +85,8 @@
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
 			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
+			console.log($openedRoom);
+			
 		})
 		.catch(error => console.error('Error:', error));
 	}
