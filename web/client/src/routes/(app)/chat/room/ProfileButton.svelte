@@ -28,10 +28,6 @@
 	}
 
 	const adminClickEvent = () => {
-		/*
-			@TODO
-			관리자 권한 SOCKET 요청
-		*/
 		if (value.level === Level.MEMBER) {
 			$socketStore.emit("chat/set-admin", requestData);
 		} else if (value.level === Level.ADMIN) {
@@ -40,10 +36,6 @@
 	}
 
 	const muteClickEvent = () => {
-		/*
-			@TODO
-			채팅금지 SOCKET 요청
-		*/
 		if ($openedRoom.myLevel === Level.MEMBER) return ;
 		if ($openedRoom.myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		if (!value.isMuted) {

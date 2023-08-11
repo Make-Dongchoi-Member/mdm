@@ -110,6 +110,7 @@ export class ChatService {
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     if (room.roomtype === RoomType.LOCK)
       await this.checkPassword(room, password);
+    // 사용자가 ban인지 확인 후 차단
     this.roomRepository.updateRoom(roomId, {
       members: () => `array_append("members", ${userId})`,
       memberCount: room.memberCount + 1,
@@ -124,6 +125,7 @@ export class ChatService {
     for (const user of users) {
       const profile: Profile = {
         user: {
+          id: user.id,
           avatar: user.avatar,
           nickname: user.nickName,
         },
@@ -143,6 +145,7 @@ export class ChatService {
         break;
       case room.admin.includes(user.id) ? user.id : -1:
         level = Level.ADMIN;
+        break;
       default:
         level = Level.MEMBER;
         break;
@@ -200,5 +203,24 @@ export class ChatService {
       isDM: entity.isDM,
       date: entity.date,
     };
+  }
+
+  async setAdmin(roomId: number, userId: number) {
+    const adminList = await this.roomRepository.getAdmin(roomId);
+
+    if (adminList.includes(userId)) {
+      await this.roomRepository.removeAdmin(roomId, userId);
+    } else {
+      await this.roomRepository.pushAdmin(roomId, userId);
+    }
+  }
+
+  async setMute(roomId: number, userId: number) {
+    const muteList = await this.roomRepository.getMute(roomId);
+    if (muteList.includes(userId)) {
+      await this.roomRepository.removeMute(roomId, userId);
+    } else {
+      await this.roomRepository.pushMute(roomId, userId);
+    }
   }
 }

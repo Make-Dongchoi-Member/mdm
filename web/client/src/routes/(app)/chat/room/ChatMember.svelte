@@ -6,40 +6,11 @@
     import { onDestroy, onMount } from 'svelte';
 
 	onMount(() => {
-		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
-			console.log("chat/set-admin", data);
-			
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.ADMIN;
-			$openedRoom = $openedRoom;
-		});
 
-		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
-			console.log("chat/unset-admin", data);
-
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.MEMBER;
-			$openedRoom = $openedRoom;
-		});
-
-		$socketStore.on("chat/set-mute", (data: SetRequestDTO) => {
-			console.log("chat/set-mute", data);
-
-			($openedRoom.members.get(data.targetId) as Profile).isMuted = true;
-			$openedRoom = $openedRoom;
-		});
-
-		$socketStore.on("chat/unset-mute", (data: SetRequestDTO) => {
-			console.log("chat/unset-mute", data);
-
-			($openedRoom.members.get(data.targetId) as Profile).isMuted = false;
-			$openedRoom = $openedRoom;
-		});
 	});
 
 	onDestroy(() => {
-		$socketStore.off("chat/set-admin");
-		$socketStore.off("chat/unset-admin");
-		$socketStore.off("chat/set-mute");
-		$socketStore.off("chat/unset-mute");
+
 	});
 
 </script>
@@ -52,6 +23,11 @@
 		<div class="profile-id">
 			{$myData.nickname}
 		</div>
+		{#if $openedRoom.members.get(`${$myData.id}`)?.isMuted}
+			<div>&#128263;</div>
+		{:else}
+			<div></div>
+		{/if}
 		{#if $openedRoom.myLevel === Level.HOST}
 			<div>&#128081;</div>
 		{:else if $openedRoom.myLevel === Level.ADMIN}

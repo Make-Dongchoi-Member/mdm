@@ -64,21 +64,23 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('chat/set-admin')
-  handleSetAdmin(client: Socket, data: SetRequestDTO) {
+  async handleSetAdmin(client: Socket, data: SetRequestDTO) {
     /*
-            @TODO
-            유저의 방 참가 권한 체크
-            유저의 소켓 아이디와 메시지 보낸 유저 아이디의 쌍이 맞는지 확인
-            타겟이 방에 존재하는지 확인
-            보낸 유저가 방에 존재하는지 확인
-            타겟이 적절한 권한을 가졌는지 확인
-            보낸 유저의 권한이 적절한지 확인
-        */
+     * @TODO
+     * 유저의 방 참가 권한 체크
+     * 유저의 소켓 아이디와 메시지 보낸 유저 아이디의 쌍이 맞는지 확인
+     * 타겟이 방에 존재하는지 확인
+     * 보낸 유저가 방에 존재하는지 확인
+     * 타겟이 적절한 권한을 가졌는지 확인
+     * 보낸 유저의 권한이 적절한지 확인
+     */
+
+    await this.chatService.setAdmin(Number(data.roomId), Number(data.targetId));
     this.io.to(data.roomId).emit('chat/set-admin', data);
   }
 
   @SubscribeMessage('chat/set-mute')
-  handleSetMute(client: Socket, data: SetRequestDTO) {
+  async handleSetMute(client: Socket, data: SetRequestDTO) {
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -88,11 +90,12 @@ export class ChatGateway {
             타겟이 적절한 권한을 가졌는지 확인
             보낸 유저의 권한이 적절한지 확인
         */
+    await this.chatService.setMute(Number(data.roomId), Number(data.targetId));
     this.io.to(data.roomId).emit('chat/set-mute', data);
   }
 
   @SubscribeMessage('chat/unset-admin')
-  handleUnsetAdmin(client: Socket, data: SetRequestDTO) {
+  async handleUnsetAdmin(client: Socket, data: SetRequestDTO) {
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -102,11 +105,12 @@ export class ChatGateway {
             타겟이 적절한 권한을 가졌는지 확인
             보낸 유저의 권한이 적절한지 확인
         */
+    await this.chatService.setAdmin(Number(data.roomId), Number(data.targetId));
     this.io.to(data.roomId).emit('chat/unset-admin', data);
   }
 
   @SubscribeMessage('chat/unset-mute')
-  handleUnsetMute(client: Socket, data: SetRequestDTO) {
+  async handleUnsetMute(client: Socket, data: SetRequestDTO) {
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -116,6 +120,7 @@ export class ChatGateway {
             타겟이 적절한 권한을 가졌는지 확인
             보낸 유저의 권한이 적절한지 확인
         */
+    await this.chatService.setMute(Number(data.roomId), Number(data.targetId));
     this.io.to(data.roomId).emit('chat/unset-mute', data);
   }
 

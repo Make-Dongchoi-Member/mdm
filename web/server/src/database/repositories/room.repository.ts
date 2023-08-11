@@ -84,4 +84,40 @@ export class RoomRepository extends Repository<Rooms> {
     messageEntity.room = room;
     this.manager.save(messageEntity);
   }
+
+  async getAdmin(roomId: number) {
+    const room = await this.findOneBy({ id: roomId });
+    return room.admin;
+  }
+
+  async pushAdmin(roomId: number, userId: number) {
+    console.log('pushAdmin', roomId, userId);
+
+    await this.update(roomId, {
+      admin: () => `array_append("admin", ${userId})`,
+    });
+  }
+
+  async removeAdmin(roomId: number, userId: number) {
+    await this.update(roomId, {
+      admin: () => `array_remove("admin", ${userId})`,
+    });
+  }
+
+  async getMute(roomId: number) {
+    const room = await this.findOneBy({ id: roomId });
+    return room.mute;
+  }
+
+  async pushMute(roomId: number, userId: number) {
+    await this.update(roomId, {
+      mute: () => `array_append("mute", ${userId})`,
+    });
+  }
+
+  async removeMute(roomId: number, userId: number) {
+    await this.update(roomId, {
+      mute: () => `array_remove("mute", ${userId})`,
+    });
+  }
 }

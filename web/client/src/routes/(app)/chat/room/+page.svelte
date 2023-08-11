@@ -9,7 +9,7 @@
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
-  	import type { Message, Profile } from '../../../../interfaces';
+  	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
 
     onMount(() => {
         getRoomData();
@@ -31,12 +31,32 @@
 				goto("/chat");
 			}
 		});
+
+		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+
+		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+
+		$socketStore.on("chat/set-mute", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+
+		$socketStore.on("chat/unset-mute", (data: SetRequestDTO) => {
+			getRoomData();
+		});
 	});
 
 	onDestroy(() => {
 		$socketStore.off("chat/enter");
 		$socketStore.off("chat/out");
 		$socketStore.off("chat/set-kick");
+		$socketStore.off("chat/set-admin");
+		$socketStore.off("chat/unset-admin");
+		$socketStore.off("chat/set-mute");
+		$socketStore.off("chat/unset-mute");
 	});
 
 	const getRoomData = async () => {

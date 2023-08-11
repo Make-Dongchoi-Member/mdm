@@ -85,7 +85,6 @@ export class ChatController {
    */
   @Post('room/enter')
   async roomEnter(@UserId() userId: string, @Body('data') data: RoomEnterDTO) {
-    console.log(`roomEnter controller ${data}`);
     await this.chatService.roomEnter(+userId, +data.roomId, data.password);
   }
 }
