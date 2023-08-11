@@ -12,7 +12,6 @@
 	}
 
 	const nicknameClickEvent = () => {
-		console.log(nickname);
 		block = true;
 		onChanging = true;
 		nicknameSetAPI({data : {nickname}})

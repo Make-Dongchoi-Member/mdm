@@ -22,7 +22,6 @@
         });
 
         $socketStore.on("chat/out", (data: any) => {
-			console.log("chat/out", data);
 			getRoomData();
 		});
 
@@ -50,9 +49,6 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
-			
-			
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;
 			$openedRoom.roomname = data.openedRoom.roomname;
@@ -61,12 +57,10 @@
 				m.date = new Date(m.date);
 				return m;
 			});
-
 			$openedRoom.memberCount = data.openedRoom.memberCount;
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
 			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
-			
 		})
 		.catch(error => console.error('Error:', error));
 	}

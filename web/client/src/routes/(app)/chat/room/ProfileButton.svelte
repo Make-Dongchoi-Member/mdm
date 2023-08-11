@@ -8,8 +8,6 @@
 	export let key: string;
 	export let value: Profile;
 	
-	console.log(key, value);
-	
 	let isClicked: boolean = false;
 
 	const requestData: SetRequestDTO = {

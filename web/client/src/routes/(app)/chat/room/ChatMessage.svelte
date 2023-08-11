@@ -13,6 +13,7 @@
 			data.message.date = new Date(data.message.date);
 			pushNewMessage(data.message);
 		});
+		scrollAndFocus();
 	});
 
 	onDestroy(() => {
@@ -27,10 +28,7 @@
 	}
 
 	const sendButtonEvent = () => {
-		if (inputValue === "") {
-			return ;
-		}
-		
+		if (inputValue === "") return;
 		const message: Message = {
 			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
 			roomId: $page.url.searchParams.get("id") as string,
@@ -38,24 +36,20 @@
 			isDM: false,
 			date: new Date(),
 		};
-
-		/*
-			@TODO
-			메시지 SOCKET 요청
-		*/
 		$socketStore.emit("chat/message", { message });
-
 		inputValue = "";
 		pushNewMessage(message);
 	}
 
 	const pushNewMessage = (message: Message) => {
 		$openedRoom.history = [...$openedRoom.history, message];
-		
+		scrollAndFocus();
+	}
+
+	const scrollAndFocus = () => {
 		setTimeout(() => {
 			const chattingBox =  document.querySelector(".chatting-box") as HTMLDivElement;
 			chattingBox.scrollTop = chattingBox.scrollHeight;
-			
 			const inputTag =  document.querySelector("#chat-input") as HTMLInputElement;
 			inputTag.focus();
 		}, 1);
