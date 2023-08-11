@@ -29,6 +29,8 @@
 			if ($myData.id === data.targetId) {
 				console.log("chat/set-kick", data);
 				goto("/chat");
+			} else {
+				getRoomData();
 			}
 		});
 
@@ -92,7 +94,6 @@
     const myDataUpdate = (roomId: number) => {
         if (($myData.rooms).includes(roomId)) return;
         $myData.rooms = [...$myData.rooms, roomId];
-
     }
 
 </script>

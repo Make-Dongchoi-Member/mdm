@@ -223,4 +223,8 @@ export class ChatService {
       await this.roomRepository.pushMute(roomId, userId);
     }
   }
+
+  async setBan(roomId: number, userId: number) {
+    await this.roomRepository.pushBan(roomId, userId);
+  }
 }

@@ -120,4 +120,10 @@ export class RoomRepository extends Repository<Rooms> {
       mute: () => `array_remove("mute", ${userId})`,
     });
   }
+
+  async pushBan(roomId: number, userId: number) {
+    await this.update(roomId, {
+      ban: () => `array_append("ban", ${userId})`,
+    });
+  }
 }

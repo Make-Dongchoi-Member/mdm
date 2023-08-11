@@ -125,7 +125,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('chat/set-kick')
-  handleSetKick(client: Socket, data: SetRequestDTO) {
+  async handleSetKick(client: Socket, data: SetRequestDTO) {
     /*
             @TODO
             유저의 방 참가 권한 체크
@@ -138,7 +138,9 @@ export class ChatGateway {
             강퇴당한 유저를 방에서 나가도록 하기
             유저의 id로 소켓 id를 가져와서 그 소켓 id로 메시지를 보내야함.
         */
-    client.to(data.roomId).emit('chat/set-kick', data);
+    await this.chatService.setBan(Number(data.roomId), Number(data.targetId));
+    await this.chatService.roomOut(+data.targetId, +data.roomId);
+    this.io.to(data.roomId).emit('chat/set-kick', data);
   }
 
   @SubscribeMessage('chat/out')
