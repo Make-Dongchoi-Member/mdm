@@ -25,8 +25,8 @@ export class GameRoomManager {
     this.GameQueue.enqueue(info);
   }
 
-  dequeue() {
-    this.GameQueue.dequeue();
+  dequeue(): PlayerInfo {
+    return this.GameQueue.dequeue();
   }
 
   isMatched(): boolean {

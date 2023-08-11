@@ -7,7 +7,13 @@ import { Socket, Server } from 'socket.io';
 import { GameDataDTO } from './dto/GameData.dto';
 import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
+import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameRoomManager } from './objects/game.RoomManager';
+import { PlayerInfo } from 'src/types/interfaces';
+import { GameStartDTO } from './dto/GameStart.dto';
+import { GameBarDTO } from './dto/GameBar.dto';
+import { GameState } from 'src/types/enums';
+import { GAME_LIFE } from 'src/configs/constants';
 
 @WebSocketGateway({
   cors: {
@@ -16,44 +22,61 @@ import { GameRoomManager } from './objects/game.RoomManager';
 })
 export class GameGateway {
   @WebSocketServer() io: Server;
-  gameService: GameService;
-  gameManager: GameRoomManager;
+  gameManager: GameRoomManager = new GameRoomManager();
+  constructor(private readonly gameService: GameService) {}
   // queue
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
     this.gameManager.enqueue({ socket: client, nickname: data.nickname });
-    if (this.gameManager.isMatched()) {
-      // 두 클라이언트에게 보내줄 게임방 정보 데이터 구성
-      // 디큐
-      // 두 클라이언트에게 emit
-    }
-    /*
-      매치에 참여한다 -> queue에 들어간다.
-      1. 큐확인 있어? -> 큐에 있는 상대랑 조인 -> 두 명한데 emit (join한 room 번호)
-      2. 없어? -> 큐에 집어 넣는다.
-    */
-    // console.log('game', data);
 
-    client.broadcast.emit('game', data);
-    setInterval(this.gameMain, 0.1);
+    // 큐 안에 두 명 이상 들어온 경우
+    if (this.gameManager.isMatched()) {
+      // 게임방 번호(키) 생성
+      const key: string = this.gameManager.newGameRoomKey();
+
+      // 플레이어 두 명 큐에서 dequeue
+      const playerA: PlayerInfo = this.gameManager.dequeue();
+      const playerB: PlayerInfo = this.gameManager.dequeue();
+
+      // 두 플레이어를 게임방에 join
+      playerA.socket.join(key);
+      playerB.socket.join(key);
+
+      // 두 플레이어에게 emit
+      const gameRoom: GameRoomDTO = {
+        playerA: playerA.nickname,
+        playerB: playerB.nickname,
+        roomKey: key,
+      };
+      this.gameService.saveGameRoom(gameRoom);
+      this.io.to(key).emit('game/match', gameRoom);
+    }
   }
 
-  @SubscribeMessage('game/join')
-  handleGameJoin(client: Socket, data: GameDataDTO) {
-    const key = this.gameManager.newGameRoomKey();
-    client.join(key);
-    client.broadcast.to(key).emit('game/join', data);
+  @SubscribeMessage('game/start')
+  handleGameStart(client: Socket, data: GameStartDTO) {
+    this.gameService.startGame(data.roomKey);
+    const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    if (
+      data.nickname === gameStatus.playerA.nickname &&
+      gameStatus.playerA.life === GAME_LIFE &&
+      gameStatus.playerB.life === GAME_LIFE
+    )
+      setInterval(this.gameMain, 5, data.roomKey, this.gameService, this.io);
   }
 
   @SubscribeMessage('game/bar')
-  handleGameBarMove(client: Socket, data: GameDataDTO) {
-    this.gameService.barPosition();
+  handleGameBarMove(client: Socket, data: GameBarDTO) {
+    // console.log(data)
+    this.gameService.barPosition(data.roomKey, data.pos, data.nickname);
   }
 
-  private async gameMain() {
-    this.gameService.play();
-    // 계산, 현재위치 + 공 스피드 => emit
-    // room.emit('data') 공위치
+  private gameMain(roomKey: string, gs: GameService, io: Server) {
+    // console.log(gs, io)
+    gs.play(roomKey);
+    const gmaeStatus = gs.getGameStatusByKey(roomKey);
+    if (gmaeStatus.state === GameState.GAMING)
+      io.to(roomKey).emit('game/play', gmaeStatus);
   }
 }

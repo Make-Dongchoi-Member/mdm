@@ -13,6 +13,7 @@ import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameState } from 'src/types/enums';
 import { Ball, Bar, GameStatus, PlayerInfo } from 'src/types/interfaces';
+import { GameRoomDTO } from './dto/GameRoom.dto';
 
 @Injectable()
 export class GameService {
@@ -23,7 +24,9 @@ export class GameService {
     private userRepository: UserRepository,
   ) {}
 
-  saveGameRoom(socketRoom: string) {
+  saveGameRoom(gameRoom: GameRoomDTO) {
+    if (this.gameRoomMap.has(gameRoom.roomKey)) throw new Error();
+
     const ball: Ball = {
       x: (CANVAS_WIDTH - BALL_SIZE) / 2,
       y: (CANVAS_HEIGHT - BALL_SIZE) / 2,
@@ -34,15 +37,43 @@ export class GameService {
       y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
       h: BAR_BASIC_H,
     };
-    const barB = barA;
+    const barB = {
+      y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
+      h: BAR_BASIC_H,
+    };
     const gameStatus: GameStatus = {
       ball,
-      barA,
-      barB,
       state: GameState.READY,
-      lifeA: GAME_LIFE,
-      lifeB: GAME_LIFE,
+      playerA: {
+        bar: barA,
+        life: GAME_LIFE,
+        nickname: gameRoom.playerA,
+      },
+      playerB: {
+        bar: barB,
+        life: GAME_LIFE,
+        nickname: gameRoom.playerB,
+      },
     };
+    this.gameRoomMap.set(gameRoom.roomKey, gameStatus);
+  }
+
+  startGame(socketRoom: string) {
+    const gameStatus = this.gameRoomMap.get(socketRoom);
+    const ball: Ball = {
+      x: (CANVAS_WIDTH - BALL_SIZE) / 2,
+      y: (CANVAS_HEIGHT - BALL_SIZE) / 2,
+      speedX: BALL_SPEED,
+      speedY: BALL_SPEED,
+    };
+    gameStatus.ball = ball;
+    gameStatus.state = GameState.GAMING;
+    this.gameRoomMap.set(socketRoom, gameStatus);
+  }
+
+  setGameState(socketRoom: string, state: GameState) {
+    const gameStatus = this.gameRoomMap.get(socketRoom);
+    gameStatus.state = state;
     this.gameRoomMap.set(socketRoom, gameStatus);
   }
 
@@ -51,36 +82,42 @@ export class GameService {
     if (gameStatus.state !== GameState.GAMING) return;
 
     const ball = gameStatus.ball;
-    const barA = gameStatus.barA;
-    const barB = gameStatus.barB;
+    const barA = gameStatus.playerA.bar;
+    const barB = gameStatus.playerB.bar;
 
     ball.x += ball.speedX;
     ball.y += ball.speedY;
 
+    console.log(ball, barA, barB);
+
     //공이 왼쪽 벽에 부딪혔을 때의 조건
     if (ball.x < 0) {
-      --gameStatus.lifeA;
+      console.log('left wall');
+      gameStatus.playerA.life = gameStatus.playerA.life - 1;
       gameStatus.state = GameState.READY;
     }
 
     //공이 오른쪽 벽에 부딪혔을 때의 조건
-    if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
-      --gameStatus.lifeB;
+    else if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
+      console.log('right wall');
+      gameStatus.playerB.life = gameStatus.playerB.life - 1;
       gameStatus.state = GameState.READY;
     }
 
     //공이 위, 아래 벽에 부딪혔을 때의 조건
-    if (ball.y < 0 || ball.y > CANVAS_WIDTH - BALL_SIZE) {
+    else if (ball.y < 0 || ball.y > CANVAS_HEIGHT - BALL_SIZE) {
+      console.log('up down wall');
       ball.speedY *= -1;
     }
 
     //공이 왼쪽 막대에 부딪혔을 때의 조건
-    if (
+    else if (
       ball.x < BAR_W &&
       ball.x > 0 &&
       ball.y < barA.y + barA.h &&
       ball.y > barA.y
     ) {
+      console.log('left bar');
       if (ball.speedX < 0) {
         ball.speedX = this.randomSpeed();
         if (ball.speedY < 0) {
@@ -92,12 +129,13 @@ export class GameService {
     }
 
     //공이 오른쪽 막대에 부딪혔을 때의 조건
-    if (
-      ball.x > CANVAS_WIDTH - BAR_W &&
+    else if (
+      ball.x > CANVAS_WIDTH - BAR_W - BALL_SIZE &&
       ball.x < CANVAS_WIDTH &&
       ball.y < barB.y + barB.h &&
       ball.y > barB.y
     ) {
+      console.log('right bar');
       if (ball.speedX > 0) {
         ball.speedX = this.randomSpeed() * -1;
         if (ball.speedY < 0) {
@@ -112,13 +150,19 @@ export class GameService {
     // emit
   }
 
-  barPosition(socketRoom: string, pos: number, isLeft: boolean) {
+  getGameStatusByKey(socketRoom: string): GameStatus {
+    return this.gameRoomMap.get(socketRoom);
+  }
+
+  barPosition(socketRoom: string, pos: number, nickname: string) {
     const gameStatus = this.gameRoomMap.get(socketRoom);
+    const isLeft = gameStatus.playerA.nickname === nickname;
     if (isLeft) {
-      gameStatus.barA.y += pos;
+      gameStatus.playerA.bar.y += pos;
     } else {
-      gameStatus.barB.y += pos;
+      gameStatus.playerB.bar.y += pos;
     }
+    console.log(gameStatus);
     this.gameRoomMap.set(socketRoom, gameStatus);
   }
 

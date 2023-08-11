@@ -63,13 +63,17 @@ export interface Bar {
   h: number;
 }
 
+export interface Player {
+  bar: Bar;
+  life: number;
+  nickname: string;
+}
+
 export interface GameStatus {
   ball: Ball;
-  barA: Bar;
-  barB: Bar;
   state: GameState;
-  lifeA: number;
-  lifeB: number;
+  playerA: Player;
+  playerB: Player;
 }
 
 export interface PlayerInfo {

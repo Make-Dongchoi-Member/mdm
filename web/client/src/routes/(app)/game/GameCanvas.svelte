@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { spaceKey } from '../../../actions';
-	import { gameSettingStore, socketStore } from '../../../store';
-	import type { GameData } from '../../../interfaces';
+	import { gameSettingStore, socketStore, myData } from '../../../store';
+	import type { GameData, GameInfo, GameStatus } from '../../../interfaces';
 
 	let scoreDiv: HTMLDivElement;
 	let canvas: HTMLCanvasElement;
@@ -88,9 +88,50 @@
 		color: gameState.barColor,
 	}
 
+	let leftBar: Bar = {
+		w:7,
+		h: gameState.basicModeBar,
+		x: 0,
+		y: 180,
+		speed: 0,
+		color: gameState.barColor,
+	}
+
+	let rightBar: Bar = {
+		w:7,
+		h: gameState.basicModeBar,
+		x: 793,
+		y: 180,
+		speed: 0,
+		color: gameState.barColor,
+	}
+
+	let gameInfo: GameInfo = {
+		me: $myData.nickname,
+		enemy: 'anonymous',
+		gameHost: false,		
+	};
+
+	let ready: boolean = false;
+
+	let leftLife: number = 5;
+	let rightLife: number = 5;
+
 	let ballPos: Position[] = new Array();
 
-	onMount( async () => {
+	const mouseControl = () => {
+		if (gameState.controlWithMouse) {
+			gameState.controlWithMouse = false;
+			gameState.pause = true;
+			document.exitPointerLock();
+		} else {
+			gameState.controlWithMouse = true;
+			gameState.pause = false;
+			canvas.requestPointerLock();
+		}
+	}
+
+	onMount(() => {
 		scoreDiv = document.getElementById("score") as HTMLDivElement;
 		canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
 		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -98,57 +139,79 @@
 		canvas.width = 800;
 		canvas.height = 430;
 
-		canvas.addEventListener('click', () => {
-			if (gameState.controlWithMouse) {
-				gameState.controlWithMouse = false;
-				gameState.pause = true;
-				document.exitPointerLock();
+		canvas.addEventListener('click', mouseControl);
+
+		document.addEventListener('mousemove', handleMousePointer);
+
+		// $socketStore.on("game", (arg: GameData) => {
+		// 	bar = {
+		// 	w: 7,
+		// 	h: gameState.basicModeBar,
+		// 	x: 10,
+		// 	y: arg.bar.y,
+		// 	speed: 0,
+		// 	color: gameState.barColor,
+		// 	}
+		// });
+
+		$socketStore.on('game/match', (arg) => {
+			if ($myData.nickname === arg.playerA) {
+				gameInfo.gameHost = true;
+				gameInfo.enemy = arg.playerB;
 			} else {
-				gameState.controlWithMouse = true;
-				gameState.pause = false;
-				canvas.requestPointerLock();
+				gameInfo.enemy = arg.playerA;
 			}
+			gameInfo.roomKey = arg.roomKey;
+			ready = true;
 		});
 
-		$socketStore.on("game", (arg: GameData) => {
-			bar = {
-			w: 7,
-			h: gameState.basicModeBar,
-			x: 10,
-			y: arg.bar.y,
-			speed: 0,
-			color: gameState.barColor,
-			}
+		$socketStore.on('game/play', (arg: GameStatus) => {
+			ctx.fillStyle = gameState.backgroundColor;
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			leftBar.y = arg.playerA.bar.y;
+			rightBar.y = arg.playerB.bar.y;
+			ctx.fillStyle = leftBar.color;
+			ctx.fillRect(leftBar.x, leftBar.y, leftBar.w, leftBar.h);
+			ctx.fillRect(rightBar.x, rightBar.y, rightBar.w, rightBar.h);
+
+			ball.x = arg.ball.x;
+			ball.y = arg.ball.y;
+			ctx.fillStyle = ball.color;
+			ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
+
+			leftLife = arg.playerA.life;
+			rightLife = arg.playerB.life;
 		});
 	});
 
-	function randomSpeed(): number {
-		return (Math.random() + gameState.speed);
-	}
+	onDestroy(() => {
+		$socketStore.off("game/match");
+		$socketStore.off("game/play");
+		canvas.removeEventListener('click', mouseControl);
+		document.removeEventListener('mousemove', handleMousePointer);
+	});
 
-	const waitPage = () => {
-		ctx.fillStyle = gameState.backgroundColor;
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	// const waitPage = () => {
+	// 	ctx.fillStyle = gameState.backgroundColor;
+	// 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		bar.h = ($gameSettingStore.gameMode === "hard") ?
-					gameState.hardModeBar : gameState.basicModeBar;
-		bar.y = (canvas.height - bar.h) / 2;
-		ctx.fillStyle = bar.color;
-		ctx.fillRect(bar.x, bar.y, bar.w, bar.h);
+	// 	bar.h = ($gameSettingStore.gameMode === "hard") ?
+	// 				gameState.hardModeBar : gameState.basicModeBar;
+	// 	bar.y = (canvas.height - bar.h) / 2;
+	// 	ctx.fillStyle = bar.color;
+	// 	ctx.fillRect(bar.x, bar.y, bar.w, bar.h);
 
-		ctx.fillStyle = ballColorString;
-		ctx.font = "bold 50px Arial, sans-serif";
-		ctx.textAlign = "center";
-		ctx.fillText(`${ gameState.myScore } : ${ gameState.enemyScore }`,
-						canvas.width / 2, canvas.height / 2);
-	}
+	// 	ctx.fillStyle = ballColorString;
+	// 	ctx.font = "bold 50px Arial, sans-serif";
+	// 	ctx.textAlign = "center";
+	// 	ctx.fillText(`${ gameState.myScore } : ${ gameState.enemyScore }`,
+	// 					canvas.width / 2, canvas.height / 2);
+	// }
 
-	const gamePage = () => {
-		// 게임 진행 페이지
-	}
-
-
-
+	// const gamePage = () => {
+	// 	// 게임 진행 페이지
+	// }
 
 
 	const draw = () => {
@@ -229,89 +292,54 @@
 
 	}
 
-	const gamePause = () => {
-		ball.x = canvas.width;
-		ball.y = (canvas.height - ball.y) / 2;
-		bar.y = (canvas.height - bar.h) / 2;
-		ballPos = new Array();
-		if (gameState.pause) {
-			gameState.pause = false;
-		} else {
-			gameState.pause = true;
+	// const gamePause = () => {
+	// 	ball.x = canvas.width;
+	// 	ball.y = (canvas.height - ball.y) / 2;
+	// 	bar.y = (canvas.height - bar.h) / 2;
+	// 	ballPos = new Array();
+	// 	if (gameState.pause) {
+	// 		gameState.pause = false;
+	// 	} else {
+	// 		gameState.pause = true;
+	// 	}
+	// }
+
+	const gameReady = () => {
+		$socketStore.emit("game/match", { nickname: $myData.nickname });
+	}
+
+	const gameStart = () => {
+		if (ready) {
+			$socketStore.emit("game/start", { nickname: gameInfo.me, roomKey: gameInfo.roomKey });
 		}
 	}
+
 	const handleMousePointer = (event: MouseEvent) => {
 		if (gameState.controlWithMouse) {
 			const pos = event.movementY;
 			bar.y += pos;
 
-			const gameData: GameData = {
-			ball: ball,
-			bar: bar,
-			}
-
-			$socketStore.emit("game", gameData);
+			$socketStore.emit("game/bar", { nickname: gameInfo.me, roomKey: gameInfo.roomKey, pos: pos});
 
 		}
 	}
-
-	// const handleKeyDown = (event: KeyboardEvent) => {
-	// 	const key = event.key;
-	// 	switch (key) {
-	// 		case "ArrowUp":
-	// 			if (bar.y > 0) {
-	// 				bar.speed = -3;
-	// 			}
-	// 			break;
-
-	// 		case "ArrowDown":
-	// 			if (bar.y + bar.h < canvas.height) {
-	// 				bar.speed = 3;
-	// 			}
-	// 			break;
-			
-	// 		default:
-	// 			break;
-	// 	}
-	// }
-
-	// const handleKeyUp = (event: KeyboardEvent) => {
-	// 	const key = event.key;
-	// 	switch (key) {
-	// 		case "ArrowUp":
-	// 			if (bar.y > 0) {
-	// 				bar.speed = 0;
-	// 			}
-	// 			break;
-
-	// 		case "ArrowDown":
-	// 			if (bar.y + bar.h < canvas.height) {
-	// 				bar.speed = 0;
-	// 			}
-	// 			break;
-			
-	// 		default:
-	// 			break;
-	// 	}
-	// }
-
-	// document.addEventListener('keydown', handleKeyDown);
-	// document.addEventListener('keyup', handleKeyUp);
-	document.addEventListener('mousemove', handleMousePointer);
 	
-	let loop = setInterval(draw, 0.1);
+	// let loop = setInterval(draw, 0.1);
 
 </script>
 
 <div class="life">
-	<span>my life : {gameState.myScore}</span>
-	<span>enemy life : {gameState.enemyScore}</span>
+	<span>{gameInfo.me} : {leftLife}</span>
+	<span>{gameInfo.enemy} : {rightLife}</span>
 </div>
 <canvas id="game-canvas">Canvas</canvas>
-<div use:spaceKey on:spacekey={gamePause} id="score">
+<div id="score">
 	0 : 0
 </div>
-<!--<button on:click={gamePause}>game start</button>-->
+<div class="button-area">
+	<button on:click={gameReady}>game ready</button>
+	<button on:click={gameStart}>game start</button>
+</div>
 
 <style>
 	#score {
