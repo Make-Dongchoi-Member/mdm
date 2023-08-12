@@ -3,8 +3,6 @@
 CLIENT_PATH=/usr/src/app/client
 SERVER_PATH=/usr/src/app/server
 
-echo "test"
-
 if [ "$NODE_ENV" == "prod" ]; then
 	echo ""
 	echo "############### PRODUCTION ###############"

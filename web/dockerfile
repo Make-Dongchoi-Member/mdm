@@ -1,8 +1,7 @@
 FROM node
 
-# COPY ./init.sh /usr/src/app/init.sh
 
 RUN apt upgrade && apt update
 RUN apt install -y dumb-init
 
-ENTRYPOINT ["/usr/bin/dumb-init","--","/usr/src/app/init.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/src/app/init.sh"]
