@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { myData, openedRoom, socketStore } from '../../../../store';
 	import type { Message } from '../../../../interfaces';
 	import { page } from '$app/stores';
@@ -10,8 +10,15 @@
 		document.body.addEventListener("keypress", enterKeyPressEvent);
 
 		$socketStore.on("chat/message", (data: { message: Message; }) => {
+			data.message.date = new Date(data.message.date);
 			pushNewMessage(data.message);
 		});
+		scrollAndFocus();
+	});
+
+	onDestroy(() => {
+		document.body.removeEventListener("keypress", enterKeyPressEvent);
+		$socketStore.off("chat/message");
 	});
 
 	const enterKeyPressEvent = (e: any) => {
@@ -20,39 +27,82 @@
 		}
 	}
 
+	// const unsplit = (array: string[]): string => {
+	// 	let res: string = "";
+	// 	for (let i = 2; i < array.length; i++) {
+	// 		const element = array[i];
+	// 		res += element;
+	// 		if (i !== array.length - 1) {
+	// 			res += " ";
+	// 		}
+	// 	}
+	// 	return res;
+	// }
+
+	// const sendDirectMessage = (): boolean => {
+	// 	if (inputValue.startsWith("/w ")) {
+	// 		const splittedArray: string[] = inputValue.split(' ');
+	// 		for (const m of $openedRoom.members) {
+	// 			if (m[1].user.nickname === splittedArray[1]) {
+	// 				const message: Message = {
+	// 					sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
+	// 					receiver: m[1].user.id,
+	// 					roomId: $page.url.searchParams.get("id") as string,
+	// 					body: unsplit(splittedArray),
+	// 					isDM: true,
+	// 					date: new Date(),
+	// 				};
+	// 				$socketStore.emit("chat/message", { message });
+	// 				inputValue = "";
+	// 				pushNewMessage(message);
+	// 				return true;
+	// 			}
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+
 	const sendButtonEvent = () => {
-		if (inputValue === "") {
-			return ;
-		}
-		
+		if (inputValue === "") return;
+		if ($openedRoom.members.get(`${$myData.id}`)?.isMuted) return;
+
+		// if (sendDirectMessage()) return;
+
 		const message: Message = {
 			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
 			roomId: $page.url.searchParams.get("id") as string,
 			body: inputValue,
 			isDM: false,
-			date: "10:00",
+			date: new Date(),
 		};
-
-		/*
-			@TODO
-			메시지 SOCKET 요청
-		*/
 		$socketStore.emit("chat/message", { message });
-
 		inputValue = "";
 		pushNewMessage(message);
 	}
 
 	const pushNewMessage = (message: Message) => {
 		$openedRoom.history = [...$openedRoom.history, message];
-		
+		scrollAndFocus();
+	}
+
+	const scrollAndFocus = () => {
 		setTimeout(() => {
 			const chattingBox =  document.querySelector(".chatting-box") as HTMLDivElement;
 			chattingBox.scrollTop = chattingBox.scrollHeight;
-			
 			const inputTag =  document.querySelector("#chat-input") as HTMLInputElement;
 			inputTag.focus();
 		}, 1);
+	}
+
+	function formatDateToTimeString(date: Date) {
+		let hours = date.getHours();
+		let minutes = date.getMinutes();
+
+		// 시간과 분이 10 미만인 경우 앞에 '0'을 붙여 두 자릿수로 만든다.
+		const hoursStr: string = `${(hours < 10) ? '0' + hours : hours}`;
+		const minutesStr: string = `${(minutes < 10) ? '0' + minutes : minutes}`;
+
+		return hoursStr + ':' + minutesStr;
 	}
 
 </script>
@@ -60,7 +110,7 @@
 <div class="chat-main-box">
 	<div class="chatting-box">
 		{#each $openedRoom.history as message}
-			<div class={$myData.id === message.sender.id ? "chatting my-message" : "chatting"}>
+			<div class={$myData.nickname === message.sender.nickname ? "chatting my-message" : "chatting"}>
 				<div>
 					<img src="{message.sender.avatar}" alt="Profile Image" class="chatting-box-avatar">
 				</div>
@@ -70,7 +120,7 @@
 							{message.sender.nickname}
 						</div>
 						<div>
-							10:00
+							{formatDateToTimeString(message.date)}
 						</div>
 					</div>
 					<div>

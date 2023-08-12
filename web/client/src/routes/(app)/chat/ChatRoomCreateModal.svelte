@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { modalStatesStore, myData } from '../../../store';
 	import { goto } from '$app/navigation';
-	import { page } from "$app/stores";
 	import type { PostCreateDTO, RoomInfoDTO } from '../../../interfaces';
 	import { RoomType } from '../../../enums';
 	import { clickOutside, escapeKey } from '../../../actions';
@@ -13,22 +11,7 @@
 	let roomNameInputValue: string = "";
 	let passwordInput: string = "";
 
-	onMount(() => {
-		const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
-		const roomnameInputBox = document.querySelector(".roomname-inputbox") as HTMLInputElement;
-		const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
-		const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
-		
-		makeButton.disabled = !isMakeButtonActivation;
 
-		closeButton.addEventListener("click", () => {
-			roomnameInputBox.value = "";
-			passwordInputBox.value = "";
-			isMakeButtonActivation = false;
-			isPrivate = false;
-			isPassword = false;
-		});
-	});
 
 	async function createRoom(data: any) {
 		const response = await fetch("http://localhost:3000/api/chat/create", {
@@ -73,6 +56,7 @@
 	}
 
 	const roomnameInputBoxEvent = (e: any) => {
+		roomNameInputValue = e.target.value.trim();
 		isMakeButtonActivation = makeButtonActivationEvent();
 	}
 
@@ -93,7 +77,6 @@
 
 	const passwordButtonToggle = () => {
 		isPassword = !isPassword;
-		console.log("isPassword : ", isPassword);
 		if (!isPassword) {
 			passwordInput = "";
 		}
@@ -102,8 +85,7 @@
 	}
 
 	const makeButtonActivationEvent = () => {
-		const roomname: string = ((document.querySelector(".roomname-inputbox") as HTMLInputElement).value).trim();			
-		if (roomname === "") {
+		if (roomNameInputValue === "") {
 			return false;
 		}
 		if (isPassword && passwordInput === "") {
@@ -111,18 +93,28 @@
 		}
 		return true;
 	}
+
+	const initialInput = () => {
+		roomNameInputValue = ""; 
+		passwordInput = "";
+		isMakeButtonActivation = false;
+		if (isPrivate)
+			passwordButtonToggle();
+		if (isPassword) 
+			passwordButtonToggle();
+	}
 </script>
 
 <div class="modal-container"
 	style="{$modalStatesStore.isRoomCreateModal ? 'display: flex;' : 'display: none;'}"
-	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomCreateModal = false}}
-	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomCreateModal = false}}>
+	use:clickOutside on:outclick={() => {$modalStatesStore.isRoomCreateModal = false; initialInput();}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isRoomCreateModal = false; initialInput();}}>
 	<div class="modal-title">
 		<div>
 			NEW CHAT ROOM
 		</div>
 		<div class="close-button">
-			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false;}}>&#215;</button>
+			<button on:click={() => { $modalStatesStore.isRoomCreateModal = false; initialInput();}}>&#215;</button>
 		</div>
 	</div>
 	<div class="modal-content">
@@ -182,7 +174,8 @@
 	.modal-container {
 		position: absolute;
 		top: 100px;
-		left: 23%;
+		left: 50%;
+		margin-left: -375px;
 
 		width: 775px;
 		height: 150px;
@@ -197,6 +190,7 @@
 		background-color: var(--dark-color);
 		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
+		
 	}
 
 	.modal-title {
@@ -205,8 +199,13 @@
 		justify-content: space-between;
 		align-items: center;
 
-		margin-left: 20px;
+		width: 100%;
+		margin-left: 80px;
 		margin-top: 10px;
+	}
+
+	.close-button {
+		margin-right: 30px;
 	}
 
 	.close-button > button {
@@ -214,7 +213,7 @@
 		font-weight: 500;
 		flex-grow: 0;
 		text-align: right;
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		color: var(--text-color);
 		border: none;
 		outline: none;

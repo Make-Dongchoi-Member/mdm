@@ -1,14 +1,21 @@
 import { GameState, Level, RoomType } from './enums';
 import { Socket } from 'socket.io';
+import { Level, Relation, RoomType } from './enums';
 
 export interface UserData {
-  id: number;
+  id?: number;
   avatar: string;
   nickname: string;
+  record?: Record[];
 }
 
 export interface MyData extends UserData {
   rooms: number[];
+  friends: FriendData[];
+}
+
+export interface OtherUserData extends UserData {
+  relation: Relation;
 }
 
 export interface Profile {
@@ -19,7 +26,8 @@ export interface Profile {
 
 export interface Message {
   sender: UserData;
-  roomId: string;
+  receiver?: string;
+  roomId?: string;
   body: string;
   isDM: boolean;
   date: Date;
@@ -41,6 +49,17 @@ export interface RoomInfo {
   roomname: string;
   password: string;
   roomtype: RoomType;
+}
+
+export interface FriendData {
+  nickname: string;
+  avatar: string;
+}
+
+export interface Record {
+  enemy: string;
+  win: boolean;
+  date: Date;
 }
 
 export interface RoomListInfo {

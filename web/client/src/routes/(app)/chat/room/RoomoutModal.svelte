@@ -1,35 +1,14 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { modalStatesStore, myData, openedRoom } from "../../../../store";
+	import { modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
 	import { page } from '$app/stores';
     import { clickOutside, escapeKey } from "../../../../actions";
 
 	const outButtonEvent = () => {
-		const data = {
-			data: {
-				roomId: $page.url.searchParams.get("id") as string,
-			}
-		}
-		const response = fetch(`http://localhost:3000/api/chat/room/out`, {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-			body: JSON.stringify(data),
-        })
-		.then((response) => {
-			if (response.status === 201) {
-				deleteRoomId($page.url.searchParams.get("id") as string);
-				goto("/chat");
-				$modalStatesStore.isRoomoutModal = false;
-			} else {
-				console.log(response.status);
-			}
-		})
-        .catch((error) => {
-			console.log("Error: ", error);
-		});
+		deleteRoomId($page.url.searchParams.get("id") as string);
+		goto("/chat");
+		$modalStatesStore.isRoomoutModal = false;
+		$socketStore.emit("chat/out", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 	}
 
 	function deleteRoomId(deleteID: string) {

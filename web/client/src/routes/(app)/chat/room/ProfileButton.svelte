@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { myData, socketStore, openedRoom, myLevel } from '../../../../store';
+    import { myData, socketStore, openedRoom } from '../../../../store';
     import { page } from '$app/stores';
     import { onDestroy } from 'svelte';
 	
 	export let key: string;
 	export let value: Profile;
-	
-	console.log(key, value);
 	
 	let isClicked: boolean = false;
 
@@ -30,10 +28,6 @@
 	}
 
 	const adminClickEvent = () => {
-		/*
-			@TODO
-			관리자 권한 SOCKET 요청
-		*/
 		if (value.level === Level.MEMBER) {
 			$socketStore.emit("chat/set-admin", requestData);
 		} else if (value.level === Level.ADMIN) {
@@ -42,12 +36,8 @@
 	}
 
 	const muteClickEvent = () => {
-		/*
-			@TODO
-			채팅금지 SOCKET 요청
-		*/
-		if ($myLevel === Level.MEMBER) return ;
-		if ($myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		if (!value.isMuted) {
 			$socketStore.emit("chat/set-mute", requestData);
 		} else {
@@ -60,13 +50,12 @@
 			@TODO
 			강퇴 SOCKET 요청
 		*/
-		if ($myLevel === Level.MEMBER) return ;
-		if ($myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.MEMBER) return ;
+		if ($openedRoom.myLevel === Level.ADMIN && value.level !== Level.MEMBER) return ;
 		$socketStore.emit("chat/set-kick", requestData);
 	}
 
 	onDestroy(() => {
-		console.log("destroy!");
 		isClicked = false;
 	})
 
@@ -96,10 +85,10 @@
 	{#if isClicked}
 		<div class="menu-list">
 			<button on:click={profileClickEvent}>PROFILE</button>
-			{#if $myLevel === Level.HOST}
+			{#if $openedRoom.myLevel === Level.HOST}
 				<button on:click={adminClickEvent}>ADMIN</button>
 			{/if}
-			{#if $myLevel === Level.HOST || ($myLevel === Level.ADMIN && value.level === Level.MEMBER)}
+			{#if $openedRoom.myLevel === Level.HOST || ($openedRoom.myLevel === Level.ADMIN && value.level === Level.MEMBER)}
 				<button on:click={muteClickEvent}>MUTE</button>
 				<button on:click={kickClickEvent}>KICK</button>
 			{/if}
@@ -108,7 +97,9 @@
 </div>
 
 <style>
+
 	.profile-button {
+		width: 100%;
 		height: 40px;
         display: flex;
         flex-direction: row;
@@ -116,8 +107,9 @@
         align-items: center;
         border: 1px solid var(--border-color);
 		padding: 4px 10px 4px 10px;
-		margin: 0 5% 5% 5%;
+		
 		box-sizing: border-box;
+		margin-bottom: 5px;
     }
 
 	.profile-id {

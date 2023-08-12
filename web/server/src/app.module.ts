@@ -5,14 +5,14 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { LoginModule } from './login/login.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtGuard } from './login/guards/login.jwt.guard';
 import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { AppGateway } from './app.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './configs/typeorm.config';
 import { GameModule } from './game/game.module';
+import { DatabaseModule } from './database/database.module';
+import { UserRepository } from './database/repositories/user.repository';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === 'prod') {
     UserModule,
     ChatModule,
     GameModule,
+    DatabaseModule.forCustomRepository([UserRepository]),
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

@@ -1,39 +1,18 @@
 <script lang="ts">
-	import { myData, openedRoom, socketStore, myLevel } from '../../../../store';
+	import { myData, openedRoom, socketStore } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
 
 	onMount(() => {
-		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
-			console.log("chat/set-admin", data);
-			
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.ADMIN;
-			$openedRoom = $openedRoom;
-		});
 
-		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
-			console.log("chat/unset-admin", data);
-
-			($openedRoom.members.get(data.targetId) as Profile).level = Level.MEMBER;
-			$openedRoom = $openedRoom;
-		});
-
-		$socketStore.on("chat/set-mute", (data: SetRequestDTO) => {
-			console.log("chat/set-mute", data);
-
-			($openedRoom.members.get(data.targetId) as Profile).isMuted = true;
-			$openedRoom = $openedRoom;
-		});
-
-		$socketStore.on("chat/unset-mute", (data: SetRequestDTO) => {
-			console.log("chat/unset-mute", data);
-
-			($openedRoom.members.get(data.targetId) as Profile).isMuted = false;
-			$openedRoom = $openedRoom;
-		});
 	});
+
+	onDestroy(() => {
+
+	});
+
 </script>
 
 <div class="members">
@@ -44,11 +23,16 @@
 		<div class="profile-id">
 			{$myData.nickname}
 		</div>
-		{#if $myLevel === Level.HOST}
+		{#if $openedRoom.members.get(`${$myData.id}`)?.isMuted}
+			<div>&#128263;</div>
+		{:else}
+			<div></div>
+		{/if}
+		{#if $openedRoom.myLevel === Level.HOST}
 			<div>&#128081;</div>
-		{:else if $myLevel === Level.ADMIN}
+		{:else if $openedRoom.myLevel === Level.ADMIN}
 			<div>&#128736;</div>
-		{:else if $myLevel === Level.MEMBER}
+		{:else if $openedRoom.myLevel === Level.MEMBER}
 			<div></div>
 		{/if}
 	</div>

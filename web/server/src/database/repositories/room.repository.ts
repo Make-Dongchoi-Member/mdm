@@ -2,11 +2,13 @@ import { ArrayContains, Not, Repository } from 'typeorm';
 import { Rooms } from '../entities/room.entity';
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
 import { RoomType } from 'src/types/enums';
-import { RoomInfo } from 'src/types/interfaces';
+import { Message, RoomInfo } from 'src/types/interfaces';
 import { SALT_ROUNDS } from 'src/configs/constants';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { MessageEntity } from '../entities/message.entity';
+import { Users } from '../entities/user.entity';
 
 @CustomRepository(Rooms)
 export class RoomRepository extends Repository<Rooms> {
@@ -25,7 +27,7 @@ export class RoomRepository extends Repository<Rooms> {
   }
 
   async getRoomById(id: number) {
-    return this.findOneBy({ id });
+    return this.findOne({ where: { id }, relations: { messages: true } });
   }
 
   async saveRoom(roomInfo: RoomInfo) {
@@ -69,5 +71,57 @@ export class RoomRepository extends Repository<Rooms> {
       new ConfigService().get<number>(SALT_ROUNDS),
     );
     return bcrypt.hash(pw, salt);
+  }
+
+  async pushMessage(user: Users, message: Message) {
+    const room = await this.findOneBy({ id: Number(message.roomId) });
+    const messageEntity = new MessageEntity();
+    messageEntity.roomId = message.roomId;
+    messageEntity.body = message.body;
+    messageEntity.isDM = message.isDM;
+    messageEntity.date = new Date();
+    messageEntity.sender = user;
+    messageEntity.room = room;
+    this.manager.save(messageEntity);
+  }
+
+  async getAdmin(roomId: number) {
+    const room = await this.findOneBy({ id: roomId });
+    return room.admin;
+  }
+
+  async pushAdmin(roomId: number, userId: number) {
+    await this.update(roomId, {
+      admin: () => `array_append("admin", ${userId})`,
+    });
+  }
+
+  async removeAdmin(roomId: number, userId: number) {
+    await this.update(roomId, {
+      admin: () => `array_remove("admin", ${userId})`,
+    });
+  }
+
+  async getMute(roomId: number) {
+    const room = await this.findOneBy({ id: roomId });
+    return room.mute;
+  }
+
+  async pushMute(roomId: number, userId: number) {
+    await this.update(roomId, {
+      mute: () => `array_append("mute", ${userId})`,
+    });
+  }
+
+  async removeMute(roomId: number, userId: number) {
+    await this.update(roomId, {
+      mute: () => `array_remove("mute", ${userId})`,
+    });
+  }
+
+  async pushBan(roomId: number, userId: number) {
+    await this.update(roomId, {
+      ban: () => `array_append("ban", ${userId})`,
+    });
   }
 }

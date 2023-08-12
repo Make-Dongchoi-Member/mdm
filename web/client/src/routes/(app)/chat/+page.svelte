@@ -1,7 +1,7 @@
 <script lang="ts">
     import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
     import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
-    import { modalStatesStore, myData, roomList } from '../../../store';
+    import { modalStatesStore, myData, roomList, socketStore } from '../../../store';
     import type { Room, RoomEnterDTO } from '../../../interfaces';
     import { onMount } from 'svelte';
     import { RoomType } from '../../../enums';
@@ -24,7 +24,6 @@
         })
         .then(response => response.json())
         .then(data => {
-			console.log("get room list", data);
 			$roomList.clear();
             for (let i = 0; i < data.rooms.length; i++) {
                 const element = data.rooms[i];
@@ -62,6 +61,9 @@
 			} else if (response.status === 201) {
 				$modalStatesStore.isPasswordInputModal = false;
             	goto(`/chat/room?id=${roomId}`);
+				$socketStore.emit("chat/enter", { roomId, userId: $myData.id });
+			} else if (response.status === 406) {
+				alert("You can't enter the room.");
 			}
 		})
         .catch((error) => {

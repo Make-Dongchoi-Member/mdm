@@ -1,4 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { GameHistory } from './game-history.entity';
+import { MessageEntity } from './message.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -18,6 +20,9 @@ export class Users extends BaseEntity {
   status: string | null;
 
   @Column({ nullable: true })
+  socket: string | null;
+
+  @Column({ nullable: true })
   avatar: string | null;
 
   @Column({ nullable: true })
@@ -25,4 +30,19 @@ export class Users extends BaseEntity {
 
   @Column('int', { array: true, default: [] })
   rooms: number[];
+
+  @Column('int', { array: true, default: [] })
+  friends: number[];
+
+  @Column('int', { array: true, default: [] })
+  blocks: number[];
+
+  @OneToMany(() => GameHistory, (history) => history.user)
+  record: GameHistory[];
+
+  @OneToMany(() => GameHistory, (history) => history.enemy)
+  recordForEnemy: GameHistory[];
+
+  @OneToMany(() => MessageEntity, (message) => message.sender)
+  message: MessageEntity[];
 }

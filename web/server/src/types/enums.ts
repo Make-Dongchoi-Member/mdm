@@ -16,3 +16,9 @@ export enum GameState {
   PAUSE,
   END,
 }
+
+export enum Relation {
+  FRIEND = 'friend',
+  BLOCK = 'block',
+  NONE = 'none',
+}

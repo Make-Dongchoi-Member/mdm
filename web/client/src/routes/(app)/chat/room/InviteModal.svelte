@@ -1,5 +1,6 @@
 <script lang="ts">
     import { modalStatesStore } from "../../../../store";
+    import { clickOutside, escapeKey } from '../../../../actions';
     
     let isInviteButtonActivated: boolean = false;
     let inputValue: string = "";
@@ -22,15 +23,16 @@
 
     const inputEvent = (e: any) => {
         const isInviteAvalable = document.querySelector(".invite-avalable") as HTMLDivElement;
-        const id: string = (e.target.value).trim();
+        e.target.value = e.target.value.replace(/\s/g, '');
+        inputValue = e.target.value; 
 
-        if (id !== "" && isUserExist(id)) {
+        if (inputValue !== "" && isUserExist(inputValue)) {
             isInviteButtonActivated = true;
             isInviteAvalable.textContent = "available";
         } else {
             isInviteButtonActivated = false;
             isInviteAvalable.textContent = "unavailable";
-        }        
+        }
     }
 
     const isUserExist = (id: string) => {
@@ -40,21 +42,30 @@
         }
         
         /* 유저 존재하는지 API 요청 */       
+        return true;
         
         return false;
     }
+
+    const initialInput = () => {
+        const isInviteAvalable = document.querySelector(".invite-avalable") as HTMLDivElement;
+		inputValue = "";
+        isInviteAvalable.textContent = "unavailable";
+	}
 
     
 
 </script>
 
-    <div class="modal-container" style="{$modalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}">
+    <div class="modal-container" style="{$modalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}"
+        use:clickOutside on:outclick={() => {$modalStatesStore.isInviteModal = false; initialInput();}}
+        use:escapeKey on:esckey={() => {$modalStatesStore.isInviteModal = false; initialInput();}}>
         <div class="modal-title">
             <div>
                 INVITE FRIEND
             </div>
             <div class="close-button">
-                <button on:click={() => { $modalStatesStore.isInviteModal = false; }}>&#215;</button>
+                <button on:click={() => { $modalStatesStore.isInviteModal = false; initialInput();}}>&#215;</button>
             </div>
         </div>
         <div class="modal-content">
@@ -92,8 +103,9 @@
         justify-content: center;
         align-items: center;
 
-        background-color: var(--bg-color);
-        border: 1px solid var(--border-color);
+		background-color: var(--dark-color);
+		border: 1px solid var(--point-color);
+		border-radius: 0.5rem;
     }
 
     .modal-title {      
@@ -111,7 +123,7 @@
         font-weight: 500;
         flex-grow: 0;
         text-align: right;
-        background-color: var(--bg-color);
+        background-color: var(--dark-color);
         color: var(--text-color);
         border: none;
         outline: none;
@@ -133,7 +145,7 @@
     .find-friend-input > input {
         width: 260px;
         height: 35px;
-        background-color: var(--bg-color);
+        background-color: var(--dark-color);
         border: none;
         outline: none;
         /* border: 1px solid var(--border-color); */
@@ -151,7 +163,7 @@
 
     .find-button > button {
         font-size: 20px;
-        background-color: var(--bg-color);        
+        background-color: var(--dark-color);        
         border: none;
         outline: none;
     }    
@@ -171,7 +183,7 @@
 
         width: 320px;
         height: 35px;
-        background-color: var(--bg-color);        
+        background-color: var(--dark-color);        
         color: var(--border-color);      
     }
 
@@ -198,6 +210,7 @@
         border: 1px solid var(--border-color);
 
         margin-right: 20px;
+        background-color: var(--dark-color);
     }    
 
     .make-button.able:hover {
@@ -209,7 +222,7 @@
     }
 
     .make-button.disable:hover {
-        background-color: var(--bg-color);
+        background-color: var(--dark-color);
     }
   
 </style>

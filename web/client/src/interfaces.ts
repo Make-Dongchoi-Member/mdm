@@ -71,10 +71,11 @@ export interface GameData {
 
 export interface Message {
   sender: UserData;
-  roomId: string;
+  receiver?: string;
+  roomId?: string;
   body: string;
   isDM: boolean;
-  date: string;
+  date: Date;
 }
 
 export interface Profile {
@@ -96,6 +97,7 @@ export type RoomList = Map<number, Room>;
 export interface RoomDetail extends Room {
   members: Map<string, Profile>;
   history: Message[];
+  myLevel: Level;
 }
 
 export interface RoomInfoDTO {

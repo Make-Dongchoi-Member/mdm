@@ -2,41 +2,65 @@
     import InviteModal from './InviteModal.svelte';
     import SettingModal from './SettingModal.svelte';
     import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom, myLevel } from '../../../../store';
+    import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
     import ChatMessage from './ChatMessage.svelte';
     import ChatMember from './ChatMember.svelte';
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
+  	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
 
     onMount(() => {
         getRoomData();
         myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
+        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
-        $socketStore.on("chat/join", (data: any) => {
-            /**
-             * @TODO
-             * 방에 참가한 사용자를 사용자 목록에 추가하기
-            */
-            console.log("join:", data);
+		$socketStore.on("chat/enter", (data: any) => {
+		    $openedRoom.members.set(`${data.user.id}`, data);
+			$openedRoom = $openedRoom;
         });
 
-        $socketStore.on("chat/leave", (data: any) => {
-			console.log("chat/leave", data);
-
-			$openedRoom.members.delete(data.userId);
+        $socketStore.on("chat/out", (data: any) => {
+			$openedRoom.members.delete(`${data.userId}`);
 			$openedRoom = $openedRoom;
 		});
 
 		$socketStore.on("chat/set-kick", (data: any) => {
 			if ($myData.id === data.targetId) {
-				console.log("chat/set-kick", data);
+				$myData.rooms = ($myData.rooms).filter((room) => String(room) !== $page.url.searchParams.get("id"));
+				$myData = $myData;
 				goto("/chat");
+			} else {
+				getRoomData();
 			}
 		});
 
+		$socketStore.on("chat/set-admin", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+
+		$socketStore.on("chat/unset-admin", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+
+		$socketStore.on("chat/set-mute", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+
+		$socketStore.on("chat/unset-mute", (data: SetRequestDTO) => {
+			getRoomData();
+		});
+	});
+
+	onDestroy(() => {
+		$socketStore.off("chat/enter");
+		$socketStore.off("chat/out");
+		$socketStore.off("chat/set-kick");
+		$socketStore.off("chat/set-admin");
+		$socketStore.off("chat/unset-admin");
+		$socketStore.off("chat/set-mute");
+		$socketStore.off("chat/unset-mute");
 	});
 
 	const getRoomData = async () => {
@@ -49,15 +73,17 @@
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data);
-			
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;
 			$openedRoom.roomname = data.openedRoom.roomname;
 			$openedRoom.roomtype = data.openedRoom.roomtype;
-			$openedRoom.history = data.openedRoom.history;
+			$openedRoom.history = data.openedRoom.history.map((m: any): Message => {
+				m.date = new Date(m.date);
+				return m;
+			});
 			$openedRoom.memberCount = data.openedRoom.memberCount;
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
 		})
 		.catch(error => console.error('Error:', error));
@@ -87,7 +113,7 @@
             <div class="chat-room-name">
                 {$openedRoom.roomname}
             </div>
-            {#if $openedRoom.members.get($myData.id)?.level === Level.HOST}
+            {#if $openedRoom.myLevel === Level.HOST}
                 <div class="chat-setting-button">
                     <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
                 </div>
@@ -123,7 +149,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		width:530px;
+		width: 560px;
 		/* margin-left: 10px; */
 	}
 

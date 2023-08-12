@@ -8,7 +8,6 @@ import {
 @Injectable()
 export class SetNicknameValidPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    console.log(value);
     if (!this.isValidNickname(value.nickname)) throw new BadRequestException();
     return value;
   }

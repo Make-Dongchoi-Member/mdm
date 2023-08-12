@@ -16,7 +16,6 @@
 	
 	const fileUpload = async (e: any) => {
 		profileSrc = e.target.files[0];
-		console.log(profileSrc);
 		
 		/**
 		 * @TODO
@@ -26,8 +25,6 @@
 	};
 
 	const nicknameClickEvent = () => {
-		console.log(nickname);
-		console.log(profileSrc);
 		block = true;
 		nicknameSetAPI({data : {nickname}})
 		.then((res) => {
@@ -84,8 +81,6 @@
 			}
 			const data: Promise<MyData> = response.json();
 			$myData = await data;
-			console.log($myData.nickname);
-
 			
 			if ($myData.nickname) {
 				goto("/");

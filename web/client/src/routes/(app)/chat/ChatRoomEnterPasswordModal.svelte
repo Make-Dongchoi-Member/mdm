@@ -1,25 +1,11 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { modalStatesStore } from '../../../store';
+    import { clickOutside, escapeKey } from '../../../actions';
 
     let isMakeButtonActivation: boolean = false;
     let passwordValue: string = "";
-
     export let postRoomEnter: Function;
     export let selectedRoomId: string;
-
-    onMount(() => {     
-        const makeButton = document.querySelector(".make-button") as HTMLButtonElement;
-        const passwordInputBox = document.querySelector(".password-inputbox") as HTMLInputElement;
-        const closeButton = document.querySelector(".close-button > button") as HTMLButtonElement;
-        
-        makeButton.disabled = !isMakeButtonActivation;        
-
-        closeButton.addEventListener("click", () => {
-            passwordInputBox.value = "";
-            isMakeButtonActivation = false;
-        });
-    });
 
     const makeButtonEvent = () => {               
         /*
@@ -43,22 +29,30 @@
         return true;            
     }
 
+    const initialInput = () => {
+        passwordValue = "";
+		isMakeButtonActivation = false;
+	}
+
 </script>
 
-<div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}">
+<div class="modal-container" style="{$modalStatesStore.isPasswordInputModal ? 'display: block;' : 'display: none;'}"
+    use:clickOutside on:outclick={() => {$modalStatesStore.isPasswordInputModal = false; initialInput();}}
+	use:escapeKey on:esckey={() => {$modalStatesStore.isPasswordInputModal = false; initialInput();}}>
     <div class="modal-title">
         <div>
             PASSWORD
         </div>
         <div class="close-button">
-            <button on:click={() => { $modalStatesStore.isPasswordInputModal = false; }}>&#215;</button>
+            <button on:click={() => { $modalStatesStore.isPasswordInputModal = false; initialInput();}}>&#215;</button>
         </div>
     </div>
     <div class="modal-content">
         <div class="password-option">
             <input                         
                 class="password-inputbox"
-                on:input={passwordInputBoxEvent}                            
+                on:input={passwordInputBoxEvent}
+                bind:value={passwordValue}
                 type="password" 
                 placeholder="PASSWORD INPUT"
                 maxlength=10
@@ -88,8 +82,9 @@
         /* justify-content: center;
         align-items: center; */
 
-        background-color: var(--bg-color);
-        border: 1px solid var(--border-color);
+        background-color: var(--dark-color);
+        border: 1px solid var(--point-color);
+        border-radius: 0.5rem;
     }
 
     .modal-title {      
@@ -108,7 +103,7 @@
         font-weight: 500;
         flex-grow: 0;
         text-align: right;
-        background-color: var(--bg-color);
+        background-color: var(--dark-color);
         color: var(--text-color);
         border: none;
         outline: none;

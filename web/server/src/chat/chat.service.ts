@@ -1,20 +1,24 @@
 import {
   ForbiddenException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { Rooms } from 'src/database/entities/room.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { Level, RoomType } from 'src/types/enums';
 import {
+  Message,
   Profile,
   RoomDetail,
   RoomInfo,
   RoomListInfo,
+  UserData,
 } from 'src/types/interfaces';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { MessageEntity } from 'src/database/entities/message.entity';
 
 @Injectable()
 export class ChatService {
@@ -22,6 +26,21 @@ export class ChatService {
     private roomRepository: RoomRepository,
     private userRepository: UserRepository,
   ) {}
+
+  async getEnterUser(roomId: number, userId: number) {
+    const userdata = await this.userRepository.getUserById(userId);
+    const room = await this.roomRepository.getRoomById(roomId);
+    const res = {
+      user: {
+        id: userdata.id,
+        avatar: userdata.avatar,
+        nickname: userdata.nickName,
+      },
+      level: Level.MEMBER,
+      isMuted: room.mute.includes(userId),
+    };
+    return res;
+  }
 
   async getRoomListOfUser(userId: number) {
     const publicRooms = await this.roomRepository.publicRooms();
@@ -54,7 +73,7 @@ export class ChatService {
       roomtype: room.roomtype,
       memberCount: room.memberCount,
       members,
-      history: room.messages,
+      history: room.messages.map(this.convertMessageEntityToMessage),
     };
     return roomDetail;
   }
@@ -93,6 +112,7 @@ export class ChatService {
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     if (room.roomtype === RoomType.LOCK)
       await this.checkPassword(room, password);
+    if (room.ban.includes(userId)) throw new NotAcceptableException('ban user');
     this.roomRepository.updateRoom(roomId, {
       members: () => `array_append("members", ${userId})`,
       memberCount: room.memberCount + 1,
@@ -127,6 +147,7 @@ export class ChatService {
         break;
       case room.admin.includes(user.id) ? user.id : -1:
         level = Level.ADMIN;
+        break;
       default:
         level = Level.MEMBER;
         break;
@@ -152,15 +173,16 @@ export class ChatService {
   }
 
   private roomOutChangeHost(room: Rooms) {
-    let result: QueryDeepPartialEntity<Rooms>;
     if (room.admin.length !== 0) {
-      result.host = room.admin[0];
-      result.admin = () => `array_remove("admin", ${room.admin[0]})`;
-    } else if (room.members.length !== 0) {
-      result.host = room.members[0];
-      result.members = () => `array_remove("members", ${room.members[0]})`;
+      return {
+        host: room.admin[0],
+        admin: () => `array_remove("admin", ${room.admin[0]})`,
+      };
     }
-    return result;
+    return {
+      host: room.members[0],
+      members: () => `array_remove("members", ${room.members[0]})`,
+    };
   }
 
   private async checkPassword(room: Rooms, password: string) {
@@ -169,5 +191,42 @@ export class ChatService {
       room.password,
     );
     if (!isCorrectPassword) throw new ForbiddenException();
+  }
+
+  private convertMessageEntityToMessage(entity: MessageEntity): Message {
+    const sender: UserData = {
+      avatar: entity.sender.avatar,
+      nickname: entity.sender.nickName,
+    };
+    return {
+      sender,
+      roomId: entity.roomId,
+      body: entity.body,
+      isDM: entity.isDM,
+      date: entity.date,
+    };
+  }
+
+  async setAdmin(roomId: number, userId: number) {
+    const adminList = await this.roomRepository.getAdmin(roomId);
+
+    if (adminList.includes(userId)) {
+      await this.roomRepository.removeAdmin(roomId, userId);
+    } else {
+      await this.roomRepository.pushAdmin(roomId, userId);
+    }
+  }
+
+  async setMute(roomId: number, userId: number) {
+    const muteList = await this.roomRepository.getMute(roomId);
+    if (muteList.includes(userId)) {
+      await this.roomRepository.removeMute(roomId, userId);
+    } else {
+      await this.roomRepository.pushMute(roomId, userId);
+    }
+  }
+
+  async setBan(roomId: number, userId: number) {
+    await this.roomRepository.pushBan(roomId, userId);
   }
 }

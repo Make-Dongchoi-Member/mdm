@@ -1,6 +1,13 @@
 import { RoomType } from 'src/types/enums';
 import { Message } from 'src/types/interfaces';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { MessageEntity } from './message.entity';
 
 @Entity()
 export class Rooms extends BaseEntity {
@@ -34,6 +41,6 @@ export class Rooms extends BaseEntity {
   @Column('int', { array: true, default: [] })
   mute: number[];
 
-  @Column('json', { array: true, default: [] })
-  messages: Message[];
+  @OneToMany(() => MessageEntity, (message) => message.room)
+  messages: MessageEntity[];
 }
