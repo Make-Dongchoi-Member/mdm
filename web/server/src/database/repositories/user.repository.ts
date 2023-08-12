@@ -63,4 +63,16 @@ export class UserRepository extends Repository<Users> {
       return Relation.NONE;
     }
   }
+
+  async setSocketId(id: number, socket: string) {
+    console.log('setSocket:', id, socket);
+    await this.update(id, { socket });
+  }
+
+  async unsetSocketId(socket: string) {
+    const user = await this.findOneBy({ socket });
+    await this.update(user.id, { socket: null });
+    // user.socket = null;
+    // await this.save(user);
+  }
 }

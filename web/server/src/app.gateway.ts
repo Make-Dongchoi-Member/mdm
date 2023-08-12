@@ -30,6 +30,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleDisconnect(client: Socket) {
     console.log(`disconnected:	${client.id}`);
+    this.userRepository.unsetSocketId(client.id);
   }
 
   private async verify(token: string, client: Socket) {
@@ -45,6 +46,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client.disconnect();
       } else {
         console.log(`connected:		${client.id} ${payload.sub}`);
+        this.userRepository.setSocketId(+payload.sub, client.id);
       }
     } catch (e) {
       console.log('There is error!');

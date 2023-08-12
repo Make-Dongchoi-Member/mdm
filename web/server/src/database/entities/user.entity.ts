@@ -20,6 +20,9 @@ export class Users extends BaseEntity {
   status: string | null;
 
   @Column({ nullable: true })
+  socket: string | null;
+
+  @Column({ nullable: true })
   avatar: string | null;
 
   @Column({ nullable: true })

@@ -24,7 +24,8 @@ export interface Profile {
 
 export interface Message {
   sender: UserData;
-  roomId: string;
+  receiver?: string;
+  roomId?: string;
   body: string;
   isDM: boolean;
   date: Date;

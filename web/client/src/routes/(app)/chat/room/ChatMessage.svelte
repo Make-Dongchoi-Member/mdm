@@ -27,10 +27,47 @@
 		}
 	}
 
+	// const unsplit = (array: string[]): string => {
+	// 	let res: string = "";
+	// 	for (let i = 2; i < array.length; i++) {
+	// 		const element = array[i];
+	// 		res += element;
+	// 		if (i !== array.length - 1) {
+	// 			res += " ";
+	// 		}
+	// 	}
+	// 	return res;
+	// }
+
+	// const sendDirectMessage = (): boolean => {
+	// 	if (inputValue.startsWith("/w ")) {
+	// 		const splittedArray: string[] = inputValue.split(' ');
+	// 		for (const m of $openedRoom.members) {
+	// 			if (m[1].user.nickname === splittedArray[1]) {
+	// 				const message: Message = {
+	// 					sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
+	// 					receiver: m[1].user.id,
+	// 					roomId: $page.url.searchParams.get("id") as string,
+	// 					body: unsplit(splittedArray),
+	// 					isDM: true,
+	// 					date: new Date(),
+	// 				};
+	// 				$socketStore.emit("chat/message", { message });
+	// 				inputValue = "";
+	// 				pushNewMessage(message);
+	// 				return true;
+	// 			}
+	// 		}
+	// 	}
+	// 	return false;
+	// }
+
 	const sendButtonEvent = () => {
 		if (inputValue === "") return;
 		if ($openedRoom.members.get(`${$myData.id}`)?.isMuted) return;
-		
+
+		// if (sendDirectMessage()) return;
+
 		const message: Message = {
 			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
 			roomId: $page.url.searchParams.get("id") as string,
