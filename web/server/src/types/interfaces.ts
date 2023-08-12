@@ -1,3 +1,5 @@
+import { GameState, Level, RoomType } from './enums';
+import { Socket } from 'socket.io';
 import { Level, Relation, RoomType } from './enums';
 
 export interface UserData {
@@ -66,4 +68,34 @@ export interface RoomListInfo {
   roomname: string;
   memberCount: number;
   roomtype: RoomType;
+}
+
+export interface Ball {
+  x: number;
+  y: number;
+  speedX: number;
+  speedY: number;
+}
+
+export interface Bar {
+  y: number;
+  h: number;
+}
+
+export interface Player {
+  bar: Bar;
+  life: number;
+  nickname: string;
+}
+
+export interface GameStatus {
+  ball: Ball;
+  state: GameState;
+  playerA: Player;
+  playerB: Player;
+}
+
+export interface PlayerInfo {
+  socket: Socket;
+  nickname: string;
 }

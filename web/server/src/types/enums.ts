@@ -10,6 +10,13 @@ export enum RoomType {
   PRIVATE = 'private',
 }
 
+export enum GameState {
+  READY,
+  GAMING,
+  PAUSE,
+  END,
+}
+
 export enum Relation {
   FRIEND = 'friend',
   BLOCK = 'block',

@@ -1,4 +1,4 @@
-import type { Level, RoomType } from "./enums";
+import type { GameState, Level, RoomType } from "./enums";
 
 export interface UserData {
   id: string;
@@ -13,6 +13,60 @@ export interface Notification {
 
 export interface RequestNoti extends Notification {
   pageUrl: string;
+}
+
+export interface Rect {
+  w: number;
+  h: number;
+  x: number;
+  y: number;
+  color: string;
+}
+
+export interface Ball extends Rect {
+  speedX: number;
+  speedY: number;
+}
+
+export interface Bar extends Rect {
+  speed: number;
+}
+
+export interface SocketBall {
+  x: number;
+  y: number;
+  speedX: number;
+  speedY: number;
+}
+
+export interface SocketBar {
+  y: number;
+  h: number;
+}
+
+export interface Player {
+  bar: SocketBar;
+  life: number;
+  nickname: string;
+}
+
+export interface GameStatus {
+  ball: SocketBall;
+  state: GameState;
+  playerA: Player;
+  playerB: Player;
+}
+
+export interface GameInfo {
+  me: string;
+  enemy: string;
+  gameHost: boolean;
+  roomKey?: string;
+}
+
+export interface GameData {
+  ball: Ball;
+  bar: Bar;
 }
 
 export interface Message {

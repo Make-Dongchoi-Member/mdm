@@ -1,6 +1,5 @@
 import {
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -25,7 +24,7 @@ export class PendingUserService {
     }
     if (currentTime > findUser.validity) {
       // err) 인증시간이 지남
-      throw new InternalServerErrorException('TimeOver');
+      throw new NotFoundException('TimeOver');
     }
     if (emailCode !== findUser.authCode) {
       // err) 인증번호가 다름

@@ -10,6 +10,7 @@ import type {
 import { Level, RoomType } from "./enums";
 import { io } from "socket.io-client";
 
+
 const socket = io("http://localhost:3000", {
   withCredentials: true,
   autoConnect: false,
@@ -20,6 +21,7 @@ const myData: Writable<MyData> = writable({
   id: "",
   avatar: "",
   nickname: "",
+
   rooms: [],
 });
 
@@ -76,4 +78,5 @@ export {
   openedRoom,
   socketStore,
   roomList,
+  myLevel,
 };

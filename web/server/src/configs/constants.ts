@@ -18,3 +18,13 @@ export const MAILER_USER = 'MAILER_USER';
 export const MAILER_PASS = 'MAILER_PASS';
 export const JWT_SECRET = 'JWT_SECRET';
 export const SALT_ROUNDS = 'SALT_ROUNDS';
+
+// game
+export const CANVAS_WIDTH = 800;
+export const CANVAS_HEIGHT = 430;
+export const BALL_SPEED = 2.5;
+export const BALL_SIZE = 6;
+export const BAR_W = 7;
+export const BAR_BASIC_H = 120;
+export const BAR_HARD_H = 60;
+export const GAME_LIFE = 5;
