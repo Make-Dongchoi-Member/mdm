@@ -29,6 +29,8 @@
 
 	const sendButtonEvent = () => {
 		if (inputValue === "") return;
+		if ($openedRoom.members.get(`${$myData.id}`)?.isMuted) return;
+		
 		const message: Message = {
 			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
 			roomId: $page.url.searchParams.get("id") as string,

@@ -62,6 +62,8 @@
 				$modalStatesStore.isPasswordInputModal = false;
             	goto(`/chat/room?id=${roomId}`);
 				$socketStore.emit("chat/enter", { roomId, userId: $myData.id });
+			} else if (response.status === 406) {
+				alert("You can't enter the room.");
 			}
 		})
         .catch((error) => {

@@ -59,6 +59,9 @@ export class ChatGateway {
         룸 아이디가 맞는지 확인
         방 참가 권한 체크
     */
+    const muteList = await this.roomRepository.getMute(+data.message.roomId);
+    if (muteList.includes(data.message.sender.id)) return;
+
     const sender = await this.userRepository.getUserById(
       data.message.sender.id,
     );

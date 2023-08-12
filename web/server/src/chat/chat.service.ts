@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { Rooms } from 'src/database/entities/room.entity';
@@ -111,7 +112,7 @@ export class ChatService {
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     if (room.roomtype === RoomType.LOCK)
       await this.checkPassword(room, password);
-    // 사용자가 ban인지 확인 후 차단
+    if (room.ban.includes(userId)) throw new NotAcceptableException('ban user');
     this.roomRepository.updateRoom(roomId, {
       members: () => `array_append("members", ${userId})`,
       memberCount: room.memberCount + 1,
