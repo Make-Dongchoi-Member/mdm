@@ -165,6 +165,23 @@ export class GameService {
     this.gameRoomMap.set(socketRoom, gameStatus);
   }
 
+  deleteGameStatus(socketRoom: string) {
+    if (this.gameRoomMap.has(socketRoom)) {
+      this.gameRoomMap.delete(socketRoom);
+    }
+  }
+
+  hasPlayer(nickname: string): boolean {
+    for (const [key, value] of this.gameRoomMap) {
+      if (
+        value.playerA.nickname === nickname ||
+        value.playerB.nickname === nickname
+      )
+        return true;
+    }
+    return false;
+  }
+
   private randomSpeed(): number {
     return Math.random() + BALL_SPEED;
   }

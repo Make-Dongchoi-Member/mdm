@@ -101,6 +101,7 @@
 		gameHost: false,		
 	};
 
+	let matching: boolean = false;
 	let ready: boolean = false;
 
 	let leftLife: number = 5;
@@ -111,11 +112,13 @@
 	let ballPos: Position[] = new Array();
 
 	const gameReady = () => {
+		if (ready) return;
+		ready = true;
 		$socketStore.emit("game/match", { nickname: $myData.nickname });
 	}
 
 	const gameStart = () => {
-		if (ready) {
+		if (matching) {
 			$socketStore.emit("game/start", { nickname: gameInfo.me, roomKey: gameInfo.roomKey });
 		}
 	}
@@ -154,12 +157,16 @@
 				gameInfo.gameHost = true;
 				gameInfo.enemy = arg.playerB;
 			} else {
+				gameInfo.gameHost = false;
 				gameInfo.enemy = arg.playerA;
 			}
+			console.log(`arg `, arg);
+			console.log(`before ${gameInfo.roomKey}`);
 			gameInfo.roomKey = arg.roomKey;
 			leftPlayer = arg.playerA;
 			rightPlayer = arg.playerB;
-			ready = true;
+			matching = true;
+			console.log(`after ${gameInfo.roomKey}`);
 		});
 
 		$socketStore.on('game/play', (arg: GameStatus) => {
@@ -194,6 +201,24 @@
 			leftLife = arg.playerA.life;
 			rightLife = arg.playerB.life;
 		});
+
+		$socketStore.on('game/end', (arg: GameStatus) => {
+			let winner: string;
+			if (arg.playerA.life > 0) {
+				winner = arg.playerA.nickname;
+			} else {
+				winner = arg.playerB.nickname;
+			}
+			const scoreDiv = document.querySelector("#score") as HTMLDivElement;
+			if (gameInfo.me === winner) {
+				// ㄴㅐ가 이이김김
+				scoreDiv.innerText = "WIN";
+			} else {
+				// 내가 짐
+				scoreDiv.innerText = "LOSE";
+			}
+			ready = false;
+		})
 	});
 
 	onDestroy(() => {
@@ -205,21 +230,23 @@
 </script>
 
 <div class="life">
-	<span>{leftPlayer} : {leftLife}</span>
-	<span>{rightPlayer} : {rightLife}</span>
+	{#if gameInfo.roomKey !== undefined}
+		<span>{leftPlayer} : {leftLife}</span>
+		<span>{rightPlayer} : {rightLife}</span>
+	{/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
-<div id="score">
-	0 : 0
-</div>
+<div id="score"></div>
 <div class="button-area">
-	<button on:click={gameReady}>game ready</button>
-	<button on:click={gameStart}>game start</button>
+	<button on:click={gameReady}>{ready ? "✓" : "game ready"}</button>
+	{#if gameInfo.gameHost}
+		<button on:click={gameStart}>game start</button>
+	{/if}
 </div>
 
 <style>
 	#score {
-		display: none;
+		/* display: none; */
 	}
 
 	.life {
@@ -237,6 +264,10 @@
 	#game-canvas {
 		border: 1px solid var(--border-color);
 		box-sizing: border-box;
+	}
+
+	.button-area> button {
+		width: 150px;
 	}
 </style>
 

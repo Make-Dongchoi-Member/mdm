@@ -4,7 +4,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { GameDataDTO } from './dto/GameData.dto';
 import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
 import { GameRoomDTO } from './dto/GameRoom.dto';
@@ -13,7 +12,7 @@ import { PlayerInfo } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
 import { GameState } from 'src/types/enums';
-import { GAME_LIFE } from 'src/configs/constants';
+import { GameEndDTO } from './dto/GameEnd.dto';
 
 @WebSocketGateway({
   cors: {
@@ -28,7 +27,9 @@ export class GameGateway {
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
-    this.gameManager.enqueue({ socket: client, nickname: data.nickname });
+    if (!this.existPlayer(data.nickname)) {
+      this.gameManager.enqueue({ socket: client, nickname: data.nickname });
+    }
 
     // 큐 안에 두 명 이상 들어온 경우
     if (this.gameManager.isMatched()) {
@@ -50,6 +51,7 @@ export class GameGateway {
         roomKey: key,
       };
       this.gameService.saveGameRoom(gameRoom);
+      // console.log(key)
       this.io.to(key).emit('game/match', gameRoom);
     }
   }
@@ -74,6 +76,39 @@ export class GameGateway {
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
   }
 
+  @SubscribeMessage('game/end')
+  handleGameEnd(client: Socket, data: GameEndDTO) {
+    // gmae 도중 사용자가 나갔을 때
+    // gameEnd로 설정
+    // interval, roomKey, gameStatus 삭제
+    const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    clearInterval(this.gameManager.getIntervalID(data.roomKey));
+    this.gameManager.deleteGameRoomKey(data.roomKey);
+    this.gameService.deleteGameStatus(data.roomKey);
+    if (gameStatus.playerA.nickname === data.nickname) {
+      gameStatus.playerA.life = 0;
+    } else {
+      gameStatus.playerB.life = 0;
+    }
+    this.io.to(data.roomKey).emit('game/end', gameStatus);
+    client.leave(data.roomKey);
+  }
+
+  @SubscribeMessage('game/roomout')
+  handleGameRoomOut(client: Socket, data: GameEndDTO) {
+    // game 종료후 사용자가 속한 room 제거 요청
+    client.leave(data.roomKey);
+  }
+
+  @SubscribeMessage('game/matchout')
+  handleGameMatchOut(client: Socket, data: GameReadyDTO) {
+    // 대기큐에서 삭제
+    this.gameManager.deletePlayerAtQueue(data.nickname);
+    if (!this.gameManager.hasQueue(data.nickname)) {
+      client.emit('game/matchout');
+    }
+  }
+
   @SubscribeMessage('game/bar')
   handleGameBarMove(client: Socket, data: GameBarDTO) {
     // console.log(data
@@ -86,7 +121,7 @@ export class GameGateway {
     io: Server,
     gm: GameRoomManager,
   ) {
-    // console.log(gs, io)
+    // console.log(gs, io
     gs.play(roomKey);
     const gameStatus = gs.getGameStatusByKey(roomKey);
     if (gameStatus.state === GameState.GAMING) {
@@ -95,8 +130,18 @@ export class GameGateway {
       io.to(roomKey).emit('game/play', gameStatus);
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
-        gs.setGameState(roomKey, GameState.END);
+        // gs.setGameState(roomKey, GameState.END);
+        gm.deleteGameRoomKey(roomKey);
+        gs.deleteGameStatus(roomKey);
+        io.to(roomKey).emit('game/end', gameStatus);
       }
     }
+  }
+
+  private existPlayer(nickname: string): boolean {
+    return (
+      this.gameManager.hasQueue(nickname) ||
+      this.gameService.hasPlayer(nickname)
+    );
   }
 }
