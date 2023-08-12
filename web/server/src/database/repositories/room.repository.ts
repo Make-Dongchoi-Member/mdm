@@ -91,8 +91,6 @@ export class RoomRepository extends Repository<Rooms> {
   }
 
   async pushAdmin(roomId: number, userId: number) {
-    console.log('pushAdmin', roomId, userId);
-
     await this.update(roomId, {
       admin: () => `array_append("admin", ${userId})`,
     });

@@ -85,8 +85,6 @@
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
 			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
-			console.log($openedRoom);
-			
 		})
 		.catch(error => console.error('Error:', error));
 	}

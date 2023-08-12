@@ -65,7 +65,6 @@ export class UserRepository extends Repository<Users> {
   }
 
   async setSocketId(id: number, socket: string) {
-    console.log('setSocket:', id, socket);
     await this.update(id, { socket });
   }
 

@@ -29,7 +29,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`disconnected:	${client.id}`);
     this.userRepository.unsetSocketId(client.id);
   }
 
@@ -42,10 +41,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         secret: this.config.get(JWT_SECRET),
       });
       if (this.userRepository.findOneBy({ id: +payload.sub }) === null) {
-        console.log('There is no user!');
         client.disconnect();
       } else {
-        console.log(`connected:		${client.id} ${payload.sub}`);
         this.userRepository.setSocketId(+payload.sub, client.id);
       }
     } catch (e) {
