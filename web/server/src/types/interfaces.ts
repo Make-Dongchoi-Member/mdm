@@ -1,6 +1,5 @@
-import { GameState, Level, RoomType } from './enums';
+import { GameState, Relation, Level, RoomType } from './enums';
 import { Socket } from 'socket.io';
-import { Level, Relation, RoomType } from './enums';
 
 export interface UserData {
   id?: number;
