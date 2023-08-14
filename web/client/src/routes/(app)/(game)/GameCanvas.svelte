@@ -98,7 +98,7 @@
 	let gameInfo: GameInfo = {
 		me: $myData.nickname,
 		enemy: 'anonymous',
-		gameHost: false,		
+		gameHost: false,
 	};
 
 	let matching: boolean = false;
@@ -114,7 +114,11 @@
 	const gameReady = () => {
 		if (ready) return;
 		ready = true;
-		$socketStore.emit("game/match", { nickname: $myData.nickname });
+		$socketStore.emit("game/match", {
+			nickname: $myData.nickname,
+			gameMode: $gameSettingStore.gameMode,
+			barColor: $gameSettingStore.barColor
+		});
 	}
 
 	const gameStart = () => {
@@ -181,9 +185,16 @@
 
 
 			leftBar.y = arg.playerA.bar.y;
+			leftBar.h = arg.playerA.bar.h;
+			leftBar.color = arg.playerA.bar.color;
+
 			rightBar.y = arg.playerB.bar.y;
+			rightBar.h = arg.playerB.bar.h;
+			rightBar.color = arg.playerB.bar.color;
+
 			ctx.fillStyle = leftBar.color;
 			ctx.fillRect(leftBar.x, leftBar.y, leftBar.w, leftBar.h);
+			ctx.fillStyle = rightBar.color;
 			ctx.fillRect(rightBar.x, rightBar.y, rightBar.w, rightBar.h);
 
 			ball.x = arg.ball.x;
@@ -211,13 +222,14 @@
 			}
 			const scoreDiv = document.querySelector("#score") as HTMLDivElement;
 			if (gameInfo.me === winner) {
-				// ㄴㅐ가 이이김김
+				// 내가 이김
 				scoreDiv.innerText = "WIN";
 			} else {
 				// 내가 짐
 				scoreDiv.innerText = "LOSE";
 			}
 			ready = false;
+			gameInfo.gameHost = false;
 		})
 	});
 
@@ -246,7 +258,7 @@
 
 <style>
 	#score {
-		/* display: none; */
+		display: none;
 	}
 
 	.life {

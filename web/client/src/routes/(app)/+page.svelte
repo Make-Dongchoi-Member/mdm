@@ -2,8 +2,8 @@
 	import { myData } from '../../store'
 	import type { MyData } from '../../interfaces';
 	import { goto } from '$app/navigation';
-	import GameSetting from './game/GameSetting.svelte';
-    import GameCanvas from './game/GameCanvas.svelte';
+	import GameSetting from './(game)/GameSetting.svelte';
+    import GameCanvas from './(game)/GameCanvas.svelte';
 </script>
 
 <div class="game-box">

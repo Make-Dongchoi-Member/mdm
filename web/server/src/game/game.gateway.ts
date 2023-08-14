@@ -8,11 +8,18 @@ import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
 import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameRoomManager } from './objects/game.RoomManager';
-import { PlayerInfo } from 'src/types/interfaces';
+import { Bar, PlayerInfo } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
 import { GameState } from 'src/types/enums';
 import { GameEndDTO } from './dto/GameEnd.dto';
+import {
+  BAR_BASIC_H,
+  BAR_HARD_H,
+  CANVAS_HEIGHT,
+  FRAME_PER_MS,
+  GAME_LIFE,
+} from 'src/configs/constants';
 
 @WebSocketGateway({
   cors: {
@@ -28,7 +35,12 @@ export class GameGateway {
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
     if (!this.existPlayer(data.nickname)) {
-      this.gameManager.enqueue({ socket: client, nickname: data.nickname });
+      this.gameManager.enqueue({
+        socket: client,
+        bar: this.barSetter(data),
+        life: GAME_LIFE,
+        nickname: data.nickname,
+      });
     }
 
     // 큐 안에 두 명 이상 들어온 경우
@@ -50,8 +62,8 @@ export class GameGateway {
         playerB: playerB.nickname,
         roomKey: key,
       };
-      this.gameService.saveGameRoom(gameRoom);
-      // console.log(key)
+      this.gameService.saveGameRoom(gameRoom, playerA.bar, playerB.bar);
+      // console.log(key);
       this.io.to(key).emit('game/match', gameRoom);
     }
   }
@@ -65,7 +77,7 @@ export class GameGateway {
     } else if (gameStatus.state === GameState.READY) {
       const id = setInterval(
         this.gameMain,
-        4,
+        FRAME_PER_MS,
         data.roomKey,
         this.gameService,
         this.io,
@@ -78,7 +90,7 @@ export class GameGateway {
 
   @SubscribeMessage('game/end')
   handleGameEnd(client: Socket, data: GameEndDTO) {
-    // gmae 도중 사용자가 나갔을 때
+    // gmae 도중 사용자가 나갔을 때d
     // gameEnd로 설정
     // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
@@ -121,7 +133,7 @@ export class GameGateway {
     io: Server,
     gm: GameRoomManager,
   ) {
-    // console.log(gs, io
+    // console.log(gs, io)
     gs.play(roomKey);
     const gameStatus = gs.getGameStatusByKey(roomKey);
     if (gameStatus.state === GameState.GAMING) {
@@ -130,7 +142,7 @@ export class GameGateway {
       io.to(roomKey).emit('game/play', gameStatus);
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
-        // gs.setGameState(roomKey, GameState.END);
+        // gs.setGameState(roomKey, GameState.END)
         gm.deleteGameRoomKey(roomKey);
         gs.deleteGameStatus(roomKey);
         io.to(roomKey).emit('game/end', gameStatus);
@@ -143,5 +155,23 @@ export class GameGateway {
       this.gameManager.hasQueue(nickname) ||
       this.gameService.hasPlayer(nickname)
     );
+  }
+
+  private barSetter(info: GameReadyDTO): Bar {
+    let bar: Bar;
+    if (info.gameMode === 'basic') {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
+        h: BAR_BASIC_H,
+        color: info.barColor,
+      };
+    } else if (info.gameMode === 'hard') {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_HARD_H) / 2,
+        h: BAR_HARD_H,
+        color: info.barColor,
+      };
+    }
+    return bar;
   }
 }
