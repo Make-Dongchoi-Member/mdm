@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { DMRooms } from 'src/database/entities/dm-room.entity';
 import { GameHistory } from 'src/database/entities/game-history.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { UserRepository } from 'src/database/repositories/user.repository';
@@ -97,12 +98,17 @@ export class UserService {
 
   async friendRequest(id: number, friendNickname: string) {
     const friend = await this.userRepository.getUserByNickname(friendNickname);
+    const me = await this.userRepository.getUserById(id);
     this.userRepository.updateUser(id, {
       friends: () => `array_append("friends", ${friend.id})`,
     });
     this.userRepository.updateUser(friend.id, {
       friends: () => `array_append("friends", ${id})`,
     });
+    const dmRooms = new DMRooms();
+    dmRooms.users.push(friend, me);
+    dmRooms.messages = [];
+    this.userRepository.manager.save(dmRooms);
   }
 
   async addGame(id: number, enemy: string) {
@@ -127,7 +133,7 @@ export class UserService {
   }
 
   private convertToFriendData(user: Users): FriendData {
-    return { nickname: user.nickName, avatar: user.avatar };
+    return { id: user.id, nickname: user.nickName, avatar: user.avatar };
   }
 
   private convertToRecord(history: GameHistory): Record {

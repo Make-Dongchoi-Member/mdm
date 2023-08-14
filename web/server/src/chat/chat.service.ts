@@ -121,6 +121,43 @@ export class ChatService {
       rooms: () => `array_append("rooms", ${roomId})`,
     });
   }
+  /**
+   *
+   * sender: UserData;
+   * receiver?: string;
+   * roomId?: string;
+   * body: string;
+   * isDM: boolean;
+   * date: Date;
+   */
+  async getDirectMessages(userId: number, otherId: number) {
+    const other = await this.userRepository.getUserById(otherId);
+    if (!other) throw new NotFoundException(`user_id ${otherId} Not Found`);
+    const dmRoom = await this.userRepository.getDMRoom(userId, otherId);
+    const me = dmRoom.users.find((e) => e.id === userId);
+    const history: Message[] = [];
+    if (dmRoom) {
+      for (const msg of dmRoom.messages) {
+        const sender: UserData =
+          msg.sender === me.id
+            ? { id: me.id, avatar: me.avatar, nickname: me.nickName }
+            : { id: other.id, avatar: other.avatar, nickname: other.nickName };
+        const receiver = msg.receiver === me.id ? me.nickName : other.nickName;
+        history.push({
+          sender,
+          receiver,
+          body: msg.body,
+          isDM: true,
+          date: msg.date,
+        });
+      }
+    }
+    return {
+      id: dmRoom.id,
+      with: { id: other.id, avatar: other.avatar, nickname: other.nickName },
+      history,
+    };
+  }
 
   private roomMembers(room: Rooms, users: Users[]) {
     const members: Map<string, Profile> = new Map();

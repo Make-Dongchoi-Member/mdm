@@ -1,6 +1,15 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { GameHistory } from './game-history.entity';
 import { MessageEntity } from './message.entity';
+import { DMRooms } from './dm-room.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -45,4 +54,8 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => MessageEntity, (message) => message.sender)
   message: MessageEntity[];
+
+  @ManyToMany(() => DMRooms, (dmRooms) => dmRooms.users)
+  @JoinTable()
+  dmRooms: DMRooms[];
 }
