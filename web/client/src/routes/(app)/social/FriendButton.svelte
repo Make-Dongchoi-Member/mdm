@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { UserData } from "../../../interfaces";
-  import { dm } from "../../../store";
+  import { dm, modalStatesStore } from "../../../store";
 
 	export let user: UserData;
 	let isClicked: boolean = false;
@@ -14,6 +14,7 @@
 			@TODO
 			프로필 모달을 띄워줌
 		*/
+		$modalStatesStore.isProfileModal = true;
 	}
 
 	const chatClickEvent = () => {
