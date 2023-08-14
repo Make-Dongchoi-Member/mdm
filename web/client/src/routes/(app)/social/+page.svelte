@@ -2,7 +2,7 @@
   import { dm } from "../../../store";
   import DirectMessage from "./DirectMessage.svelte";
   import Friends from "./Friends.svelte";
-  import ProfileModal from "./ProfileModal.svelte";
+  import ProfileModal from "../(profileModal)/ProfileModal.svelte";
 
 
 </script>

@@ -10,6 +10,8 @@
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
   	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
+	import ProfileModal from "../../(profileModal)/ProfileModal.svelte";
+	
 
     onMount(() => {
         getRoomData();
@@ -100,6 +102,7 @@
 
 </script>
 
+<ProfileModal />
 <InviteModal />
 <SettingModal />
 <RoomoutModal />
