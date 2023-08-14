@@ -1,26 +1,41 @@
 <script lang="ts">
-	import { modalStatesStore } from "../../../store";
+	import { modalStatesStore, profileModalStore } from "../../../store";
 	import OtherInfo from "./OtherInfo.svelte";
 	import { clickOutside, escapeKey } from "../../../actions";
 	import ModalHistory from "./ModalHistory.svelte";
+  import type { OtherUserData } from "../../../interfaces";
+  import { onDestroy, onMount } from "svelte";
 
-	interface tabButtons {
-		[index: string]: boolean;
-		social: boolean;
-		history: boolean;
+	let userData: OtherUserData;
+
+	onMount(() => {
+		getUserData();
+	});
+
+	onDestroy(() => {
+
+	});
+
+	const getUserData = async () => {
+		const nickname: string = $profileModalStore.nickname;
+		const uri: string = `http://localhost:3000/api/user/info?nickname=${nickname}`;
+		const response = await fetch(uri, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
+			userData = data;
+			console.log(userData);
+		})
+		.catch(error => console.error('Error:', error));
 	}
-
-	let tabButtonSet: tabButtons = {
-		social: true,
-		history: false,
-	};
 
 	const modalCloseEvent = () => {
 		$modalStatesStore.isProfileModal = false;
-		for (const key of Object.keys(tabButtonSet)) {
-			tabButtonSet[key] = false;
-		}
-		tabButtonSet.social = true;
 	}
 </script>
 
@@ -30,10 +45,10 @@
 	<button class="close-button" on:click={ modalCloseEvent }>&#215;</button>
 	<div class="modal-container">
 		<div class="info_container">
-			<OtherInfo />
+			<OtherInfo user={userData} />
 		</div>
 		<div class="data_container">
-			<ModalHistory />
+			<ModalHistory user={userData}/>
 		</div>
 	</div>
 </div>

@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
 import { PendingUser } from 'src/login/objects/pending-user.object';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { Relation } from 'src/types/enums';
+import { Relation, UserState } from 'src/types/enums';
 import { DMRooms } from '../entities/dm-room.entity';
 import { DirectMessageEntity } from '../entities/dm-message.entity';
 import { Message } from 'src/types/interfaces';
@@ -27,6 +27,10 @@ export class UserRepository extends Repository<Users> {
 
   async getUserByNickname(nickName: string) {
     return this.findOne({ where: { nickName }, relations: { record: true } });
+  }
+
+  async getUserBySocketId(socket: string) {
+    return this.findOne({ where: { socket } });
   }
 
   async getUserList(ids: number[]) {
@@ -65,6 +69,12 @@ export class UserRepository extends Repository<Users> {
     } else {
       return Relation.NONE;
     }
+  }
+
+  async setStatusBySocketId(socketId: string, status: UserState) {
+    const user = await this.getUserBySocketId(socketId);
+    if (!user) return;
+    await this.updateUser(user.id, { state: status });
   }
 
   async setSocketId(id: number, socket: string) {

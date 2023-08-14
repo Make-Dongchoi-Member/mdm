@@ -1,37 +1,9 @@
 <script lang="ts">
 	import MatchStat from "./MatchStat.svelte";
 	import { profileModalStore } from "../../../store";
-  import { onDestroy, onMount } from "svelte";
   import type { OtherUserData } from "../../../interfaces";
 
-	let userData: OtherUserData;
-
-	onMount(() => {
-		getUserData();
-	});
-
-	onDestroy(() => {
-
-	});
-
-	const getUserData = async () => {
-		const nickname: string = $profileModalStore.nickname;
-		const uri: string = `http://localhost:3000/api/user/info?nickname=${nickname}`;
-		const response = await fetch(uri, {
-			method: "GET",
-			credentials: 'include',
-			headers: {
-				"Content-Type": "application/json",
-			},
-		})
-		.then(response => response.json())
-		.then(data => {
-			userData = data;
-			console.log(userData);
-			
-		})
-		.catch(error => console.error('Error:', error));
-	}
+	export let user: OtherUserData;
 </script>
 
 <div class="personal_box">
@@ -40,10 +12,10 @@
 	</button>
 	<div class="personal_info">
 		<button disabled>
-			{userData ? userData.nickname : ""}
+			{user ? user.nickname : ""}
 		</button>
 		<button disabled>
-			{userData ? userData.state?.toUpperCase() : ""}
+			{user ? user.state?.toUpperCase() : ""}
 		</button>
 	</div>
 </div>

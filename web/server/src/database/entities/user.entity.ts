@@ -10,6 +10,7 @@ import {
 import { GameHistory } from './game-history.entity';
 import { MessageEntity } from './message.entity';
 import { DMRooms } from './dm-room.entity';
+import { UserState } from 'src/types/enums';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -25,8 +26,8 @@ export class Users extends BaseEntity {
   @Column()
   email: string | null;
 
-  @Column({ default: 'offline' })
-  status: string;
+  @Column('enum', { enum: UserState, default: UserState.OFFLINE })
+  state: UserState;
 
   @Column({ nullable: true })
   socket: string | null;

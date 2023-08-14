@@ -8,7 +8,7 @@ import type {
   RoomList,
   DM,
   UserData,
-  FriendData,
+  OtherUserData,
 } from "./interfaces";
 import { Level, RoomType } from "./enums";
 import { io } from "socket.io-client";
@@ -23,7 +23,7 @@ const myData: Writable<MyData> = writable({
   id: "",
   avatar: "",
   nickname: "",
-
+  friends: [],
   rooms: [],
 });
 
@@ -45,7 +45,7 @@ const modalStatesStore: Writable<ModalStates> = writable({
   isNicknameModal: false,
 });
 
-const profileModalStore: Writable<FriendData> = writable();
+const profileModalStore: Writable<UserData> = writable();
 
 const openedRoom: Writable<RoomDetail> = writable({
   roomId: "",

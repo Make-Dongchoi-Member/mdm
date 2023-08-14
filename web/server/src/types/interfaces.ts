@@ -10,7 +10,7 @@ export interface UserData {
 
 export interface MyData extends UserData {
   rooms: number[];
-  friends: FriendData[];
+  friends: UserData[];
 }
 
 export interface OtherUserData extends UserData {
@@ -49,12 +49,6 @@ export interface RoomInfo {
   roomname: string;
   password: string;
   roomtype: RoomType;
-}
-
-export interface FriendData {
-  id: number;
-  nickname: string;
-  avatar: string;
 }
 
 export interface Record {

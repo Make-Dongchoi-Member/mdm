@@ -15,6 +15,7 @@ import { MyData, OtherUserData, UserData } from 'src/types/interfaces';
 import { InfoValidPipe } from './pipes/info.valid.pipe';
 import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
 import { UserNicknameDto } from './dto/UserNickname.dto';
+import { UserState } from 'src/types/enums';
 
 @Controller('api/user')
 export class UserController {
@@ -70,7 +71,7 @@ export class UserController {
     @UserId(ParseIntPipe) userId: number,
     @Body('data') data: SetStatusDto,
   ) {
-    await this.userService.setStatus(userId, data.status);
+    await this.userService.setStatus(userId, data.status as UserState);
   }
 
   /**

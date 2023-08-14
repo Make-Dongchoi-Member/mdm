@@ -95,10 +95,10 @@
 		$socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 	})
 
-    const myDataUpdate = (roomId: number) => {
-        if (($myData.rooms).includes(roomId)) return;
-        $myData.rooms = [...$myData.rooms, roomId];
-    }
+	const myDataUpdate = (roomId: number) => {
+			if (($myData.rooms).includes(roomId)) return;
+			$myData.rooms = [...$myData.rooms, roomId];
+	}
 
 </script>
 

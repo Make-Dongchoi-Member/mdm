@@ -1,36 +1,31 @@
 <script lang="ts">
+  import type { OtherUserData, Record } from "../../../interfaces";
+
 	const history = [
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'seonhoki'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'jaewchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'sooyokim'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 	];
+
+	export let user: OtherUserData;
+	let records: Record[] = [];
+	if (user) {
+		records = user.record as Record[];
+	}
 </script>
 
 <div class="data">
-	{#each history as item}
+	{#each records as item}
 	<div class="history">
-		{#if item.result === 'WIN'}
+		{#if item.win}
 			<div class="win">
-				{item.result}
+				WIN
 			</div>
 		{:else}
 			<div class="lose">
-				{item.result}
+				LOSE
 			</div>
 		{/if}
 		<div>
-			{item.date}&nbsp;&nbsp;&nbsp;{item.time}
+			{item.date}
 		</div>
 		<div>
 			<span class="simple-text">vs</span>

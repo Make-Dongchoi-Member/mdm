@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { FriendData, UserData } from "../../../interfaces";
-  import { dm, myData } from "../../../store";
+  import { myData } from "../../../store";
   import FriendButton from "./FriendButton.svelte";
 
 </script>

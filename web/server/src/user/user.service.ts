@@ -8,12 +8,7 @@ import { GameHistory } from 'src/database/entities/game-history.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { UserState } from 'src/types/enums';
-import {
-  FriendData,
-  MyData,
-  OtherUserData,
-  Record,
-} from 'src/types/interfaces';
+import { MyData, OtherUserData, Record, UserData } from 'src/types/interfaces';
 
 @Injectable()
 export class UserService {
@@ -46,7 +41,7 @@ export class UserService {
       nickname: other.nickName,
       relation: await this.userRepository.getRelation(id, other.id),
       record,
-      state: other.status as UserState,
+      state: other.state as UserState,
     };
     return otherUserData;
   }
@@ -59,8 +54,8 @@ export class UserService {
     this.userRepository.updateUser(id, { nickName });
   }
 
-  async setStatus(id: number, status: string) {
-    await this.userRepository.updateUser(id, { status });
+  async setStatus(id: number, status: UserState) {
+    await this.userRepository.updateUser(id, { state: status });
   }
 
   async setAvatar(id: number, avatar: string) {
@@ -134,7 +129,7 @@ export class UserService {
     await this.userRepository.manager.save([myHistory, enemyHistory]);
   }
 
-  private convertToFriendData(user: Users): FriendData {
+  private convertToFriendData(user: Users): UserData {
     return { id: user.id, nickname: user.nickName, avatar: user.avatar };
   }
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { FriendData, UserData } from "../../../interfaces";
+  import type { UserData } from "../../../interfaces";
   import { dm, modalStatesStore, profileModalStore } from "../../../store";
 
-	export let user: FriendData;
+	export let user: UserData;
 	let isClicked: boolean = false;
 
 	const friendButtonClickEvent = () => {
