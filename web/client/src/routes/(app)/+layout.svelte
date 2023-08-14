@@ -43,7 +43,8 @@
 <div class="container">
 	<nav class= "containerTop" >
 		<a href="/" >GAME</a>
-		<a href="/chat" >CHAT</a> 
+		<a href="/chat" >CHAT</a>
+		<a href="/social" >SOCIAL</a>
 		<a href="/profile" >{$myData.nickname}</a>
 	</nav>
 	<div class="containerBody">
@@ -124,7 +125,6 @@
 
 	.container {
 		width: 800px;
-		/* border: 1px solid var(--border-color); */
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -138,7 +138,6 @@
 	}
 
 	nav {
-		/* border: 1px solid var(--border-color); */
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -160,8 +159,4 @@
 		padding: 10px 10px 10px 10px;
 		text-decoration: none;
 	}
-
-	/* .icon-transform {
-		transform: scale(1.2);
-	} */
 </style>

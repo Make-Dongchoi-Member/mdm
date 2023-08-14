@@ -128,7 +128,6 @@ export interface ModalStates {
 
 export interface MyData extends UserData {
   rooms: number[];
-  // rooms: Room[];
 }
 
 export interface SetRequestDTO {
@@ -145,4 +144,9 @@ export interface RoomEnterDTO {
 
 export interface PostCreateDTO {
   roomId: string;
+}
+
+export interface DM {
+  with: UserData;
+  history: Message[];
 }
