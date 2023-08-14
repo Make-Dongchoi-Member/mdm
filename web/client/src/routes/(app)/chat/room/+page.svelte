@@ -102,7 +102,9 @@
 
 </script>
 
+{#if $modalStatesStore.isProfileModal}
 <ProfileModal />
+{/if}
 <InviteModal />
 <SettingModal />
 <RoomoutModal />

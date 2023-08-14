@@ -12,30 +12,30 @@
     });
 
     const getMyData = async (): Promise<void> => {
-        try {
-			const response = await fetch("http://localhost:3000/api/user/me", {
-				method: "GET",
-				credentials: 'include',
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-            if (response.status !== 200) {
-                goto("/signin");
-                return;
-            }
-			const data: Promise<MyData> = response.json();
-            $myData = await data;
+			try {
+				const response = await fetch("http://localhost:3000/api/user/me", {
+					method: "GET",
+					credentials: 'include',
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+							if (response.status !== 200) {
+									goto("/signin");
+									return;
+							}
+				const data: Promise<MyData> = response.json();
+							$myData = await data;
 
-			if ($myData.nickname) {
-				isSigned = true;
-				$socketStore.connect();
-			} else {
-				goto("/join");
+				if ($myData.nickname) {
+					isSigned = true;
+					$socketStore.connect();
+				} else {
+					goto("/join");
+				}
+			} catch (error) {
+				console.error("실패:", error);
 			}
-		} catch (error) {
-			console.error("실패:", error);
-		}
     }
 </script>
 

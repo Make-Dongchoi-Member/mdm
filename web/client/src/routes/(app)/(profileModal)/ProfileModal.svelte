@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { modalStatesStore } from "../../../store";
-    import ModalSocial from "./ModalSocial.svelte";
 	import OtherInfo from "./OtherInfo.svelte";
-    import { clickOutside, escapeKey } from "../../../actions";
-    import ModalHistory from "./ModalHistory.svelte";
+	import { clickOutside, escapeKey } from "../../../actions";
+	import ModalHistory from "./ModalHistory.svelte";
 
 	interface tabButtons {
 		[index: string]: boolean;
@@ -23,17 +22,9 @@
 		}
 		tabButtonSet.social = true;
 	}
-
-	const profileTabEvent = (e: any) => {
-		for (const key of Object.keys(tabButtonSet)) {
-			tabButtonSet[key] = false;
-		}
-		tabButtonSet[e.target.value] = true;
-	}
 </script>
 
 <div class="modal-frame"
-	style="{$modalStatesStore.isProfileModal ? 'display: flex;' : 'display: none;'}"
 	use:clickOutside on:outclick={ modalCloseEvent }
 	use:escapeKey on:esckey={ modalCloseEvent }>
 	<button class="close-button" on:click={ modalCloseEvent }>&#215;</button>
@@ -61,10 +52,11 @@
 		border-radius: 0.5rem;
 		box-sizing: border-box;
 
-		position: absolute;
+		position: fixed;
 
-		margin-top: -70px;
-		margin-left: -30px;
+		margin-top: 0px;
+		margin-left: 0px;
+		z-index: 10;
 	}
 
 	.modal-container {

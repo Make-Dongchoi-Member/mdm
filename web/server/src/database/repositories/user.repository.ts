@@ -70,8 +70,8 @@ export class UserRepository extends Repository<Users> {
 
   async unsetSocketId(socket: string) {
     const user = await this.findOneBy({ socket });
-    await this.update(user.id, { socket: null });
-    // user.socket = null;
-    // await this.save(user);
+    if (user) {
+      await this.update(user.id, { socket: null });
+    }
   }
 }

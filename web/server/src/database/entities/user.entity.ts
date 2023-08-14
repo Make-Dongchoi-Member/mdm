@@ -16,8 +16,8 @@ export class Users extends BaseEntity {
   @Column()
   email: string | null;
 
-  @Column({ nullable: true })
-  status: string | null;
+  @Column({ default: 'offline' })
+  status: string;
 
   @Column({ nullable: true })
   socket: string | null;
