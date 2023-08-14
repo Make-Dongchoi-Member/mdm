@@ -4,6 +4,23 @@
   import type { OtherUserData } from "../../../interfaces";
 
 	export let user: OtherUserData;
+
+	const sendFollow = async () => {
+		/**
+		 * @TODO
+		 * 수정하세요
+		 */
+		const response = fetch(`http://localhost:3000/api/user/friend/request?nickname=${user.nickname}`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+		.then((response) => {
+			
+		})
+	}
 </script>
 
 <div class="personal_box">
@@ -23,7 +40,7 @@
 	<MatchStat />
 </div>
 <div class="option_box">
-	<button>
+	<button on:click={sendFollow}>
 		FOLLOW
 	</button>
 	<button>

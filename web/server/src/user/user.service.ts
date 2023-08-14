@@ -103,7 +103,7 @@ export class UserService {
       friends: () => `array_append("friends", ${id})`,
     });
     const dmRooms = new DMRooms();
-    dmRooms.users.push(friend, me);
+    dmRooms.users = [friend, me];
     dmRooms.messages = [];
     this.userRepository.manager.save(dmRooms);
   }
