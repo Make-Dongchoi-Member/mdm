@@ -3,7 +3,8 @@
 	import type { MyData } from '../../interfaces';
 	import { goto } from '$app/navigation';
 	import GameSetting from './game/GameSetting.svelte';
-    import GameCanvas from './game/GameCanvas.svelte';
+	import GameCanvas from './game/GameCanvas.svelte';
+  import ProfileModal from './(profileModal)/ProfileModal.svelte';
 </script>
 
 <div class="game-box">

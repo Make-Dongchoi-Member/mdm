@@ -1,4 +1,4 @@
-import type { GameState, Level, RoomType } from "./enums";
+import type { GameState, Level, Relation, RoomType, UserState } from "./enums";
 
 export interface UserData {
   id: string;
@@ -128,6 +128,7 @@ export interface ModalStates {
 
 export interface MyData extends UserData {
   rooms: number[];
+  friends: FriendData[];
 }
 
 export interface SetRequestDTO {
@@ -149,4 +150,15 @@ export interface PostCreateDTO {
 export interface DM {
   with: UserData;
   history: Message[];
+}
+
+export interface OtherUserData extends UserData {
+  relation: Relation;
+  state?: UserState;
+}
+
+export interface FriendData {
+  id: string;
+  nickname: string;
+  avatar: string;
 }

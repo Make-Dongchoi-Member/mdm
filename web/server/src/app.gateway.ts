@@ -29,7 +29,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: Socket) {
-    this.userRepository.unsetSocketId(client.id);
+    try {
+      this.userRepository.unsetSocketId(client.id);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   private async verify(token: string, client: Socket) {

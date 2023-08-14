@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { dm } from "../../../store";
   import DirectMessage from "./DirectMessage.svelte";
   import Friends from "./Friends.svelte";
   import ProfileModal from "../(profileModal)/ProfileModal.svelte";
-
-
+  import { modalStatesStore } from "../../../store";
 </script>
 
+{#if $modalStatesStore.isProfileModal}
 <ProfileModal />
+{/if}
 <div class="chat-box">  
 	<Friends />
 	<DirectMessage />

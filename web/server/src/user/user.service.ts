@@ -7,6 +7,7 @@ import { DMRooms } from 'src/database/entities/dm-room.entity';
 import { GameHistory } from 'src/database/entities/game-history.entity';
 import { Users } from 'src/database/entities/user.entity';
 import { UserRepository } from 'src/database/repositories/user.repository';
+import { UserState } from 'src/types/enums';
 import {
   FriendData,
   MyData,
@@ -45,6 +46,7 @@ export class UserService {
       nickname: other.nickName,
       relation: await this.userRepository.getRelation(id, other.id),
       record,
+      state: other.status as UserState,
     };
     return otherUserData;
   }

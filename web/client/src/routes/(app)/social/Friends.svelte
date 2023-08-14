@@ -1,25 +1,14 @@
 <script lang="ts">
-  import type { UserData } from "../../../interfaces";
-  import { dm } from "../../../store";
+  import { onMount } from "svelte";
+  import type { FriendData, UserData } from "../../../interfaces";
+  import { dm, myData } from "../../../store";
   import FriendButton from "./FriendButton.svelte";
 
-	const friends: UserData[] = [
-		{
-			id: "123",
-			avatar: "/asset/default_profile.png",
-			nickname: "nick1"
-		},
-		{
-			id: "456",
-			avatar: "/asset/hhwang.png",
-			nickname: "nick2"
-		}
-	];
 </script>
 
 <div class="members">
 	<div class="other-profile-container">
-		{#each friends as user}
+		{#each $myData.friends as user}
 		<FriendButton {user} />
 		{/each}
 	</div>

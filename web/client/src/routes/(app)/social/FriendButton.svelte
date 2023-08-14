@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { UserData } from "../../../interfaces";
-  import { dm, modalStatesStore } from "../../../store";
+  import type { FriendData, UserData } from "../../../interfaces";
+  import { dm, modalStatesStore, profileModalStore } from "../../../store";
 
-	export let user: UserData;
+	export let user: FriendData;
 	let isClicked: boolean = false;
 
 	const friendButtonClickEvent = () => {
@@ -10,10 +10,7 @@
 	}
 
 	const profileClickEvent = () => {
-		/*
-			@TODO
-			프로필 모달을 띄워줌
-		*/
+		$profileModalStore = user;
 		$modalStatesStore.isProfileModal = true;
 	}
 
@@ -25,7 +22,7 @@
 		*/
 
 		$dm = {
-			with: user,
+			with: user as UserData,
 			history: []
 		}
 		$dm = $dm;

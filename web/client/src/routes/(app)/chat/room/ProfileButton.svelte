@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { myData, socketStore, openedRoom, modalStatesStore } from '../../../../store';
-    import { page } from '$app/stores';
-    import { onDestroy } from 'svelte';
+	import { myData, socketStore, openedRoom, modalStatesStore, profileModalStore } from '../../../../store';
+	import { page } from '$app/stores';
+	import { onDestroy } from 'svelte';
 	
 	export let key: string;
 	export let value: Profile;
@@ -21,6 +21,7 @@
 	}
 
 	const profileClickEvent = () => {
+		$profileModalStore = value.user;
 		$modalStatesStore.isProfileModal = true;		
 	}
 
