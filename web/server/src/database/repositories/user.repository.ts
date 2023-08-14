@@ -5,6 +5,9 @@ import { CustomRepository } from 'src/decorators/customrepository.decorator';
 import { PendingUser } from 'src/login/objects/pending-user.object';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { Relation } from 'src/types/enums';
+import { DMRooms } from '../entities/dm-room.entity';
+import { DirectMessageEntity } from '../entities/dm-message.entity';
+import { Message } from 'src/types/interfaces';
 
 @CustomRepository(Users)
 export class UserRepository extends Repository<Users> {
@@ -73,5 +76,32 @@ export class UserRepository extends Repository<Users> {
     await this.update(user.id, { socket: null });
     // user.socket = null;
     // await this.save(user);
+  }
+
+  async getDMRoom(userId: number, otherId: number) {
+    const user = await this.findOne({
+      where: { id: userId },
+      relations: { dmRooms: true },
+    });
+    return user.dmRooms.find((e) => e.id === otherId);
+  }
+
+  async pushDM(sender: Users, roomId: number, message: Message) {
+    const dmRoom = await this.manager.findOne(DMRooms, {
+      where: { id: roomId },
+      relations: {
+        users: true,
+      },
+    });
+    const dmEntity = new DirectMessageEntity();
+    dmEntity.sender = sender.id;
+    dmEntity.body = message.body;
+    dmEntity.date = new Date();
+    dmEntity.receiver =
+      sender.id === dmRoom.users[0].id
+        ? dmRoom.users[1].id
+        : dmRoom.users[0].id;
+    dmEntity.room = dmRoom;
+    this.manager.save(dmEntity);
   }
 }

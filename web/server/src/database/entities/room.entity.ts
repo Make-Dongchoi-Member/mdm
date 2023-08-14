@@ -1,5 +1,4 @@
 import { RoomType } from 'src/types/enums';
-import { Message } from 'src/types/interfaces';
 import {
   BaseEntity,
   Column,

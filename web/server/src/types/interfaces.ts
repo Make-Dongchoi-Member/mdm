@@ -51,6 +51,7 @@ export interface RoomInfo {
 }
 
 export interface FriendData {
+  id: number;
   nickname: string;
   avatar: string;
 }
