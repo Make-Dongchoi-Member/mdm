@@ -4,14 +4,33 @@
 	import { page } from '$app/stores';
     import { clickOutside, escapeKey } from "../../../../actions";
 
-	const outButtonEvent = () => {
-		deleteRoomId($page.url.searchParams.get("id") as string);
-		goto("/chat");
-		$modalStatesStore.isRoomoutModal = false;
-		$socketStore.emit("chat/out", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
+	const outButtonEvent = async () => {
+		roomOut($page.url.searchParams.get("id") as string);
+	}
+	
+	const roomOut = async (roomId: string) => {
+		try {
+			const response = await fetch("http://localhost:3000/api/chat/room/out", {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data: { roomId } }),
+			})
+			.then(() => {
+				deleteRoomId($page.url.searchParams.get("id") as string);
+				$modalStatesStore.isRoomoutModal = false;
+				$socketStore.emit("chat/out", { userId: $myData.id, roomId });
+				goto("/chat");
+			});
+			
+		} catch (error) {
+			console.error("실패:", error);
+		}
 	}
 
-	function deleteRoomId(deleteID: string) {
+	const deleteRoomId = (deleteID: string) => {
 		$myData.rooms = ($myData.rooms).filter((room) => String(room) !== deleteID);
 		$myData = $myData;
 	}

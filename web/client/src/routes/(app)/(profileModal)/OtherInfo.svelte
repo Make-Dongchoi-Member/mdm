@@ -21,6 +21,23 @@
 			
 		})
 	}
+
+	const sendGame = async () => {
+		/**
+		 * @TODO
+		 * 수정하세요
+		 */
+		const response = fetch(`http://localhost:3000/api/user/game?nickname=${user.nickname}`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+		.then((response) => {
+			
+		})
+	}
 </script>
 
 <div class="personal_box">
@@ -37,13 +54,13 @@
 	</div>
 </div>
 <div class="stat_box">
-	<MatchStat />
+	<MatchStat records={user.record}/>
 </div>
 <div class="option_box">
 	<button on:click={sendFollow}>
 		FOLLOW
 	</button>
-	<button>
+	<button on:click={sendGame}>
 		PLAY WITH
 	</button>
 	<button>

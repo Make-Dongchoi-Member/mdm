@@ -5,10 +5,19 @@
 		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
 	];
 
-	export let user: OtherUserData;
-	let records: Record[] = [];
-	if (user) {
-		records = user.record as Record[];
+	export let records: Record[] = [];
+
+	function formatDate(d: Date) {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const dayName = days[d.getDay()];
+    const monthName = months[d.getMonth()];
+    const day = d.getDate();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+
+    return `${dayName} ${monthName} ${day} ${hours}:${minutes}`;
 	}
 </script>
 
@@ -25,7 +34,7 @@
 			</div>
 		{/if}
 		<div>
-			{item.date}
+			{formatDate(new Date(item.date))}
 		</div>
 		<div>
 			<span class="simple-text">vs</span>

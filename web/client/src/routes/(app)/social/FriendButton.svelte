@@ -14,18 +14,24 @@
 		$modalStatesStore.isProfileModal = true;
 	}
 
-	const chatClickEvent = () => {
-		/**
-		 * @TODO
-		 * 채팅 상대의 id를 사용해서 API 호출
-		 * dm 변경
-		*/
-
-		$dm = {
-			with: user as UserData,
-			history: []
-		}
-		$dm = $dm;
+	const chatClickEvent = async (): Promise<void> => {
+		const response = await fetch(`http://localhost:3000/api/dm/history?other=${user.id}`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
+			$dm = {
+				id: data.id,
+				with: data.with as UserData,
+				history: data.history
+			};
+			$dm = $dm;
+		})
+		.catch(error => console.error('Error:', error));
 	}
 </script>
 

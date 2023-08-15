@@ -1,6 +1,6 @@
 import { Message, UserData } from 'src/types/interfaces';
 
-export class DirectMessaageDTO {
+export class DMHistoryDTO {
   id: number;
   with: UserData;
   history: Message[];
