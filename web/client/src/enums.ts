@@ -15,3 +15,15 @@ export enum GameState {
   GAMING,
   END,
 }
+
+export enum Relation {
+  FRIEND = "friend",
+  BLOCK = "block",
+  NONE = "none",
+}
+
+export enum UserState {
+  ONLINE = "online",
+  OFFLINE = "offline",
+  GAMING = "gaming",
+}

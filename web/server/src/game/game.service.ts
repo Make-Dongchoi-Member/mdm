@@ -12,7 +12,7 @@ import {
 
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
-import { GameState } from 'src/types/enums';
+import { GameState, UserState } from 'src/types/enums';
 import { Ball, Bar, GameStatus, PlayerInfo } from 'src/types/interfaces';
 import { GameRoomDTO } from './dto/GameRoom.dto';
 
@@ -176,6 +176,16 @@ export class GameService {
         return true;
     }
     return false;
+  }
+
+  async setUserState(nickname: string, state: UserState) {
+    const user = await this.userRepository.getUserByNickname(nickname);
+    if (
+      (state === UserState.GAMING && user.state === UserState.ONLINE) ||
+      (state === UserState.ONLINE && user.state === UserState.GAMING)
+    ) {
+      this.userRepository.updateUser(user.id, { state: state });
+    }
   }
 
   private randomSpeed(): number {

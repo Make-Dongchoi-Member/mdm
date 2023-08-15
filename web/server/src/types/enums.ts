@@ -22,3 +22,9 @@ export enum Relation {
   BLOCK = 'block',
   NONE = 'none',
 }
+
+export enum UserState {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+  GAMING = 'gaming',
+}

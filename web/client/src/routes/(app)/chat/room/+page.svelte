@@ -10,6 +10,8 @@
     import { Level } from '../../../../enums';
     import { goto } from '$app/navigation';
   	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
+	import ProfileModal from "../../(profileModal)/ProfileModal.svelte";
+	
 
     onMount(() => {
         getRoomData();
@@ -93,13 +95,16 @@
 		$socketStore.emit("chat/leave", { userId: $myData.id, roomId: $page.url.searchParams.get("id") })
 	})
 
-    const myDataUpdate = (roomId: number) => {
-        if (($myData.rooms).includes(roomId)) return;
-        $myData.rooms = [...$myData.rooms, roomId];
-    }
+	const myDataUpdate = (roomId: number) => {
+			if (($myData.rooms).includes(roomId)) return;
+			$myData.rooms = [...$myData.rooms, roomId];
+	}
 
 </script>
 
+{#if $modalStatesStore.isProfileModal}
+<ProfileModal />
+{/if}
 <InviteModal />
 <SettingModal />
 <RoomoutModal />

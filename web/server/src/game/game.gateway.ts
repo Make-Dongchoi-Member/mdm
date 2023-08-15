@@ -11,7 +11,7 @@ import { GameRoomManager } from './objects/game.RoomManager';
 import { Bar, PlayerInfo } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
-import { GameState } from 'src/types/enums';
+import { GameState, UserState } from 'src/types/enums';
 import { GameEndDTO } from './dto/GameEnd.dto';
 import {
   BAR_BASIC_H,
@@ -56,6 +56,9 @@ export class GameGateway {
       playerA.socket.join(key);
       playerB.socket.join(key);
 
+      this.gameService.setUserState(playerA.nickname, UserState.GAMING);
+      this.gameService.setUserState(playerB.nickname, UserState.GAMING);
+
       // 두 플레이어에게 emit
       const gameRoom: GameRoomDTO = {
         playerA: playerA.nickname,
@@ -95,6 +98,14 @@ export class GameGateway {
     // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     clearInterval(this.gameManager.getIntervalID(data.roomKey));
+    this.gameService.setUserState(
+      gameStatus.playerA.nickname,
+      UserState.ONLINE,
+    );
+    this.gameService.setUserState(
+      gameStatus.playerB.nickname,
+      UserState.ONLINE,
+    );
     this.gameManager.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
     if (gameStatus.playerA.nickname === data.nickname) {
@@ -142,7 +153,9 @@ export class GameGateway {
       io.to(roomKey).emit('game/play', gameStatus);
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
-        // gs.setGameState(roomKey, GameState.END)
+        // gs.setGameState(roomKey, GameState.END);
+        gs.setUserState(gameStatus.playerA.nickname, UserState.ONLINE);
+        gs.setUserState(gameStatus.playerB.nickname, UserState.ONLINE);
         gm.deleteGameRoomKey(roomKey);
         gs.deleteGameStatus(roomKey);
         io.to(roomKey).emit('game/end', gameStatus);

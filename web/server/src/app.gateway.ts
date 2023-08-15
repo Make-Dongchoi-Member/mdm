@@ -9,6 +9,8 @@ import {
 import { Socket } from 'socket.io';
 import { JWT_SECRET } from './configs/constants';
 import { UserRepository } from './database/repositories/user.repository';
+import { UserService } from './user/user.service';
+import { UserState } from './types/enums';
 
 @WebSocketGateway({
   cors: {
@@ -28,8 +30,18 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.verify(token, client);
   }
 
-  handleDisconnect(client: Socket) {
-    this.userRepository.unsetSocketId(client.id);
+  async handleDisconnect(client: Socket) {
+    console.log(client.id);
+
+    try {
+      await this.userRepository.setStatusBySocketId(
+        client.id,
+        UserState.OFFLINE,
+      );
+      await this.userRepository.unsetSocketId(client.id);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   private async verify(token: string, client: Socket) {
@@ -43,7 +55,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (this.userRepository.findOneBy({ id: +payload.sub }) === null) {
         client.disconnect();
       } else {
-        this.userRepository.setSocketId(+payload.sub, client.id);
+        await this.userRepository.setSocketId(+payload.sub, client.id);
+        await this.userRepository.setStatusBySocketId(
+          client.id,
+          UserState.ONLINE,
+        );
       }
     } catch (e) {
       console.log('There is error!');

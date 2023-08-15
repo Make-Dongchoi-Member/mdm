@@ -1,60 +1,18 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
-	import { myData, openedRoom, socketStore } from '../../../../store';
-	import type { Message } from '../../../../interfaces';
-	import { page } from '$app/stores';
+  import { onMount } from "svelte";
+  import type { Message } from "../../../interfaces";
+  import { dm, myData } from "../../../store";
 
-	let inputValue: string = "";
+  let inputValue: string = "";
 
 	onMount(() => {
 		document.body.addEventListener("keypress", enterKeyPressEvent);
-
-		$socketStore.on("chat/message", (data: { message: Message; }) => {
-			data.message.date = new Date(data.message.date);
-			pushNewMessage(data.message);
-		});
-		scrollAndFocus();
-	});
-
-	onDestroy(() => {
-		document.body.removeEventListener("keypress", enterKeyPressEvent);
-		$socketStore.off("chat/message");
 	});
 
 	const enterKeyPressEvent = (e: any) => {
 		if (e.code === "Enter") {
 			sendButtonEvent();
 		}
-	}
-
-	const sendButtonEvent = () => {
-		if (inputValue === "") return;
-		if ($openedRoom.members.get(`${$myData.id}`)?.isMuted) return;
-
-		const message: Message = {
-			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
-			roomId: $page.url.searchParams.get("id") as string,
-			body: inputValue,
-			isDM: false,
-			date: new Date(),
-		};
-		$socketStore.emit("chat/message", { message });
-		inputValue = "";
-		pushNewMessage(message);
-	}
-
-	const pushNewMessage = (message: Message) => {
-		$openedRoom.history = [...$openedRoom.history, message];
-		scrollAndFocus();
-	}
-
-	const scrollAndFocus = () => {
-		setTimeout(() => {
-			const chattingBox =  document.querySelector(".chatting-box") as HTMLDivElement;
-			chattingBox.scrollTop = chattingBox.scrollHeight;
-			const inputTag =  document.querySelector("#chat-input") as HTMLInputElement;
-			inputTag.focus();
-		}, 1);
 	}
 
 	function formatDateToTimeString(date: Date) {
@@ -68,11 +26,47 @@
 		return hoursStr + ':' + minutesStr;
 	}
 
+	const sendButtonEvent = () => {
+		if (inputValue === "") return;
+
+		const message: Message = {
+			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
+			receiver: $dm.with.id,
+			body: inputValue,
+			isDM: true,
+			date: new Date(),
+		};
+		// $socketStore.emit("chat/message", { message });
+		inputValue = "";
+		pushNewMessage(message);
+	}
+
+	const pushNewMessage = (message: Message) => {
+		$dm.history = [...$dm.history, message];
+		scrollAndFocus();
+	}
+
+	const scrollAndFocus = () => {
+		setTimeout(() => {
+			const chattingBox =  document.querySelector(".chatting-box") as HTMLDivElement;
+			chattingBox.scrollTop = chattingBox.scrollHeight;
+			const inputTag =  document.querySelector("#chat-input") as HTMLInputElement;
+			inputTag.focus();
+
+		}, 1);
+	}
 </script>
 
-<div class="chat-main-box">
-	<div class="chatting-box">
-		{#each $openedRoom.history as message}
+<div class="dm-container">
+	{#if $dm.with.nickname === ""}
+	<div class="empty-box"></div>
+	{:else}
+	<div class="chatroom-top-box">
+	 {$dm.with.nickname}
+	</div>
+	<div class="chat-main-box">
+		<div class="chatting-box">
+			{#each $dm.history as message}
 			<div class={$myData.nickname === message.sender.nickname ? "chatting my-message" : "chatting"}>
 				<div>
 					<img src="{message.sender.avatar}" alt="Profile Image" class="chatting-box-avatar">
@@ -91,24 +85,48 @@
 					</div>
 				</div>
 			</div>
-		{/each}
-		
+			{/each}
+		</div>
+		<div class="chat-send-box">
+			<input bind:value={inputValue} id="chat-input" type="text" placeholder="chat here">
+			<button on:click={sendButtonEvent} class="send-button">
+				&#9655;
+			</button>
+		</div>
 	</div>
-	<div class="chat-send-box">
-		<input bind:value={inputValue} id="chat-input" type="text" placeholder="chat here">
-		<button on:click={sendButtonEvent} class="send-button">
-			&#9655;
-		</button>
-	</div>
+	{/if}
 </div>
 
 <style>
+	.dm-container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.empty-box {
+		width: 560px;
+		height: 650px;
+		border: 1px solid var(--border-color);
+	}
+
+	.chatroom-top-box {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: end;
+		height: 40px;
+		padding-right: 10px;
+		font-weight: bold;
+		border: 1px solid var(--border-color);
+		border-bottom: none;
+	}
+
 	.chat-main-box {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		width: 560px;
-		height: 570px;
+		height: 610px;
 		border: 1px solid var(--border-color);
 		box-sizing: border-box;
 	}
@@ -123,7 +141,7 @@
 
 	.chatting-box {
 		width: 100%;
-		height: 500px;
+		height: 100%;
 		overflow-y: auto;
 	}
 

@@ -1,18 +1,7 @@
 <script lang="ts">
-	import { myData, openedRoom, socketStore } from '../../../../store';
+	import { myData, openedRoom } from '../../../../store';
 	import ProfileButton from './ProfileButton.svelte';
-	import type { Profile, SetRequestDTO } from '../../../../interfaces';
 	import { Level } from '../../../../enums';
-    import { onDestroy, onMount } from 'svelte';
-
-	onMount(() => {
-
-	});
-
-	onDestroy(() => {
-
-	});
-
 </script>
 
 <div class="members">
@@ -43,8 +32,6 @@
 			{/if}
 		{/each}
 	</div>
-	
-
 </div>
 
 <style>
