@@ -1,40 +1,17 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { gameSettingStore, socketStore, myData } from '../../../store';
-	import type { GameData, GameRoom, GameStatus } from '../../../interfaces';
+	import type { Ball, Bar, GameData, GameRoom, GameStatus, Position } from '../../../interfaces';
 
 	let scoreDiv: HTMLDivElement;
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
-	
-	interface Rect {
-		w: number;
-		h: number;
-		x: number;
-		y: number;
-		color: string;
-	}
-	
-	interface Ball extends Rect {
-		speedX: number;
-		speedY: number;
-	}
-	
-	interface Bar extends Rect {
-		speed: number;
-	}
-
-	interface Position {
-		x: number,
-		y: number,
-	}
 
 	interface BallColorRGB {
 		red: number,
 		green: number,
 		blue: number,
 	}
-	
 
 	interface GameState {
 		page: string,
@@ -107,7 +84,7 @@
 	let leftLife: number = 5;
 	let rightLife: number = 5;
 
-	let ballPos: Position[] = new Array();
+	let ballSpectrums: Position[] = new Array();
 
 	const gameReady = () => {
 		if (ready) return;
@@ -166,9 +143,9 @@
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-			ballPos.push({x: ball.x, y: ball.y});
-			if (ballPos.length > 35) {
-				ballPos.shift();
+			ballSpectrums.push({x: ball.x, y: ball.y});
+			if (ballSpectrums.length > 35) {
+				ballSpectrums.shift();
 			}
 
 
@@ -187,12 +164,12 @@
 
 			ball.x = arg.ball.x;
 			ball.y = arg.ball.y;
-			for (const i in ballPos) {
+			for (const i in ballSpectrums) {
 				ctx.fillStyle = `rgba(${gameState.ballColor.red}, \
 				${gameState.ballColor.green}, \
 				${gameState.ballColor.blue}, \
 				${0.02 * +i})`;
-				ctx.fillRect(ballPos[i].x, ballPos[i].y, ball.w, ball.h);
+				ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
 			}
 			ctx.fillStyle = ball.color;
 			ctx.fillRect(ball.x, ball.y, ball.w, ball.h);

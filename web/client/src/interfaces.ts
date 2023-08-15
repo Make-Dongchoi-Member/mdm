@@ -22,6 +22,11 @@ export interface RequestNoti extends Notification {
   pageUrl: string;
 }
 
+export interface Position {
+  x: number;
+  y: number;
+}
+
 export interface Rect {
   w: number;
   h: number;
