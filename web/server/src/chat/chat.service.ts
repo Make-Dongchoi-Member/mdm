@@ -19,12 +19,16 @@ import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { MessageEntity } from 'src/database/entities/message.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ChatService {
   constructor(
     private roomRepository: RoomRepository,
     private userRepository: UserRepository,
+    @InjectRepository(MessageEntity)
+    private readonly messageRepository: Repository<MessageEntity>,
   ) {}
 
   async getEnterUser(roomId: number, userId: number) {
@@ -98,6 +102,7 @@ export class ChatService {
     const room = await this.roomRepository.getRoomById(roomId);
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     if (room.host === userId && room.memberCount === 1) {
+      await this.messageRepository.delete({ roomId: String(roomId) });
       this.roomRepository.delete(roomId);
     } else {
       const updateData = this.roomOutUpdateData(userId, room);
