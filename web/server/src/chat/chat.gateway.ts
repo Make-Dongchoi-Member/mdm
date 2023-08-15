@@ -156,7 +156,6 @@ export class ChatGateway {
             유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
             방에 있는 유저인지 체크
         */
-    await this.chatService.roomOut(+data.userId, +data.roomId);
     client.broadcast.to(data.roomId).emit('chat/out', data);
   }
 

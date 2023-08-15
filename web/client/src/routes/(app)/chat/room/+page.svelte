@@ -1,31 +1,29 @@
 <script lang="ts">
-    import InviteModal from './InviteModal.svelte';
-    import SettingModal from './SettingModal.svelte';
-    import RoomoutModal from './RoomoutModal.svelte';
-    import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
-    import ChatMessage from './ChatMessage.svelte';
-    import ChatMember from './ChatMember.svelte';
-    import { onDestroy, onMount } from 'svelte';
-    import { page } from '$app/stores';
-    import { Level } from '../../../../enums';
-    import { goto } from '$app/navigation';
-  	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
+	import InviteModal from './InviteModal.svelte';
+	import SettingModal from './SettingModal.svelte';
+	import RoomoutModal from './RoomoutModal.svelte';
+	import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
+	import ChatMessage from './ChatMessage.svelte';
+	import ChatMember from './ChatMember.svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { Level } from '../../../../enums';
+	import { goto } from '$app/navigation';
+	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
 	import ProfileModal from "../../(profileModal)/ProfileModal.svelte";
 	
 
-    onMount(() => {
-        getRoomData();
-        myDataUpdate(Number($page.url.searchParams.get("id")) as number);
-        $socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
+	onMount(() => {
+		getRoomData();
+		myDataUpdate(Number($page.url.searchParams.get("id")) as number);
+		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
-		    $openedRoom.members.set(`${data.user.id}`, data);
-			$openedRoom = $openedRoom;
-        });
+			getRoomData();
+		});
 
-        $socketStore.on("chat/out", (data: any) => {
-			$openedRoom.members.delete(`${data.userId}`);
-			$openedRoom = $openedRoom;
+		$socketStore.on("chat/out", (data: any) => {
+			getRoomData();
 		});
 
 		$socketStore.on("chat/set-kick", (data: any) => {
