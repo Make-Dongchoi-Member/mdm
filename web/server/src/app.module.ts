@@ -13,6 +13,7 @@ import { typeORMConfig } from './configs/typeorm.config';
 import { GameModule } from './game/game.module';
 import { DatabaseModule } from './database/database.module';
 import { UserRepository } from './database/repositories/user.repository';
+import { DMModule } from './dm/dm.module';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -34,6 +35,7 @@ if (process.env.NODE_ENV === 'prod') {
     UserModule,
     ChatModule,
     GameModule,
+    DMModule,
     DatabaseModule.forCustomRepository([UserRepository]),
   ],
   controllers: [AppController],

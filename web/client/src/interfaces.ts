@@ -154,7 +154,8 @@ export interface PostCreateDTO {
   roomId: string;
 }
 
-export interface DM {
+export interface DMHistory {
+  id: string;
   with: UserData;
   history: Message[];
 }
@@ -162,4 +163,8 @@ export interface DM {
 export interface OtherUserData extends UserData {
   relation: Relation;
   state?: UserState;
+}
+
+export interface DirectMessageDTO {
+  message: Message;
 }
