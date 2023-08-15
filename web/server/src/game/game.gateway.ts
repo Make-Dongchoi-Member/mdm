@@ -56,6 +56,7 @@ export class GameGateway {
       playerA.socket.join(key);
       playerB.socket.join(key);
 
+      // 두 플레이어의 현재 상태를 '게임 중' 으로 변경
       this.gameService.setUserState(playerA.nickname, UserState.GAMING);
       this.gameService.setUserState(playerB.nickname, UserState.GAMING);
 
@@ -66,8 +67,7 @@ export class GameGateway {
         roomKey: key,
       };
       this.gameService.saveGameRoom(gameRoom, playerA.bar, playerB.bar);
-      // console.log(key);
-      this.io.to(key).emit('game/match', gameRoom);
+      this.io.to(key).emit('game/room', gameRoom);
     }
   }
 

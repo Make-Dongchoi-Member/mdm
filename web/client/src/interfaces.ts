@@ -65,10 +65,9 @@ export interface GameStatus {
   playerB: Player;
 }
 
-export interface GameInfo {
-  me: string;
-  enemy: string;
-  gameHost: boolean;
+export interface GameRoom {
+  playerA: string;
+  playerB: string;
   roomKey?: string;
 }
 
