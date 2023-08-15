@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { spaceKey } from '../../../actions';
 	import { gameSettingStore, socketStore, myData } from '../../../store';
 	import type { GameData, GameInfo, GameStatus } from '../../../interfaces';
 
