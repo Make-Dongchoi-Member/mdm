@@ -2,7 +2,6 @@ import { Queue } from 'datastructures-js';
 import { PlayerInfo } from 'src/types/interfaces';
 
 export class GameRoomManager {
-  // private GameRoomList = new Set<string>();
   private GameRoomList = new Map<string, NodeJS.Timer>();
   private GameQueue = new Queue<PlayerInfo>();
 

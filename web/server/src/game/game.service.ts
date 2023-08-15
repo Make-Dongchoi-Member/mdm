@@ -3,6 +3,7 @@ import {
   BALL_SIZE,
   BALL_SPEED,
   BAR_BASIC_H,
+  BAR_HARD_H,
   BAR_W,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -24,7 +25,7 @@ export class GameService {
     private userRepository: UserRepository,
   ) {}
 
-  saveGameRoom(gameRoom: GameRoomDTO) {
+  saveGameRoom(gameRoom: GameRoomDTO, barA: Bar, barB: Bar) {
     if (this.gameRoomMap.has(gameRoom.roomKey)) throw new Error();
 
     const ball: Ball = {
@@ -33,14 +34,9 @@ export class GameService {
       speedX: BALL_SPEED,
       speedY: BALL_SPEED,
     };
-    const barA: Bar = {
-      y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
-      h: BAR_BASIC_H,
-    };
-    const barB = {
-      y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
-      h: BAR_BASIC_H,
-    };
+    // const barA: Bar = gameRoom.playerA.bar;
+    // const barB: Bar = gameRoom.playerB.bar;
+
     const gameStatus: GameStatus = {
       ball,
       state: GameState.READY,

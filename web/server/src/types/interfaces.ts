@@ -75,6 +75,7 @@ export interface Ball {
 export interface Bar {
   y: number;
   h: number;
+  color: string;
 }
 
 export interface Player {
@@ -90,7 +91,6 @@ export interface GameStatus {
   playerB: Player;
 }
 
-export interface PlayerInfo {
+export interface PlayerInfo extends Player {
   socket: Socket;
-  nickname: string;
 }

@@ -49,6 +49,7 @@ export interface SocketBall {
 export interface SocketBar {
   y: number;
   h: number;
+  color: string;
 }
 
 export interface Player {
