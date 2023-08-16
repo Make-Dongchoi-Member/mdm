@@ -74,6 +74,7 @@
 	let gameInfo: GameRoom = {
 		playerA: '',
 		playerB: '',
+		roomKey: '',
 	};
 
 	let matching: boolean = false;

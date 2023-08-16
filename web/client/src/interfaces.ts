@@ -73,7 +73,7 @@ export interface GameStatus {
 export interface GameRoom {
   playerA: string;
   playerB: string;
-  roomKey?: string;
+  roomKey: string;
 }
 
 export interface GameData {
