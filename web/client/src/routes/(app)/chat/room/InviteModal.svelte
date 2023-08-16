@@ -14,13 +14,6 @@
 		$modalStatesStore.isInviteModal = false;
 	}
 
-	/*
-			@TODO
-			유저 검색 입력이 들어올때마다 유저가 존재하는지 API 요청으로 확인하고
-			있으면 unavailable을 available로 변경.
-			초대 가능한 상태일때만 초대 버튼 활성화.
-	*/
-
 	const inputEvent = async (e: any) => {
 		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
 		e.target.value = e.target.value.replace(/\s/g, '');
@@ -57,28 +50,27 @@
 			} else if (response.status === 404 || response.status === 400) {
 				return false; 
 			} else {
-				throw new Error('서버에서 예상치 못한 응답을 받았습니다.'); 
+				return false;
 			}            
 		} catch (error) {
 			console.error("실패:", error);
-			throw error; 
 		}
+		return false;
 	}
 
 
 	const initialInput = () => {
 		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
-	inputValue = "";
+		inputValue = "";
 		isInviteAvalable.textContent = "unavailable";
-}
-
-	
+		isInviteButtonActivated = false;
+	}
 
 </script>
 
 	<div class="modal-container" style="{$modalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}"
-		use:clickOutside on:outclick={() => {$modalStatesStore.isInviteModal = false; initialInput();}}
-		use:escapeKey on:esckey={() => {$modalStatesStore.isInviteModal = false; initialInput();}}>
+		use:clickOutside on:outclick={() => {initialInput(); $modalStatesStore.isInviteModal = false;}}
+		use:escapeKey on:esckey={() => {initialInput(); $modalStatesStore.isInviteModal = false;}}>
 		<div class="modal-title">
 			<div>
 					INVITE FRIEND
@@ -94,7 +86,7 @@
 				</div>
 			</div>
 			<div class="bottom-line">
-				<div class={isInviteButtonActivated ? "invite-check available" : "invite-check unavailable"}>
+				<div class={isInviteButtonActivated ? "invite-check available" : "invite-check"}>
 					unavailable
 				</div>        
 				<button 
@@ -151,105 +143,78 @@
 	}
 
 	.find-friend {
-			width: 310px;
-			/* height: 35px; */
-			display: flex;
-			flex-direction: row;
-			/* justify-content: space-between; */
-			border: 1px solid var(--border-color);
-
-			margin-left: 20px;      
+		width: 310px;
+		display: flex;
+		flex-direction: row;
+		border: 1px solid var(--border-color);
+		margin-left: 20px;      
 	}
 
 	.find-friend-input > input {
-			width: 260px;
-			height: 35px;
-			background-color: var(--dark-color);
-			border: none;
-			outline: none;
-			/* border: 1px solid var(--border-color); */
-
-			color: var(--font-color);  
-			margin-left: 10px;
+		width: 260px;
+		height: 35px;
+		background-color: var(--dark-color);
+		border: none;
+		outline: none;
+		color: var(--font-color);  
+		margin-left: 10px;
 	}
 
 	.find-button {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			text-align: center;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		text-align: center;
 	}
 
 	.find-button > button {
-			font-size: 20px;
-			background-color: var(--dark-color);        
-			border: none;
-			outline: none;
+		font-size: 20px;
+		background-color: var(--dark-color);        
+		border: none;
+		outline: none;
 	}    
 
 	.bottom-line {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-			margin-left: 20px;
-			margin-top: 10px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-left: 20px;
+		margin-top: 10px;
 	}
 
-	.bottom-line > :nth-child(1){
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
+	.invite-check {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 
-			width: 320px;
-			height: 35px;
-			background-color: var(--dark-color);        
-			color: var(--border-color);      
+		width: 320px;
+		height: 35px;
+		background-color: var(--dark-color);        
+		color: var(--border-color);
 	}
-
-	/* .bottom-line > :nth-child(2) {
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			text-align: center;
-
-			width: 100px;
-			border: 1px solid var(--border-color);
-
-			margin-right: 20px;
-	}
-
-	.bottom-line > :nth-child(2):hover {
-			background-color: var(--hover-color);
-	} */
 
 	.invite-check.available {
 		color:rgb(0, 255, 0);
 	}
 
-	/* .invite-check.unavailable {
-		
-	} */
-
 	.make-button {
-			text-align: center;
-
-			width: 100px;
-			border: 1px solid var(--border-color);
-
-			margin-right: 20px;
-			background-color: var(--dark-color);
+		text-align: center;
+		width: 100px;
+		border: 1px solid var(--border-color);
+		margin-right: 20px;
+		background-color: var(--dark-color);
 	}    
 
 	.make-button.able:hover {
-			background-color: var(--hover-color);
+		background-color: var(--hover-color);
 	}
 
 	.make-button.disable {
-			color: var(--border-color);
+		color: var(--border-color);
 	}
 
 	.make-button.disable:hover {
-			background-color: var(--dark-color);
+		background-color: var(--dark-color);
 	}
   
 </style>
