@@ -11,6 +11,7 @@ import { GameHistory } from './game-history.entity';
 import { MessageEntity } from './message.entity';
 import { DMRooms } from './dm-room.entity';
 import { UserState } from 'src/types/enums';
+import { AlarmEntity } from './alarm.entity';
 
 @Entity()
 export class Users extends BaseEntity {
@@ -59,4 +60,10 @@ export class Users extends BaseEntity {
   @ManyToMany(() => DMRooms, (dmRooms) => dmRooms.users)
   @JoinTable()
   dmRooms: DMRooms[];
+
+  @OneToMany(() => AlarmEntity, (alarm) => alarm.sender)
+  sendAlarms: AlarmEntity[];
+
+  @OneToMany(() => AlarmEntity, (alarm) => alarm.receiver)
+  receiveAlarms: AlarmEntity[];
 }
