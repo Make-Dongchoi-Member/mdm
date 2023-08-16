@@ -10,6 +10,11 @@
 		<FriendButton {user} />
 		{/each}
 	</div>
+	<div class="find-area">
+		<button class="find-button">
+			🔍︎
+		</button>
+	</div>
 </div>
 
 <style>
@@ -64,5 +69,22 @@
 	.image-container {
 		display: flex;
 		justify-content: center;
+	}
+
+	.find-area {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		align-items: center;
+
+		width: 100%;
+		height: 40px;
+		padding-right: 5px;
+		/* border: 1px solid var(--border-color); */
+	}
+
+	.find-button {
+		font-size: 22px;
+		border: none;
 	}
 </style>
