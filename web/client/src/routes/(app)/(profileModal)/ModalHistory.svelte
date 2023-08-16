@@ -1,9 +1,5 @@
 <script lang="ts">
-  import type { OtherUserData, Record } from "../../../interfaces";
-
-	const history = [
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-	];
+  import type { Record } from "../../../interfaces";
 
 	export let records: Record[] = [];
 

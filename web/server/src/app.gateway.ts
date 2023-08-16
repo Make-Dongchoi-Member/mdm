@@ -31,8 +31,6 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(client: Socket) {
-    console.log(client.id);
-
     try {
       await this.userRepository.setStatusBySocketId(
         client.id,

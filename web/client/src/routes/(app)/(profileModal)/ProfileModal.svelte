@@ -29,7 +29,6 @@
 		.then(response => response.json())
 		.then(data => {
 			userData = data;
-			console.log(userData);
 		})
 		.catch(error => console.error('Error:', error));
 	}

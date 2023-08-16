@@ -8,7 +8,7 @@
     let isSigned: boolean = false;
 
     onMount(() => {
-        getMyData();
+			getMyData();
     });
 
     const getMyData = async (): Promise<void> => {
@@ -20,10 +20,10 @@
 						"Content-Type": "application/json",
 					},
 				});
-							if (response.status !== 200) {
-									goto("/signin");
-									return;
-							}
+				if (response.status !== 200) {
+						goto("/signin");
+						return;
+				}
 				const data: Promise<MyData> = response.json();
 							$myData = await data;
 

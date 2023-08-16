@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { modalStatesStore, myData } from "../../../store";
-    import { clickOutside, escapeKey } from "../../../actions";
+	import { clickOutside, escapeKey } from "../../../actions";
 
 	const logoutEvent = () => {
 		/*
