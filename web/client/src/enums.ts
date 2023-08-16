@@ -27,3 +27,9 @@ export enum UserState {
   OFFLINE = "offline",
   GAMING = "gaming",
 }
+
+export enum AlertType {
+  GAME_REQUEST,
+  FRIEND_REQUEST,
+  CHAT_INVITE,
+}

@@ -1,25 +1,22 @@
 <script lang="ts">
 	import MatchStat from "./MatchStat.svelte";
-	import { profileModalStore } from "../../../store";
-  import type { OtherUserData } from "../../../interfaces";
+	import { myData, profileModalStore, socketStore } from "../../../store";
+  import type { AlertData, OtherUserData } from "../../../interfaces";
+  import { AlertType } from "../../../enums";
 
 	export let user: OtherUserData;
 
 	const sendFollow = async () => {
 		/**
 		 * @TODO
-		 * 수정하세요
+		 * follow 요청 보내기
 		 */
-		const response = fetch(`http://localhost:3000/api/user/friend/request?nickname=${user.nickname}`, {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-		.then((response) => {
-			
-		})
+		const data: AlertData = {
+			sender: $myData,
+			receiver: user,
+			alertType: AlertType.FRIEND_REQUEST,
+		}
+		$socketStore.emit("alert/follow", data);
 	}
 
 	const sendGame = async () => {

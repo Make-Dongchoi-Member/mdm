@@ -1,4 +1,4 @@
-import { AlarmType } from 'src/types/enums';
+import { AlertType } from 'src/types/enums';
 import {
   BaseEntity,
   Column,
@@ -16,8 +16,8 @@ export class AlarmEntity extends BaseEntity {
   @Column()
   date: Date;
 
-  @Column('enum', { enum: AlarmType })
-  type: AlarmType;
+  @Column('enum', { enum: AlertType })
+  type: AlertType;
 
   @ManyToOne(() => Users, (user) => user.sendAlarms, {
     cascade: true,

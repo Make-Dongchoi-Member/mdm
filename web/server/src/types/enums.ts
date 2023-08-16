@@ -29,7 +29,7 @@ export enum UserState {
   GAMING = 'gaming',
 }
 
-export enum AlarmType {
+export enum AlertType {
   GAME_REQUEST,
   FRIEND_REQUEST,
   CHAT_INVITE,

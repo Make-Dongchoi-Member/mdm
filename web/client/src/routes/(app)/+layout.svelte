@@ -6,9 +6,14 @@
     import { onMount } from 'svelte';
 
     let isSigned: boolean = false;
+		let isAlert: boolean = false;
 
     onMount(() => {
 			getMyData();
+
+			$socketStore.on("alert", () => {
+				isAlert = true;
+			});
     });
 
     const getMyData = async (): Promise<void> => {
@@ -52,7 +57,10 @@
 	</div>
 </div>
 <div class="alarm">
-	<button on:click={() => { $modalStatesStore.isNotiModal = true; }}>
+	{#if isAlert}
+	<div class="new-alert"> </div>
+	{/if}
+	<button on:click={() => { $modalStatesStore.isNotiModal = true; isAlert = false; }}>
 		&#x1F4E2;
 	</button>
 </div>
@@ -121,6 +129,16 @@
 		border: 1px solid var(--border-color);
 		border-radius: 70%;
 		text-align: center;
+	}
+
+	.new-alert {
+		background-color: var(--point-color);
+		width: 10px;
+		height: 10px;
+		border-radius: 100px;
+		position: absolute;
+		top: 10px;
+		right: 0px;
 	}
 
 	.container {

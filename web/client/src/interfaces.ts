@@ -1,4 +1,11 @@
-import type { GameState, Level, Relation, RoomType, UserState } from "./enums";
+import type {
+  AlertType,
+  GameState,
+  Level,
+  Relation,
+  RoomType,
+  UserState,
+} from "./enums";
 
 export interface UserData {
   id?: string;
@@ -172,4 +179,12 @@ export interface OtherUserData extends UserData {
 
 export interface DirectMessageDTO {
   message: Message;
+}
+
+export interface AlertData {
+  alertId?: number;
+  alertType: AlertType;
+  sender: UserData;
+  receiver: UserData;
+  date?: Date;
 }

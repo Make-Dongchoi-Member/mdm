@@ -1,37 +1,37 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AlarmEntity } from 'src/database/entities/alarm.entity';
-import { AlarmRepository } from 'src/database/repositories/alarm.repository';
+import { AlertRepository } from 'src/database/repositories/alarm.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
-import { AlarmData } from 'src/types/interfaces';
+import { AlertData } from 'src/types/interfaces';
 
 @Injectable()
-export class AlarmService {
+export class AlertService {
   constructor(
-    private readonly alamRepository: AlarmRepository,
+    private readonly alamRepository: AlertRepository,
     private readonly userRepsitory: UserRepository,
   ) {}
 
-  async alarmList(userId: number) {
+  async alertList(userId: number) {
     const user = await this.userRepsitory.getUserByIdWithAlarm(userId);
     if (!user) throw new NotFoundException(`user_id ${userId} Not Found`);
-    return user.receiveAlarms.map(this.alarmEntityToAlamData);
+    return user.receiveAlarms.map(this.alertEntityToAlertData);
   }
 
-  async alarmSave(userId: number, alarm: AlarmData) {
+  async alertSave(alarm: AlertData) {
     const sender = await this.userRepsitory.getUserById(alarm.sender.id);
     const receiver = await this.userRepsitory.getUserById(alarm.receiver.id);
-    await this.alamRepository.saveAlarm(alarm.alarmType, sender, receiver);
+    await this.alamRepository.saveAlert(alarm.alertType, sender, receiver);
   }
 
-  async alarmDelete(alarmId: number) {
+  async alertDelete(alarmId: number) {
     console.log(alarmId);
     await this.alamRepository.delete(alarmId);
   }
 
-  private alarmEntityToAlamData(entity: AlarmEntity): AlarmData {
+  private alertEntityToAlertData(entity: AlarmEntity): AlertData {
     return {
-      alarmId: entity.id,
-      alarmType: entity.type,
+      alertId: entity.id,
+      alertType: entity.type,
       sender: {
         id: entity.sender.id,
         avatar: entity.sender.avatar,
@@ -44,5 +44,10 @@ export class AlarmService {
       },
       date: entity.date,
     };
+  }
+
+  async getSocketId(userId: number): Promise<string> | null {
+    const user = await this.userRepsitory.getUserById(userId);
+    return user.socket;
   }
 }

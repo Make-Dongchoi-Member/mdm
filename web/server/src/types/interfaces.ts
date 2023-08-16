@@ -4,7 +4,7 @@ import {
   Level,
   RoomType,
   UserState,
-  AlarmType,
+  AlertType as AlertType,
 } from './enums';
 import { Socket } from 'socket.io';
 
@@ -102,10 +102,10 @@ export interface GameStatus {
   playerB: Player;
 }
 
-export interface AlarmData {
-  alarmId: number;
-  alarmType: AlarmType;
+export interface AlertData {
+  alertId?: number;
+  alertType: AlertType;
   sender: UserData;
   receiver: UserData;
-  date: Date;
+  date?: Date;
 }

@@ -14,7 +14,7 @@ import { GameModule } from './game/game.module';
 import { DatabaseModule } from './database/database.module';
 import { UserRepository } from './database/repositories/user.repository';
 import { DMModule } from './dm/dm.module';
-import { AlarmModule } from './alarm/alarm.module';
+import { AlertModule } from './alert/alert.module';
 
 let staticModule = [];
 if (process.env.NODE_ENV === 'prod') {
@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === 'prod') {
     GameModule,
     DMModule,
     DatabaseModule.forCustomRepository([UserRepository]),
-    AlarmModule,
+    AlertModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

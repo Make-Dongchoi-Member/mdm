@@ -37,6 +37,7 @@ export class UserService {
     if (!other) throw new NotFoundException(`nickname ${nickName} Not Found`);
     const record = other.record.map(this.convertToRecord);
     const otherUserData: OtherUserData = {
+      id: other.id,
       avatar: other.avatar,
       nickname: other.nickName,
       relation: await this.userRepository.getRelation(id, other.id),
