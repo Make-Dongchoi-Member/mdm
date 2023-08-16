@@ -22,7 +22,6 @@ export class DMGateway {
   @SubscribeMessage('dm/message')
   async handleMessage(client: Socket, data: DirectMessageDTO) {
     const socketId = await this.dmService.sendMessage(data.message);
-    console.log(socketId);
     if (socketId) {
       client.to(socketId).emit('dm/message', data);
     }

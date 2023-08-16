@@ -1,31 +1,39 @@
 <script lang="ts">
-	import ProfileSocial from "./ProfileSocial.svelte";
 	import ProfileHistory from "./ProfileHistory.svelte";
-	import ProfileModal from "./ProfileModal.svelte";
 	import MyInfo from "./MyInfo.svelte";
-    import LogoutModal from "./LogoutModal.svelte";
-    import NicknameModal from "./NicknameModal.svelte";
-	
-	interface subComponents {
-		[index: string]: boolean;
-		social: boolean;
-		history: boolean;
-	}
-	
-	let components: subComponents = {
-		social: true,
-		history: false,
-	};
+	import LogoutModal from "./LogoutModal.svelte";
+	import NicknameModal from "./NicknameModal.svelte";
+  import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import type { MyData } from "../../../interfaces";
+  import { myData } from "../../../store";
 
-	const profileTabEvent = (e: any) => {
-		for (const key of Object.keys(components)) {
-			components[key] = false;
+	onMount(() => {
+		getMyData();
+	})
+
+	const getMyData = async (): Promise<void> => {
+		try {
+			const response = await fetch("http://localhost:3000/api/user/me", {
+				method: "GET",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (response.status !== 200) {
+					goto("/signin");
+					return;
+			}
+			const data: Promise<MyData> = response.json();
+			$myData = await data;
+			$myData = $myData;
+		} catch (error) {
+			console.error("실패:", error);
 		}
-		components[e.target.value] = true;
 	}
 </script>
 
-<ProfileModal />
 <LogoutModal />
 <NicknameModal />
 
@@ -34,18 +42,9 @@
 </div>
 <div class="data_container">
 	<div class="button_area">
-		<button on:click={ profileTabEvent }
-			value="social"
-			class={components.social ? "selected" : ""}>SOCIAL</button>
-		<button on:click={ profileTabEvent }
-			value="history"
-			class={components.history ? "selected" : ""}>HISTORY</button>
+		<div>HISTORY</div>
 	</div>
-	{#if components.social}
-		<ProfileSocial />
-	{:else if components.history}
-		<ProfileHistory />
-	{/if}
+	<ProfileHistory records={$myData.record} />
 </div>
 
 <style>
@@ -75,10 +74,5 @@
 	button {
 		width: 150px;
 		margin-right: 15px;
-	}
-
-	.selected {
-		border: 1px solid var(--point-color);
-		background-color: var(--hover-color);
 	}
 </style>

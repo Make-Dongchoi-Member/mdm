@@ -1,24 +1,43 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+	import type { Record } from "../../../interfaces";
+  import { myData } from "../../../store";
+
+	let records: Record[] = [];
+	let plays: number = 0;
+	let wins: number = 0;
+	let losses: number = 0;
+	let winRate: number = 0;
+
+	onMount(() => {
+		records = $myData.record as Record[];
+		if (records && records.length !== 0) {
+			plays = records.length;
+			wins = records.filter((r) => r.win).length;
+			losses = plays - wins;
+			winRate = wins / plays * 100;
+		}
+	})
 </script>
 
 <div class="match_count_area">
 	<div>
 		plays
-		<span>10000</span>
+		<span>{plays}</span>
 	</div>
 	<div class="division_line"></div>
 	<div>
 		wins
-		<span>4242</span>
+		<span>{wins}</span>
 	</div>
 	<div>
 		losses
-		<span>5758</span>
+		<span>{losses}</span>
 	</div>
 </div>
 <div class="win_rate_area">
 	win rate
-	<span>42.42%</span>
+	<span>{winRate.toFixed(2)}%</span>
 </div>
 
 <style>

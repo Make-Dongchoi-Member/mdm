@@ -10,7 +10,6 @@ export class DMService {
     const other = await this.userRepository.getUserById(otherId);
     if (!other) throw new NotFoundException(`user_id ${otherId} Not Found`);
     const dmRoom = await this.userRepository.getDMRoom(userId, otherId);
-    // console.log(dmRoom);
     const me = dmRoom.users.find((e) => e.id === userId);
     const history: Message[] = [];
     if (dmRoom && dmRoom.messages) {
