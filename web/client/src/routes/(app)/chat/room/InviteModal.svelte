@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, myData } from "../../../../store";
+	import { modalStatesStore, myData, openedRoom } from "../../../../store";
 	import { clickOutside, escapeKey } from '../../../../actions';
 	
 	let isInviteButtonActivated: boolean = false;
@@ -29,8 +29,9 @@
 		}
 	}	
 
-	const isUserExistAPI = async (nickname: any): Promise<boolean> => {
-		if (nickname === "" || nickname === $myData.nickname) {
+	const isUserExistAPI = async (nickname: any): Promise<boolean> => {		
+		const isAlreayRoom: boolean = Array.from($openedRoom.members.values()).some(member => member.user.nickname === nickname)
+		if (nickname === "" || nickname === $myData.nickname || isAlreayRoom) {
 				return false;
 		}	
 		try {
