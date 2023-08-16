@@ -136,6 +136,7 @@ export interface ModalStates {
   isPasswordInputModal: boolean;
   isLogoutModal: boolean;
   isNicknameModal: boolean;
+  isFindModal: boolean;
 }
 
 export interface MyData extends UserData {

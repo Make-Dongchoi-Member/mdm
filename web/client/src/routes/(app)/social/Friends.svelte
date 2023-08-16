@@ -1,6 +1,11 @@
 <script lang="ts">
   import { myData } from "../../../store";
   import FriendButton from "./FriendButton.svelte";
+	import { modalStatesStore } from "../../../store";
+
+	const findButtonEvent = () => {
+		$modalStatesStore.isFindModal = true;
+	}
 
 </script>
 
@@ -11,7 +16,7 @@
 		{/each}
 	</div>
 	<div class="find-area">
-		<button class="find-button">
+		<button class="find-button" on:click={findButtonEvent}>
 			🔍︎
 		</button>
 	</div>
