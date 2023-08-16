@@ -1,4 +1,5 @@
 import {
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -8,7 +9,7 @@ import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
 import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameRoomManager } from './objects/game.RoomManager';
-import { Bar, PlayerInfo } from 'src/types/interfaces';
+import { Bar, GameStatus, Player } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
 import { GameState, UserState } from 'src/types/enums';
@@ -20,17 +21,30 @@ import {
   FRAME_PER_MS,
   GAME_LIFE,
 } from 'src/configs/constants';
+import { GameMatchOutDTO } from './dto/GameMatchOut.dto';
+import { GamePlayDTO } from './dto/GamePlay.dto';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:5173'],
   },
 })
-export class GameGateway {
+export class GameGateway implements OnGatewayDisconnect {
   @WebSocketServer() io: Server;
   gameManager: GameRoomManager = new GameRoomManager();
   constructor(private readonly gameService: GameService) {}
   // queue
+
+  async handleDisconnect(client: Socket) {
+    // 게임 서버가 들고있는 유저 정보 삭제하기
+    if (this.gameManager.hasQueueBySocketId(client.id)) {
+      // 큐에 들어있는 경우 아직 매칭되지 않은 유저
+      this.gameManager.deletePlayerAtQueueBySocketId(client.id);
+    } else {
+      // 큐에 없는 경우 ready하지 않았거나, 게임 진행중이던 유저
+      // 게임 진행중이던 유저인 경우 roomKey가 존재함
+    }
+  }
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
@@ -49,8 +63,8 @@ export class GameGateway {
       const key: string = this.gameManager.newGameRoomKey();
 
       // 플레이어 두 명 큐에서 dequeue
-      const playerA: PlayerInfo = this.gameManager.dequeue();
-      const playerB: PlayerInfo = this.gameManager.dequeue();
+      const playerA: Player = this.gameManager.dequeue();
+      const playerB: Player = this.gameManager.dequeue();
 
       // 두 플레이어를 게임방에 join
       playerA.socket.join(key);
@@ -66,7 +80,7 @@ export class GameGateway {
         playerB: playerB.nickname,
         roomKey: key,
       };
-      this.gameService.saveGameRoom(gameRoom, playerA.bar, playerB.bar);
+      this.gameService.saveGameRoom(gameRoom.roomKey, playerA, playerB);
       this.io.to(key).emit('game/room', gameRoom);
     }
   }
@@ -91,13 +105,14 @@ export class GameGateway {
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
   }
 
-  // 게임 중간에 나간 사용자만
+  // 게임 중간에 나간 사용자만d
   @SubscribeMessage('game/end')
   handleGameEnd(client: Socket, data: GameEndDTO) {
     // gmae 도중 사용자가 나갔을 때d
     // gameEnd로 설정
     // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    const gamePlayInfo = this.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameManager.getIntervalID(data.roomKey));
     if (gameStatus.playerA.nickname === data.nickname) {
       gameStatus.playerA.life = 0;
@@ -122,7 +137,7 @@ export class GameGateway {
     );
     this.gameManager.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
-    this.io.to(data.roomKey).emit('game/end', gameStatus);
+    this.io.to(data.roomKey).emit('game/end', gamePlayInfo);
     client.leave(data.roomKey);
   }
 
@@ -134,7 +149,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('game/matchout')
-  handleGameMatchOut(client: Socket, data: GameReadyDTO) {
+  handleGameMatchOut(client: Socket, data: GameMatchOutDTO) {
     // 대기큐에서 삭제
     this.gameManager.deletePlayerAtQueue(data.nickname);
     if (!this.gameManager.hasQueue(data.nickname)) {
@@ -157,10 +172,11 @@ export class GameGateway {
     // console.log(gs, io)
     gs.play(roomKey);
     const gameStatus = gs.getGameStatusByKey(roomKey);
+    const gamePlayInfo = this.gamePlayByGameStatus(gameStatus);
     if (gameStatus.state === GameState.GAMING) {
-      io.to(roomKey).emit('game/play', gameStatus);
+      io.to(roomKey).emit('game/play', gamePlayInfo);
     } else if (gameStatus.state === GameState.PAUSE) {
-      io.to(roomKey).emit('game/play', gameStatus);
+      io.to(roomKey).emit('game/play', gamePlayInfo);
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
         // gs.setGameState(roomKey, GameState.END);
@@ -179,7 +195,7 @@ export class GameGateway {
         gs.setUserState(gameStatus.playerB.nickname, UserState.ONLINE);
         gm.deleteGameRoomKey(roomKey);
         gs.deleteGameStatus(roomKey);
-        io.to(roomKey).emit('game/end', gameStatus);
+        io.to(roomKey).emit('game/end', gamePlayInfo);
       }
     }
   }
@@ -189,6 +205,23 @@ export class GameGateway {
       this.gameManager.hasQueue(nickname) ||
       this.gameService.hasPlayer(nickname)
     );
+  }
+
+  private gamePlayByGameStatus(gameStatus: GameStatus): GamePlayDTO {
+    const gamePlayInfo: GamePlayDTO = {
+      ball: gameStatus.ball,
+      playerA: {
+        bar: gameStatus.playerA.bar,
+        life: gameStatus.playerA.life,
+        nickname: gameStatus.playerA.nickname,
+      },
+      playerB: {
+        bar: gameStatus.playerB.bar,
+        life: gameStatus.playerB.life,
+        nickname: gameStatus.playerB.nickname,
+      },
+    };
+    return gamePlayInfo;
   }
 
   private barSetter(info: GameReadyDTO): Bar {

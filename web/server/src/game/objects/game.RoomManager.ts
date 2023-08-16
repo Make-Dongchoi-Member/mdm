@@ -1,9 +1,10 @@
 import { Queue } from 'datastructures-js';
-import { PlayerInfo } from 'src/types/interfaces';
+import { Player } from 'src/types/interfaces';
+import { Socket } from 'socket.io';
 
 export class GameRoomManager {
   private GameRoomList = new Map<string, NodeJS.Timer>();
-  private GameQueue = new Queue<PlayerInfo>();
+  private GameQueue = new Queue<Player>();
 
   newGameRoomKey(): string {
     let randomString = this.generateRandomString(8);
@@ -36,11 +37,11 @@ export class GameRoomManager {
     return this.GameRoomList.get(key);
   }
 
-  enqueue(info: PlayerInfo) {
+  enqueue(info: Player) {
     this.GameQueue.enqueue(info);
   }
 
-  dequeue(): PlayerInfo {
+  dequeue(): Player {
     return this.GameQueue.dequeue();
   }
 
@@ -53,9 +54,23 @@ export class GameRoomManager {
     return arr.length > 0;
   }
 
+  hasQueueBySocketId(socketId: string): boolean {
+    const arr = this.GameQueue.toArray().filter(
+      (e) => e.socket.id === socketId,
+    );
+    return arr.length > 0;
+  }
+
   deletePlayerAtQueue(nickname: string) {
     const arr = this.GameQueue.toArray().filter((e) => e.nickname !== nickname);
-    this.GameQueue = new Queue<PlayerInfo>(arr);
+    this.GameQueue = new Queue<Player>(arr);
+  }
+
+  deletePlayerAtQueueBySocketId(socketId: string) {
+    const arr = this.GameQueue.toArray().filter(
+      (e) => e.socket.id !== socketId,
+    );
+    this.GameQueue = new Queue<Player>(arr);
   }
 
   private generateRandomString(length: number): string {

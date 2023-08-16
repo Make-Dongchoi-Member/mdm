@@ -13,7 +13,7 @@
 		blue: number,
 	}
 
-	interface GameState {
+	interface GamePrefer {
 		page: string,
 		controlWithMouse: boolean,
 		myScore: number,
@@ -26,7 +26,7 @@
 		hardModeBar: number,
 	}
 
-	let gameState:GameState = {
+	let gamePrefer: GamePrefer = {
 		page: "wait",
 		controlWithMouse: false,
 		myScore: 5,
@@ -39,9 +39,9 @@
 		hardModeBar: 50,
 	}
 
-	let ballColorString: string = `rgb(${gameState.ballColor.red}, \
-										${gameState.ballColor.green}, \
-										${gameState.ballColor.blue})`
+	let ballColorString: string = `rgb(${gamePrefer.ballColor.red}, \
+										${gamePrefer.ballColor.green}, \
+										${gamePrefer.ballColor.blue})`
 
 	const ball: Ball = {
 		w: 6,
@@ -55,20 +55,20 @@
 
 	let leftBar: Bar = {
 		w:7,
-		h: gameState.basicModeBar,
+		h: gamePrefer.basicModeBar,
 		x: 0,
 		y: 180,
 		speed: 0,
-		color: gameState.barColor,
+		color: gamePrefer.barColor,
 	}
 
 	let rightBar: Bar = {
 		w:7,
-		h: gameState.basicModeBar,
+		h: gamePrefer.basicModeBar,
 		x: 793,
 		y: 180,
 		speed: 0,
-		color: gameState.barColor,
+		color: gamePrefer.barColor,
 	}
 
 	let gameInfo: GameRoom = {
@@ -104,7 +104,7 @@
 	}
 
 	const handleMousePointer = (event: MouseEvent) => {
-		if (gameState.controlWithMouse) {
+		if (gamePrefer.controlWithMouse) {
 			const pos = event.movementY;
 
 			$socketStore.emit("game/bar", { nickname: gameInfo.playerA, roomKey: gameInfo.roomKey, pos: pos});
@@ -113,11 +113,11 @@
 
 	const mouseControl = () => {
 		if (!matching) return ;
-		if (gameState.controlWithMouse) {
-			gameState.controlWithMouse = false;
+		if (gamePrefer.controlWithMouse) {
+			gamePrefer.controlWithMouse = false;
 			document.exitPointerLock();
 		} else {
-			gameState.controlWithMouse = true;
+			gamePrefer.controlWithMouse = true;
 			canvas.requestPointerLock();
 		}
 	}
@@ -140,7 +140,7 @@
 		});
 
 		$socketStore.on('game/play', (arg: GameStatus) => {
-			ctx.fillStyle = gameState.backgroundColor;
+			ctx.fillStyle = gamePrefer.backgroundColor;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
@@ -166,9 +166,9 @@
 			ball.x = arg.ball.x;
 			ball.y = arg.ball.y;
 			for (const i in ballSpectrums) {
-				ctx.fillStyle = `rgba(${gameState.ballColor.red}, \
-				${gameState.ballColor.green}, \
-				${gameState.ballColor.blue}, \
+				ctx.fillStyle = `rgba(${gamePrefer.ballColor.red}, \
+				${gamePrefer.ballColor.green}, \
+				${gamePrefer.ballColor.blue}, \
 				${0.02 * +i})`;
 				ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
 			}
@@ -204,6 +204,11 @@
 		$socketStore.off("game/play");
 		canvas.removeEventListener('click', mouseControl);
 		document.removeEventListener('mousemove', handleMousePointer);
+		if (matching) {
+			$socketStore.emit("game/end", { nickname: $myData.nickname, roomKey: gameInfo.roomKey });
+		} else {
+			$socketStore.emit("game/matchout", { nickname: $myData.nickname });
+		}
 	});
 </script>
 
