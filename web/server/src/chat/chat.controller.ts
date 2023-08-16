@@ -14,7 +14,7 @@ import { PostCreateDTO } from './dto/PostCreate.dto';
 import { RoomInfoDTO } from './dto/RoomInfo.dto';
 import { RoomOutDTO } from './dto/RoomOut.dto';
 import { RoomEnterDTO } from './dto/RoomEnter.dto';
-import { DirectMessaageDTO } from './dto/DirectMessage.dto';
+import { DMHistoryDTO } from '../dm/dto/DMHistory.dto';
 
 @Controller('api/chat')
 export class ChatController {
@@ -94,19 +94,5 @@ export class ChatController {
   @Post('room/enter')
   async roomEnter(@UserId() userId: string, @Body('data') data: RoomEnterDTO) {
     await this.chatService.roomEnter(+userId, +data.roomId, data.password);
-  }
-
-  /**
-   * DM 채팅 목록 API 요청
-   * Get("/api/chat/dm?other=[otherID]")
-   * >> otherID: string
-   * << dm : DirectMessaageDTO
-   */
-  @Get('dm')
-  async directMessage(
-    @UserId(ParseIntPipe) userId: number,
-    @Query('other', ParseIntPipe) otherId: number,
-  ): Promise<DirectMessaageDTO> {
-    return await this.chatService.getDirectMessages(userId, otherId);
   }
 }

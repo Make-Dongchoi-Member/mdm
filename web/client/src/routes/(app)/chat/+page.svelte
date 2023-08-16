@@ -1,39 +1,38 @@
 <script lang="ts">
-    import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
-    import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
-    import { modalStatesStore, myData, roomList, socketStore } from '../../../store';
-    import type { Room, RoomEnterDTO } from '../../../interfaces';
-    import { onMount } from 'svelte';
-    import { RoomType } from '../../../enums';
-    import { goto } from '$app/navigation'; 
+	import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
+	import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
+	import { modalStatesStore, myData, roomList, socketStore } from '../../../store';
+	import type { Room, RoomEnterDTO } from '../../../interfaces';
+	import { onMount } from 'svelte';
+	import { RoomType } from '../../../enums';
+	import { goto } from '$app/navigation'; 
 	
 	let selectedRoomId: string;
 
-    onMount(() => {
-        $modalStatesStore.isRoomCreateModal = false;
-        getRoomList();
-    });
+	onMount(() => {
+		$modalStatesStore.isRoomCreateModal = false;
+		getRoomList();
+	});
 
-    const getRoomList = async () => {
-        const response = await fetch(`http://localhost:3000/api/chat/list`, {
-            method: "GET",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
+	const getRoomList = async () => {
+		const response = await fetch(`http://localhost:3000/api/chat/list`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
 			$roomList.clear();
-            for (let i = 0; i < data.rooms.length; i++) {
-                const element = data.rooms[i];
-                $roomList.set(Number(element.roomId), element);
-            }
-            $roomList = $roomList;
-
-        })
-        .catch(error => console.error('Error:', error));
-    }
+			for (let i = 0; i < data.rooms.length; i++) {
+				const element = data.rooms[i];
+				$roomList.set(Number(element.roomId), element);
+			}
+			$roomList = $roomList;
+		})
+		.catch(error => console.error('Error:', error));
+	}
 
 	const postRoomEnter = (roomId: string, password: string) => {
 		const data = {
@@ -43,13 +42,13 @@
 			}
 		}
 		const response = fetch(`http://localhost:3000/api/chat/room/enter`, {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
+			method: "POST",
+			credentials: 'include',
+			headers: {
+					"Content-Type": "application/json",
+			},
 			body: JSON.stringify(data),
-        })
+		})
 		.then((response) => {
 			if (response.status === 403) {
 
@@ -60,40 +59,40 @@
 				
 			} else if (response.status === 201) {
 				$modalStatesStore.isPasswordInputModal = false;
-            	goto(`/chat/room?id=${roomId}`);
+				goto(`/chat/room?id=${roomId}`);
 				$socketStore.emit("chat/enter", { roomId, userId: $myData.id });
 			} else if (response.status === 406) {
 				alert("You can't enter the room.");
 			}
 		})
-        .catch((error) => {
+		.catch((error) => {
 			console.log("Error: ", error);
 		});
 	}
 
-    const roomCreateModalButton = () => {
-        $modalStatesStore.isRoomCreateModal = true;
-    }
+	const roomCreateModalButton = () => {
+		$modalStatesStore.isRoomCreateModal = true;
+	}
 
-    const passwordInputModalButton = () => {
-        $modalStatesStore.isPasswordInputModal = true;
-    }    
+	const passwordInputModalButton = () => {
+		$modalStatesStore.isPasswordInputModal = true;
+	}    
 
-    const roomEnter = (room: Room) => {
-        if (room.roomtype === RoomType.LOCK) {
+	const roomEnter = (room: Room) => {
+		if (room.roomtype === RoomType.LOCK) {
 			selectedRoomId = room.roomId;
-            passwordInputModalButton();
-        } else {
+			passwordInputModalButton();
+		} else {
 			postRoomEnter(room.roomId, "");
-        }
-    }
+		}
+	}
 
-    const myRoomEnter = (roomNum: number) => {
-        if ($myData.rooms.includes(roomNum)) {
-            goto(`/chat/room?id=${roomNum}`);
-            return ;
-        }
-    }
+	const myRoomEnter = (roomNum: number) => {
+		if ($myData.rooms.includes(roomNum)) {
+			goto(`/chat/room?id=${roomNum}`);
+			return ;
+		}
+	}
 </script>
 
 <ChatRoomEnterPasswordModal {postRoomEnter} {selectedRoomId}/>

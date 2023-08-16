@@ -93,12 +93,24 @@ export class UserRepository extends Repository<Users> {
       where: { id: userId },
       relations: { dmRooms: true },
     });
-    return user.dmRooms.find((e) => e.id === otherId);
+    let ret: DMRooms;
+    for (const room of user.dmRooms) {
+      if (room.users.find((e) => e.id === otherId)) {
+        ret = room;
+      }
+    }
+    if (ret) {
+      ret = await this.manager.findOne(DMRooms, {
+        where: { id: ret.id },
+        relations: { messages: true },
+      });
+    }
+    return ret;
   }
 
-  async pushDM(sender: Users, roomId: number, message: Message) {
+  async pushDM(sender: Users, message: Message) {
     const dmRoom = await this.manager.findOne(DMRooms, {
-      where: { id: roomId },
+      where: { id: +message.roomId },
       relations: {
         users: true,
       },

@@ -15,6 +15,7 @@ import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameState, UserState } from 'src/types/enums';
 import { Ball, Bar, GameStatus, PlayerInfo } from 'src/types/interfaces';
 import { GameRoomDTO } from './dto/GameRoom.dto';
+import { GameHistory } from 'src/database/entities/game-history.entity';
 
 @Injectable()
 export class GameService {
@@ -186,6 +187,25 @@ export class GameService {
     ) {
       this.userRepository.updateUser(user.id, { state: state });
     }
+  }
+
+  async saveGameToDB(winnerNickname: string, loserNickname: string) {
+    const date = new Date();
+    const winner = await this.userRepository.getUserByNickname(winnerNickname);
+    const loser = await this.userRepository.getUserByNickname(loserNickname);
+    const winnerHistory = this.userRepository.manager.create(GameHistory, {
+      date,
+      win: true,
+      user: winner,
+      enemy: loser,
+    });
+    const loserHistory = this.userRepository.manager.create(GameHistory, {
+      date,
+      win: false,
+      user: loser,
+      enemy: winner,
+    });
+    await this.userRepository.manager.save([winnerHistory, loserHistory]);
   }
 
   private randomSpeed(): number {

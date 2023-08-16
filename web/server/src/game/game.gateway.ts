@@ -99,6 +99,19 @@ export class GameGateway {
     // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     clearInterval(this.gameManager.getIntervalID(data.roomKey));
+    if (gameStatus.playerA.nickname === data.nickname) {
+      gameStatus.playerA.life = 0;
+      this.gameService.saveGameToDB(
+        gameStatus.playerB.nickname,
+        gameStatus.playerA.nickname,
+      );
+    } else {
+      gameStatus.playerB.life = 0;
+      this.gameService.saveGameToDB(
+        gameStatus.playerA.nickname,
+        gameStatus.playerB.nickname,
+      );
+    }
     this.gameService.setUserState(
       gameStatus.playerA.nickname,
       UserState.ONLINE,
@@ -109,11 +122,6 @@ export class GameGateway {
     );
     this.gameManager.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
-    if (gameStatus.playerA.nickname === data.nickname) {
-      gameStatus.playerA.life = 0;
-    } else {
-      gameStatus.playerB.life = 0;
-    }
     this.io.to(data.roomKey).emit('game/end', gameStatus);
     client.leave(data.roomKey);
   }
@@ -156,6 +164,17 @@ export class GameGateway {
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
         // gs.setGameState(roomKey, GameState.END);
+        if (gameStatus.playerA.life === 0) {
+          gs.saveGameToDB(
+            gameStatus.playerB.nickname,
+            gameStatus.playerA.nickname,
+          );
+        } else {
+          gs.saveGameToDB(
+            gameStatus.playerA.nickname,
+            gameStatus.playerB.nickname,
+          );
+        }
         gs.setUserState(gameStatus.playerA.nickname, UserState.ONLINE);
         gs.setUserState(gameStatus.playerB.nickname, UserState.ONLINE);
         gm.deleteGameRoomKey(roomKey);

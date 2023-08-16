@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ChatController } from './chat.controller';
-import { ChatService } from './chat.service';
+import { DMController } from './dm.controller';
+import { DMService } from './dm.service';
 import { DatabaseModule } from 'src/database/database.module';
-import { ChatGateway } from './chat.gateway';
+import { DMGateway } from './dm.gateway';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,7 +15,7 @@ import { MessageEntity } from 'src/database/entities/message.entity';
     TypeOrmModule.forFeature([Users, Rooms, MessageEntity]),
     DatabaseModule.forCustomRepository([UserRepository, RoomRepository]),
   ],
-  controllers: [ChatController],
-  providers: [ChatService, ChatGateway],
+  controllers: [DMController],
+  providers: [DMService, DMGateway],
 })
-export class ChatModule {}
+export class DMModule {}

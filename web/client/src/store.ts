@@ -6,7 +6,7 @@ import type {
   Room,
   RoomDetail,
   RoomList,
-  DM,
+  DMHistory,
   UserData,
   OtherUserData,
 } from "./interfaces";
@@ -60,7 +60,8 @@ const openedRoom: Writable<RoomDetail> = writable({
 
 const roomList: Writable<RoomList> = writable(new Map<number, Room>());
 
-const dm: Writable<DM> = writable({
+const dm: Writable<DMHistory> = writable({
+  id: "",
   with: {
     id: "",
     avatar: "",

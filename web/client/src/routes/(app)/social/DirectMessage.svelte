@@ -1,12 +1,23 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import type { Message } from "../../../interfaces";
-  import { dm, myData } from "../../../store";
+  import { onDestroy, onMount } from "svelte";
+  import type { DirectMessageDTO, Message } from "../../../interfaces";
+  import { dm, myData, socketStore } from "../../../store";
 
   let inputValue: string = "";
 
 	onMount(() => {
 		document.body.addEventListener("keypress", enterKeyPressEvent);
+
+		$socketStore.on("dm/message", (data: DirectMessageDTO) => {
+			console.log(data)
+			console.log($dm.id)
+			if ($dm.id.toString() !== data.message.roomId) return;
+			pushNewMessage(data.message);
+		})
+	});
+
+	onDestroy(() => {
+		$socketStore.off("dm/message");
 	});
 
 	const enterKeyPressEvent = (e: any) => {
@@ -32,11 +43,12 @@
 		const message: Message = {
 			sender: {id: $myData.id, avatar: $myData.avatar, nickname: $myData.nickname},
 			receiver: $dm.with.id,
+			roomId: $dm.id.toString(),
 			body: inputValue,
 			isDM: true,
 			date: new Date(),
 		};
-		// $socketStore.emit("chat/message", { message });
+		$socketStore.emit("dm/message", { message });
 		inputValue = "";
 		pushNewMessage(message);
 	}
@@ -77,7 +89,7 @@
 							{message.sender.nickname}
 						</div>
 						<div>
-							{formatDateToTimeString(message.date)}
+							{formatDateToTimeString(new Date(message.date))}
 						</div>
 					</div>
 					<div>
