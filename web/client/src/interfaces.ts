@@ -189,3 +189,11 @@ export interface AlertData {
   receiver: UserData;
   date?: Date;
 }
+
+export interface AlertListDTO {
+  alerts: AlertData[];
+}
+
+export interface AlertDTO {
+  alert: AlertData;
+}

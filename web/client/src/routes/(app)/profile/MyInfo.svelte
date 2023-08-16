@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { modalStatesStore, myData } from "../../../store";
 	import MatchStat from "./MatchStat.svelte";
+	import type { Record } from "../../../interfaces";
+  import { onMount } from "svelte";
+
+	export let records: Record[] = [];
+
 </script>
 
 <div class="personal_box">
 	<button type="button" class="profile_image_circle">
-		<img class="image" src="/asset/hhwang.png" alt="profile_image">
+		<img class="image" src={$myData.avatar} alt="profile_image">
 	</button>
 	<div class="personal_info">
 		<button on:click={() => {$modalStatesStore.isNicknameModal = true}}>
@@ -17,7 +22,7 @@
 	</div>
 </div>
 <div class="stat_box">
-	<MatchStat />
+	<MatchStat {records} />
 </div>
 
 <style>

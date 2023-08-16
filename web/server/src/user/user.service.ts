@@ -6,6 +6,7 @@ import {
 import { DMRooms } from 'src/database/entities/dm-room.entity';
 import { GameHistory } from 'src/database/entities/game-history.entity';
 import { Users } from 'src/database/entities/user.entity';
+import { AlertRepository } from 'src/database/repositories/alarm.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { UserState } from 'src/types/enums';
 import { MyData, OtherUserData, Record, UserData } from 'src/types/interfaces';

@@ -39,7 +39,7 @@
 
 <div class="personal_box">
 	<button type="button" class="profile_image_circle" disabled>
-		<img class="image" src="/asset/hhwang.png" alt="profile_image">
+		<img class="image" src={user.avatar} alt="profile_image">
 	</button>
 	<div class="personal_info">
 		<button disabled>

@@ -3,15 +3,30 @@ import { AlertService } from './alert.service';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { AlertListDTO } from './dto/AlertList.dto';
 import { AlertData } from 'src/types/interfaces';
+import { AlertDTO } from './dto/Alert.dto';
 
-@Controller('api/alarm')
+@Controller('api/alert')
 export class AlertController {
-  constructor(private readonly alarmService: AlertService) {}
+  constructor(private readonly alertService: AlertService) {}
 
   @Get('list')
   async alertList(@UserId(ParseIntPipe) userId: number): Promise<AlertListDTO> {
-    const alarms = await this.alarmService.alertList(userId);
-    return { alarms };
+    const alarms = await this.alertService.alertList(userId);
+    return { alerts: alarms };
+  }
+
+  @Post('follow/accept')
+  async postFollowAccept(@Body('data') data: AlertDTO): Promise<void> {
+    await this.alertService.acceptFollowAlert(
+      data.alert.receiver.id,
+      data.alert.sender.id,
+    );
+    await this.alertService.alertDelete(data.alert.alertId);
+  }
+
+  @Post('deny')
+  async postDeny(@Body('data') data: AlertDTO): Promise<void> {
+    await this.alertService.alertDelete(data.alert.alertId);
   }
 
   // 알람 저장 TEST
@@ -20,15 +35,6 @@ export class AlertController {
     @UserId(ParseIntPipe) userId: number,
     @Body('data') data: AlertData,
   ) {
-    this.alarmService.alertSave(data);
-  }
-
-  // 알람 삭제 TEST
-  @Post('delete')
-  async alertDelete(
-    @UserId(ParseIntPipe) userId: number,
-    @Body('data') data: number,
-  ) {
-    this.alarmService.alertDelete(data);
+    this.alertService.alertSave(data);
   }
 }

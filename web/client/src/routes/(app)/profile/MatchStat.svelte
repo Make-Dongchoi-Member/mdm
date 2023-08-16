@@ -3,41 +3,52 @@
 	import type { Record } from "../../../interfaces";
   import { myData } from "../../../store";
 
-	let records: Record[] = [];
-	let plays: number = 0;
-	let wins: number = 0;
-	let losses: number = 0;
-	let winRate: number = 0;
+	export let records: Record[] = [];
 
-	onMount(() => {
-		records = $myData.record as Record[];
-		if (records && records.length !== 0) {
-			plays = records.length;
-			wins = records.filter((r) => r.win).length;
-			losses = plays - wins;
-			winRate = wins / plays * 100;
+	// onMount(() => {
+	// 	records = $myData.record as Record[];
+	// 	if (records && records.length !== 0) {
+	// 		plays = records.length;
+	// 		wins = records.filter((r) => r.win).length;
+	// 		losses = plays - wins;
+	// 		winRate = wins / plays * 100;
+	// 	}
+	// })
+
+	const win = (records: Record[]) => {
+		return records.filter((r) => r.win).length;
+	}
+
+	const losses = (records: Record[]) => {
+		return records.length - win(records);
+	}
+
+	const winRate = (record: Record[]) => {
+		if (records.length !== 0) {
+			return win(record) / records.length * 100;
 		}
-	})
+		return 0;
+	}
 </script>
 
 <div class="match_count_area">
 	<div>
 		plays
-		<span>{plays}</span>
+		<span>{records.length}</span>
 	</div>
 	<div class="division_line"></div>
 	<div>
 		wins
-		<span>{wins}</span>
+		<span>{win(records)}</span>
 	</div>
 	<div>
 		losses
-		<span>{losses}</span>
+		<span>{losses(records)}</span>
 	</div>
 </div>
 <div class="win_rate_area">
 	win rate
-	<span>{winRate.toFixed(2)}%</span>
+	<span>{winRate(records)}%</span>
 </div>
 
 <style>

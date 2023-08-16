@@ -1,7 +1,7 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
     import { modalStatesStore, myData, socketStore } from '../../store';
-    import type { MyData } from '../../interfaces';
+    import type { AlertListDTO, MyData } from '../../interfaces';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
 
@@ -15,6 +15,11 @@
 				isAlert = true;
 			});
     });
+
+		const alertButtonClickEvent = () => {
+			$modalStatesStore.isNotiModal = true;
+			isAlert = false;
+		}
 
     const getMyData = async (): Promise<void> => {
 			try {
@@ -60,11 +65,13 @@
 	{#if isAlert}
 	<div class="new-alert"> </div>
 	{/if}
-	<button on:click={() => { $modalStatesStore.isNotiModal = true; isAlert = false; }}>
+	<button on:click={alertButtonClickEvent}>
 		&#x1F4E2;
 	</button>
 </div>
+{#if $modalStatesStore.isNotiModal}
 <NotiModal />
+{/if}
 {/if}
 
 <style>

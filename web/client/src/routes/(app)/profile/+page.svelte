@@ -5,9 +5,10 @@
 	import NicknameModal from "./NicknameModal.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import type { MyData } from "../../../interfaces";
+  import type { MyData, Record } from "../../../interfaces";
   import { myData } from "../../../store";
 
+	let records: Record[] = [];
 	onMount(() => {
 		getMyData();
 	})
@@ -28,6 +29,9 @@
 			const data: Promise<MyData> = response.json();
 			$myData = await data;
 			$myData = $myData;
+			records = $myData.record as Record[];
+			console.log("$myData", $myData);
+			
 		} catch (error) {
 			console.error("실패:", error);
 		}
@@ -38,13 +42,13 @@
 <NicknameModal />
 
 <div class="info_container">
-	<MyInfo />
+	<MyInfo {records} />
 </div>
 <div class="data_container">
 	<div class="button_area">
 		<div>HISTORY</div>
 	</div>
-	<ProfileHistory records={$myData.record} />
+	<ProfileHistory {records} />
 </div>
 
 <style>
