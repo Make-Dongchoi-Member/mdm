@@ -25,6 +25,10 @@ export class UserRepository extends Repository<Users> {
     return this.findOne({ where: { id }, relations: { record: true } });
   }
 
+  async getUserByIdWithAlarm(id: number) {
+    return this.findOne({ where: { id }, relations: { receiveAlarms: true } });
+  }
+
   async getUserByNickname(nickName: string) {
     return this.findOne({ where: { nickName }, relations: { record: true } });
   }

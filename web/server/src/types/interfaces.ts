@@ -1,4 +1,11 @@
-import { GameState, Relation, Level, RoomType, UserState } from './enums';
+import {
+  GameState,
+  Relation,
+  Level,
+  RoomType,
+  UserState,
+  AlarmType,
+} from './enums';
 import { Socket } from 'socket.io';
 
 export interface UserData {
@@ -93,4 +100,12 @@ export interface GameStatus {
 
 export interface PlayerInfo extends Player {
   socket: Socket;
+}
+
+export interface AlarmData {
+  alarmId: number;
+  alarmType: AlarmType;
+  sender: UserData;
+  receiver: UserData;
+  date: Date;
 }
