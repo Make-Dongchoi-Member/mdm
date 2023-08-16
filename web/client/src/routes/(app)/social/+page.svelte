@@ -9,7 +9,9 @@
 {#if $modalStatesStore.isProfileModal}
 	<ProfileModal />
 {/if}
-<FindModal />
+{#if $modalStatesStore.isFindModal}
+	<FindModal />
+{/if}
 <div class="chat-box">  
 	<Friends />
 	<DirectMessage />

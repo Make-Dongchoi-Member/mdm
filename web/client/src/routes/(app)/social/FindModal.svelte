@@ -28,7 +28,7 @@
 	}	
 
 	const isUserExistAPI = async (nickname: any): Promise<boolean> => {		
-		const isAlreayRoom: boolean = $myData.friends.some(friend => friend.nickname === nickname);
+		const isAlreayRoom: boolean = $myData.friends.some(friend => friend.nickname === nickname);		
 		if (nickname === "" || nickname === $myData.nickname || isAlreayRoom) {
 				return false;
 		}	
@@ -63,7 +63,7 @@
 
 </script>
 
-	<div class="modal-container" style="{$modalStatesStore.isFindModal ? 'display: block;' : 'display: none;'}"
+	<div class="find-modal-container" style="{$modalStatesStore.isFindModal ? 'display: block;' : 'display: none;'}"
 		use:clickOutside on:outclick={() => {initialInput(); $modalStatesStore.isFindModal = false;}}
 		use:escapeKey on:esckey={() => {initialInput(); $modalStatesStore.isFindModal = false;}}>
 		<div class="modal-title">
@@ -96,7 +96,7 @@
 	</div>
 
 <style>
-	.modal-container {
+	.find-modal-container {
 		position: absolute;
 		top: 180px;
 		left: 50%;
