@@ -43,6 +43,19 @@ export class GameGateway implements OnGatewayDisconnect {
     } else {
       // 큐에 없는 경우 ready하지 않았거나, 게임 진행중이던 유저
       // 게임 진행중이던 유저인 경우 roomKey가 존재함
+      const roomKey = this.gameService.getRoomKeyBySocketId(client.id);
+      if (roomKey) {
+        const gameStatus = this.gameService.getGameStatusByKey(roomKey);
+        const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
+        this.gameService.deleteAbortedGame(
+          client.id,
+          roomKey,
+          this.gameManager,
+          gameStatus,
+        );
+        this.io.to(roomKey).emit('game/end', gamePlayInfo);
+        client.leave(roomKey);
+      }
     }
   }
 
@@ -51,7 +64,7 @@ export class GameGateway implements OnGatewayDisconnect {
     if (!this.existPlayer(data.nickname)) {
       this.gameManager.enqueue({
         socket: client,
-        bar: this.barSetter(data),
+        bar: this.gameService.barSetter(data),
         life: GAME_LIFE,
         nickname: data.nickname,
       });
@@ -112,7 +125,7 @@ export class GameGateway implements OnGatewayDisconnect {
     // gameEnd로 설정
     // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
-    const gamePlayInfo = this.gamePlayByGameStatus(gameStatus);
+    const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameManager.getIntervalID(data.roomKey));
     if (gameStatus.playerA.nickname === data.nickname) {
       gameStatus.playerA.life = 0;
@@ -172,7 +185,7 @@ export class GameGateway implements OnGatewayDisconnect {
     // console.log(gs, io)
     gs.play(roomKey);
     const gameStatus = gs.getGameStatusByKey(roomKey);
-    const gamePlayInfo = this.gamePlayByGameStatus(gameStatus);
+    const gamePlayInfo = gs.gamePlayByGameStatus(gameStatus);
     if (gameStatus.state === GameState.GAMING) {
       io.to(roomKey).emit('game/play', gamePlayInfo);
     } else if (gameStatus.state === GameState.PAUSE) {
@@ -205,40 +218,5 @@ export class GameGateway implements OnGatewayDisconnect {
       this.gameManager.hasQueue(nickname) ||
       this.gameService.hasPlayer(nickname)
     );
-  }
-
-  private gamePlayByGameStatus(gameStatus: GameStatus): GamePlayDTO {
-    const gamePlayInfo: GamePlayDTO = {
-      ball: gameStatus.ball,
-      playerA: {
-        bar: gameStatus.playerA.bar,
-        life: gameStatus.playerA.life,
-        nickname: gameStatus.playerA.nickname,
-      },
-      playerB: {
-        bar: gameStatus.playerB.bar,
-        life: gameStatus.playerB.life,
-        nickname: gameStatus.playerB.nickname,
-      },
-    };
-    return gamePlayInfo;
-  }
-
-  private barSetter(info: GameReadyDTO): Bar {
-    let bar: Bar;
-    if (info.gameMode === 'hard') {
-      bar = {
-        y: (CANVAS_HEIGHT - BAR_HARD_H) / 2,
-        h: BAR_HARD_H,
-        color: info.barColor,
-      };
-    } else {
-      bar = {
-        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
-        h: BAR_BASIC_H,
-        color: info.barColor,
-      };
-    }
-    return bar;
   }
 }

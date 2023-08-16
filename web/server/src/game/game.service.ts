@@ -16,6 +16,10 @@ import { GameState, UserState } from 'src/types/enums';
 import { Ball, Bar, GameStatus, Player } from 'src/types/interfaces';
 import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameHistory } from 'src/database/entities/game-history.entity';
+import { GameRoomManager } from './objects/game.RoomManager';
+import { clearInterval } from 'timers';
+import { GameReadyDTO } from './dto/GameReady.dto';
+import { GamePlayDTO } from './dto/GamePlay.dto';
 
 @Injectable()
 export class GameService {
@@ -142,6 +146,7 @@ export class GameService {
 
   barPosition(socketRoom: string, pos: number, nickname: string) {
     const gameStatus = this.gameRoomStatusMap.get(socketRoom);
+    if (!gameStatus) return;
     const isLeft = gameStatus.playerA.nickname === nickname;
     if (isLeft) {
       gameStatus.playerA.bar.y += pos;
@@ -169,7 +174,42 @@ export class GameService {
     return false;
   }
 
-  getRoomKeyBySocketId(socketId: string): string {
+  gamePlayByGameStatus(gameStatus: GameStatus): GamePlayDTO {
+    const gamePlayInfo: GamePlayDTO = {
+      ball: gameStatus.ball,
+      playerA: {
+        bar: gameStatus.playerA.bar,
+        life: gameStatus.playerA.life,
+        nickname: gameStatus.playerA.nickname,
+      },
+      playerB: {
+        bar: gameStatus.playerB.bar,
+        life: gameStatus.playerB.life,
+        nickname: gameStatus.playerB.nickname,
+      },
+    };
+    return gamePlayInfo;
+  }
+
+  barSetter(info: GameReadyDTO): Bar {
+    let bar: Bar;
+    if (info.gameMode === 'hard') {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_HARD_H) / 2,
+        h: BAR_HARD_H,
+        color: info.barColor,
+      };
+    } else {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
+        h: BAR_BASIC_H,
+        color: info.barColor,
+      };
+    }
+    return bar;
+  }
+
+  getRoomKeyBySocketId(socketId: string): string | null {
     for (const [key, value] of this.gameRoomStatusMap) {
       if (
         value.playerA.socket.id === socketId ||
@@ -177,7 +217,28 @@ export class GameService {
       )
         return key;
     }
-    return '';
+    return null;
+  }
+
+  deleteAbortedGame(
+    socketId: string,
+    roomKey: string,
+    gm: GameRoomManager,
+    gs: GameStatus,
+  ) {
+    const abortPlayer = this.getPlayerBySocketId(socketId);
+    clearInterval(gm.getIntervalID(roomKey));
+    if (gs.playerA.nickname === abortPlayer) {
+      gs.playerA.life = 0;
+      this.saveGameToDB(gs.playerB.nickname, gs.playerA.nickname);
+    } else {
+      gs.playerB.life = 0;
+      this.saveGameToDB(gs.playerA.nickname, gs.playerB.nickname);
+    }
+    this.setUserState(gs.playerA.nickname, UserState.ONLINE);
+    this.setUserState(gs.playerB.nickname, UserState.ONLINE);
+    gm.deleteGameRoomKey(roomKey);
+    this.deleteGameStatus(roomKey);
   }
 
   async setUserState(nickname: string, state: UserState) {
@@ -211,5 +272,12 @@ export class GameService {
 
   private randomSpeed(): number {
     return Math.random() + BALL_SPEED;
+  }
+
+  private getPlayerBySocketId(socketId: string): string {
+    for (const [key, value] of this.gameRoomStatusMap) {
+      if (value.playerA.socket.id === socketId) return value.playerA.nickname;
+      if (value.playerB.socket.id === socketId) return value.playerB.nickname;
+    }
   }
 }
