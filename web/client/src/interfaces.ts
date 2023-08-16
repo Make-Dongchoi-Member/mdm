@@ -76,11 +76,6 @@ export interface GameRoom {
   roomKey: string;
 }
 
-export interface GameData {
-  ball: Ball;
-  bar: Bar;
-}
-
 export interface Message {
   sender: UserData;
   receiver?: string;

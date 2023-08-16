@@ -7,14 +7,12 @@ import {
   BAR_W,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
-  GAME_LIFE,
 } from 'src/configs/constants';
 
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameState, UserState } from 'src/types/enums';
 import { Ball, Bar, GameStatus, Player } from 'src/types/interfaces';
-import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameHistory } from 'src/database/entities/game-history.entity';
 import { GameRoomManager } from './objects/game.RoomManager';
 import { clearInterval } from 'timers';
@@ -177,6 +175,7 @@ export class GameService {
   gamePlayByGameStatus(gameStatus: GameStatus): GamePlayDTO {
     const gamePlayInfo: GamePlayDTO = {
       ball: gameStatus.ball,
+      state: gameStatus.state,
       playerA: {
         bar: gameStatus.playerA.bar,
         life: gameStatus.playerA.life,

@@ -9,20 +9,13 @@ import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
 import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameRoomManager } from './objects/game.RoomManager';
-import { Bar, GameStatus, Player } from 'src/types/interfaces';
+import { Player } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
 import { GameState, UserState } from 'src/types/enums';
 import { GameEndDTO } from './dto/GameEnd.dto';
-import {
-  BAR_BASIC_H,
-  BAR_HARD_H,
-  CANVAS_HEIGHT,
-  FRAME_PER_MS,
-  GAME_LIFE,
-} from 'src/configs/constants';
+import { FRAME_PER_MS, GAME_LIFE } from 'src/configs/constants';
 import { GameMatchOutDTO } from './dto/GameMatchOut.dto';
-import { GamePlayDTO } from './dto/GamePlay.dto';
 
 @WebSocketGateway({
   cors: {

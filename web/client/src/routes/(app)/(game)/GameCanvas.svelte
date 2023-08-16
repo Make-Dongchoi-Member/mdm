@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { gameSettingStore, socketStore, myData } from '../../../store';
-	import type { Ball, Bar, GameData, GameRoom, GameStatus, Position } from '../../../interfaces';
+	import type { Ball, Bar, GameRoom, GameStatus, Position } from '../../../interfaces';
+	import { GameState } from '../../../enums';
 
 	let scoreDiv: HTMLDivElement;
 	let canvas: HTMLCanvasElement;
@@ -79,6 +80,7 @@
 
 	let matching: boolean = false;
 	let ready: boolean = false;
+	let gaming: boolean = false;
 	let gameHost: boolean = false;
 
 	// 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
@@ -106,8 +108,9 @@
 	const handleMousePointer = (event: MouseEvent) => {
 		if (gamePrefer.controlWithMouse) {
 			const pos = event.movementY;
+			console.log(pos)
 
-			$socketStore.emit("game/bar", { nickname: gameInfo.playerA, roomKey: gameInfo.roomKey, pos: pos});
+			$socketStore.emit("game/bar", { nickname: $myData.nickname, roomKey: gameInfo.roomKey, pos: pos});
 		}
 	}
 
@@ -140,6 +143,11 @@
 		});
 
 		$socketStore.on('game/play', (arg: GameStatus) => {
+			if (arg.state === GameState.GAMING) {
+				gaming = true;
+			} else {
+				gaming = false;
+			}
 			ctx.fillStyle = gamePrefer.backgroundColor;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -220,10 +228,13 @@
 </div>
 <canvas id="game-canvas">Canvas</canvas>
 <div id="score"></div>
-<div class="button-area">
-	<button on:click={gameReady}>{ready ? "✓" : "game ready"}</button>
+<div class="button-area" style={gaming ? 'display: none' : 'display: flex'}>
 	{#if gameHost}
-		<button on:click={gameStart}>game start</button>
+		<button on:click={gameStart}>GAME START</button>
+	{:else if matching && !gameHost}
+		<button>WAIT TO START</button>
+	{:else if !gameHost}
+		<button on:click={gameReady}>{ready ? "WAITING..." : "READY FOR THE MATCH"}</button>
 	{/if}
 </div>
 
@@ -249,8 +260,24 @@
 		box-sizing: border-box;
 	}
 
+	.button-area {
+		position: absolute;
+		top: 315px;
+
+		height: 200px;
+		width: 800px;
+
+		display: flex;
+		justify-content: center;
+
+		box-sizing: border-box;
+	}
+
 	.button-area> button {
-		width: 150px;
+		width: 750px;
+		height: 60px;
+		font-size: 25px;
+		font-weight: 100;
 	}
 </style>
 
