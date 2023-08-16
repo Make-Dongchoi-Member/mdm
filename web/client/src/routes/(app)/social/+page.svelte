@@ -3,10 +3,14 @@
   import Friends from "./Friends.svelte";
   import ProfileModal from "../(profileModal)/ProfileModal.svelte";
   import { modalStatesStore } from "../../../store";
+	import FindModal from "./FindModal.svelte";
 </script>
 
 {#if $modalStatesStore.isProfileModal}
-<ProfileModal />
+	<ProfileModal />
+{/if}
+{#if $modalStatesStore.isFindModal}
+	<FindModal />
 {/if}
 <div class="chat-box">  
 	<Friends />
