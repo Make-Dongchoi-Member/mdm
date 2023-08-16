@@ -22,6 +22,11 @@ export interface RequestNoti extends Notification {
   pageUrl: string;
 }
 
+export interface Position {
+  x: number;
+  y: number;
+}
+
 export interface Rect {
   w: number;
   h: number;
@@ -65,11 +70,10 @@ export interface GameStatus {
   playerB: Player;
 }
 
-export interface GameInfo {
-  me: string;
-  enemy: string;
-  gameHost: boolean;
-  roomKey?: string;
+export interface GameRoom {
+  playerA: string;
+  playerB: string;
+  roomKey: string;
 }
 
 export interface GameData {

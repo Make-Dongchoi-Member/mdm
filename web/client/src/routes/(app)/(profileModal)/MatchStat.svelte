@@ -10,8 +10,6 @@
 	let winRate: number = 0;
 
 	onMount(() => {
-		console.log(records);
-		
 		if (records.length !== 0) {
 			plays = records.length;
 			wins = records.filter((r) => r.win).length;

@@ -1,36 +1,36 @@
 <script lang="ts">
-	const history = [
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'seonhoki'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'jaewchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'sooyokim'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'LOSE', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-		{result:'WIN', date:'Thu Jul 6', time:'14:40', enemy:'dongchoi'},
-	];
+	import type { Record } from "../../../interfaces";
+
+	export let records: Record[] = [];
+
+	function formatDate(d: Date) {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const dayName = days[d.getDay()];
+    const monthName = months[d.getMonth()];
+    const day = d.getDate();
+    const hours = d.getHours().toString().padStart(2, '0');
+    const minutes = d.getMinutes().toString().padStart(2, '0');
+
+    return `${dayName} ${monthName} ${day} ${hours}:${minutes}`;
+	}
 </script>
 
 <div class="data">
-	{#each history as item}
+	{#each records as item}
 	<div class="history">
-		{#if item.result === 'WIN'}
+		{#if item.win}
 			<div class="win">
-				{item.result}
+				WIN
 			</div>
 		{:else}
 			<div class="lose">
-				{item.result}
+				LOSE
 			</div>
 		{/if}
 		<div>
-			{item.date}&nbsp;&nbsp;&nbsp;{item.time}
+			{formatDate(new Date(item.date))}
 		</div>
 		<div>
 			<span class="simple-text">vs</span>

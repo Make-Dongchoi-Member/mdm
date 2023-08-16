@@ -9,8 +9,6 @@
 		document.body.addEventListener("keypress", enterKeyPressEvent);
 
 		$socketStore.on("dm/message", (data: DirectMessageDTO) => {
-			console.log(data)
-			console.log($dm.id)
 			if ($dm.id.toString() !== data.message.roomId) return;
 			pushNewMessage(data.message);
 		})

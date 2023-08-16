@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { modalStatesStore, myData } from "../../../store";
+	import { modalStatesStore, myData } from "../../../store";
 	import MatchStat from "./MatchStat.svelte";
 </script>
 

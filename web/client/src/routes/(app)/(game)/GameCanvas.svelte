@@ -1,41 +1,17 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { spaceKey } from '../../../actions';
 	import { gameSettingStore, socketStore, myData } from '../../../store';
-	import type { GameData, GameInfo, GameStatus } from '../../../interfaces';
+	import type { Ball, Bar, GameData, GameRoom, GameStatus, Position } from '../../../interfaces';
 
 	let scoreDiv: HTMLDivElement;
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
-	
-	interface Rect {
-		w: number;
-		h: number;
-		x: number;
-		y: number;
-		color: string;
-	}
-	
-	interface Ball extends Rect {
-		speedX: number;
-		speedY: number;
-	}
-	
-	interface Bar extends Rect {
-		speed: number;
-	}
-
-	interface Position {
-		x: number,
-		y: number,
-	}
 
 	interface BallColorRGB {
 		red: number,
 		green: number,
 		blue: number,
 	}
-	
 
 	interface GameState {
 		page: string,
@@ -95,21 +71,21 @@
 		color: gameState.barColor,
 	}
 
-	let gameInfo: GameInfo = {
-		me: $myData.nickname,
-		enemy: 'anonymous',
-		gameHost: false,
+	let gameInfo: GameRoom = {
+		playerA: '',
+		playerB: '',
+		roomKey: '',
 	};
 
 	let matching: boolean = false;
 	let ready: boolean = false;
+	let gameHost: boolean = false;
 
+	// 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
 	let leftLife: number = 5;
 	let rightLife: number = 5;
-	let leftPlayer: string = '';
-	let rightPlayer: string = '';
 
-	let ballPos: Position[] = new Array();
+	let ballSpectrums: Position[] = new Array();
 
 	const gameReady = () => {
 		if (ready) return;
@@ -123,7 +99,7 @@
 
 	const gameStart = () => {
 		if (matching) {
-			$socketStore.emit("game/start", { nickname: gameInfo.me, roomKey: gameInfo.roomKey });
+			$socketStore.emit("game/start", { nickname: gameInfo.playerA, roomKey: gameInfo.roomKey });
 		}
 	}
 
@@ -131,11 +107,12 @@
 		if (gameState.controlWithMouse) {
 			const pos = event.movementY;
 
-			$socketStore.emit("game/bar", { nickname: gameInfo.me, roomKey: gameInfo.roomKey, pos: pos});
+			$socketStore.emit("game/bar", { nickname: gameInfo.playerA, roomKey: gameInfo.roomKey, pos: pos});
 		}
 	}
 
 	const mouseControl = () => {
+		if (!matching) return ;
 		if (gameState.controlWithMouse) {
 			gameState.controlWithMouse = false;
 			document.exitPointerLock();
@@ -156,21 +133,10 @@
 		canvas.addEventListener('click', mouseControl);
 		document.addEventListener('mousemove', handleMousePointer);
 
-		$socketStore.on('game/match', (arg) => {
-			if ($myData.nickname === arg.playerA) {
-				gameInfo.gameHost = true;
-				gameInfo.enemy = arg.playerB;
-			} else {
-				gameInfo.gameHost = false;
-				gameInfo.enemy = arg.playerA;
-			}
-			console.log(`arg `, arg);
-			console.log(`before ${gameInfo.roomKey}`);
-			gameInfo.roomKey = arg.roomKey;
-			leftPlayer = arg.playerA;
-			rightPlayer = arg.playerB;
+		$socketStore.on('game/room', (arg: GameRoom) => {
+			gameInfo = arg;
 			matching = true;
-			console.log(`after ${gameInfo.roomKey}`);
+			if (gameInfo.playerA === $myData.nickname) gameHost = true;
 		});
 
 		$socketStore.on('game/play', (arg: GameStatus) => {
@@ -178,9 +144,9 @@
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-			ballPos.push({x: ball.x, y: ball.y});
-			if (ballPos.length > 35) {
-				ballPos.shift();
+			ballSpectrums.push({x: ball.x, y: ball.y});
+			if (ballSpectrums.length > 35) {
+				ballSpectrums.shift();
 			}
 
 
@@ -199,12 +165,12 @@
 
 			ball.x = arg.ball.x;
 			ball.y = arg.ball.y;
-			for (const i in ballPos) {
+			for (const i in ballSpectrums) {
 				ctx.fillStyle = `rgba(${gameState.ballColor.red}, \
 				${gameState.ballColor.green}, \
 				${gameState.ballColor.blue}, \
 				${0.02 * +i})`;
-				ctx.fillRect(ballPos[i].x, ballPos[i].y, ball.w, ball.h);
+				ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
 			}
 			ctx.fillStyle = ball.color;
 			ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
@@ -221,7 +187,7 @@
 				winner = arg.playerB.nickname;
 			}
 			const scoreDiv = document.querySelector("#score") as HTMLDivElement;
-			if (gameInfo.me === winner) {
+			if (gameInfo.playerA === winner) {
 				// 내가 이김
 				scoreDiv.innerText = "WIN";
 			} else {
@@ -229,7 +195,7 @@
 				scoreDiv.innerText = "LOSE";
 			}
 			ready = false;
-			gameInfo.gameHost = false;
+			gameHost = false;
 		})
 	});
 
@@ -242,16 +208,16 @@
 </script>
 
 <div class="life">
-	{#if gameInfo.roomKey !== undefined}
-		<span>{leftPlayer} : {leftLife}</span>
-		<span>{rightPlayer} : {rightLife}</span>
+	{#if matching}
+		<span>{gameInfo.playerA} : {leftLife}</span>
+		<span>{gameInfo.playerB} : {rightLife}</span>
 	{/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
 <div id="score"></div>
 <div class="button-area">
 	<button on:click={gameReady}>{ready ? "✓" : "game ready"}</button>
-	{#if gameInfo.gameHost}
+	{#if gameHost}
 		<button on:click={gameStart}>game start</button>
 	{/if}
 </div>

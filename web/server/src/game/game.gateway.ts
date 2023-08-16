@@ -56,18 +56,18 @@ export class GameGateway {
       playerA.socket.join(key);
       playerB.socket.join(key);
 
+      // 두 플레이어의 현재 상태를 '게임 중' 으로 변경
       this.gameService.setUserState(playerA.nickname, UserState.GAMING);
       this.gameService.setUserState(playerB.nickname, UserState.GAMING);
 
-      // 두 플레이어에게 emit
+      // 두 플레이어에게 emitd
       const gameRoom: GameRoomDTO = {
         playerA: playerA.nickname,
         playerB: playerB.nickname,
         roomKey: key,
       };
       this.gameService.saveGameRoom(gameRoom, playerA.bar, playerB.bar);
-      // console.log(key);
-      this.io.to(key).emit('game/match', gameRoom);
+      this.io.to(key).emit('game/room', gameRoom);
     }
   }
 
@@ -91,6 +91,7 @@ export class GameGateway {
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
   }
 
+  // 게임 중간에 나간 사용자만
   @SubscribeMessage('game/end')
   handleGameEnd(client: Socket, data: GameEndDTO) {
     // gmae 도중 사용자가 나갔을 때d
@@ -125,6 +126,7 @@ export class GameGateway {
     client.leave(data.roomKey);
   }
 
+  // 게임이 종료되면 둘 다
   @SubscribeMessage('game/roomout')
   handleGameRoomOut(client: Socket, data: GameEndDTO) {
     // game 종료후 사용자가 속한 room 제거 요청
@@ -191,16 +193,16 @@ export class GameGateway {
 
   private barSetter(info: GameReadyDTO): Bar {
     let bar: Bar;
-    if (info.gameMode === 'basic') {
-      bar = {
-        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
-        h: BAR_BASIC_H,
-        color: info.barColor,
-      };
-    } else if (info.gameMode === 'hard') {
+    if (info.gameMode === 'hard') {
       bar = {
         y: (CANVAS_HEIGHT - BAR_HARD_H) / 2,
         h: BAR_HARD_H,
+        color: info.barColor,
+      };
+    } else {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
+        h: BAR_BASIC_H,
         color: info.barColor,
       };
     }

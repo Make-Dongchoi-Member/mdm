@@ -91,15 +91,15 @@ export interface Player {
   nickname: string;
 }
 
+export interface PlayerInfo extends Player {
+  socket: Socket;
+}
+
 export interface GameStatus {
   ball: Ball;
   state: GameState;
   playerA: Player;
   playerB: Player;
-}
-
-export interface PlayerInfo extends Player {
-  socket: Socket;
 }
 
 export interface AlarmData {
