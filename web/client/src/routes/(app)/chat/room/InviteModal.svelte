@@ -19,7 +19,7 @@
 		e.target.value = e.target.value.replace(/\s/g, '');
 		inputValue = e.target.value; 
 
-		const isUser = await isUserExist(inputValue);
+		const isUser = await isUserExistAPI(inputValue);
 		if (inputValue !== "" && isUser) {
 			isInviteButtonActivated = true;
 			isInviteAvalable.textContent = "available";
@@ -27,16 +27,12 @@
 			isInviteButtonActivated = false;
 			isInviteAvalable.textContent = "unavailable";
 		}
-	}
-
-	const isUserExist = async (id: string) => {
-		if (id === "" || id === $myData.nickname) {
-				return false;
-		}	
-		return await isUserExistAPI(id);
-	}
+	}	
 
 	const isUserExistAPI = async (nickname: any): Promise<boolean> => {
+		if (nickname === "" || nickname === $myData.nickname) {
+				return false;
+		}	
 		try {
 			const response = await fetch(`http://localhost:3000/api/user/info?nickname=${encodeURIComponent(nickname)}`, {
 				method: "GET",
