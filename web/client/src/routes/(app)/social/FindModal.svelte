@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { modalStatesStore, profileModalStore, myData } from "../../../store";
 	import { clickOutside, escapeKey } from '../../../actions';	
+	import type { UserData } from "../../../interfaces";
   import { onMount } from "svelte";
 	
 	let isInviteButtonActivated: boolean = false;
 	let inputValue: string = "";
+	let receiver: UserData;
 
 	onMount(() => {
 		const inputTag = document.querySelector("#find-input") as HTMLInputElement;
@@ -39,20 +41,21 @@
 				return false;
 		}	
 		try {
-			const response = await fetch(`http://localhost:3000/api/user/info?nickname=${encodeURIComponent(nickname)}`, {
+			const response = await fetch(`http://localhost:3000/api/user/search?nickname=${nickname}`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {
 					"Content-Type": "application/json",
-				},
+				},	
 			});
-			if (response.status === 200) {
-				return true;  
-			} else if (response.status === 404 || response.status === 400) {
-				return false; 
+			const data = await response.json();
+			if (data.exist) {
+				receiver = data.user;
+				return true;
 			} else {
 				return false;
-			}            
+			} 
+
 		} catch (error) {
 			console.error("실패:", error);
 		}
@@ -86,9 +89,24 @@
 				</div>
 			</div>
 			<div class="bottom-line">
-				<div class={isInviteButtonActivated ? "invite-check available" : "invite-check"}>
-					unavailable
+				<div class="find-result">
+					{#if !isInviteButtonActivated}
+						<div class="invite-check">
+							unavailable					
+						</div>
+					{:else}
+						<div class="profile-container">
+							<div class="image-container">
+								<img class="profile-photo" src={receiver.avatar} alt={`${receiver.nickname}'s profile image`}>
+							</div>
+							<div>
+								{receiver.nickname}
+							</div>
+						</div>
+					{/if}
+					
 				</div>        
+
 				<button 
 					class={isInviteButtonActivated ? 'make-button able' : 'make-button disable'}
 					on:click={findButtonEvent} 
@@ -185,16 +203,12 @@
 	.invite-check {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: top;
 
 		width: 320px;
 		height: 35px;
 		background-color: var(--dark-color);        
 		color: var(--border-color);
-	}
-
-	.invite-check.available {
-		color:rgb(0, 255, 0);
 	}
 
 	.make-button {
@@ -215,6 +229,28 @@
 
 	.make-button.disable:hover {
 		background-color: var(--dark-color);
+	}
+
+	.profile-container {
+		display: flex;
+		flex-direction: row;
+		align-items: top;
+
+		height: 35px;
+	}
+
+	.profile-photo {
+		border-radius: 70%;
+		width: 20px;
+		height: 20px;
+
+		margin-left: 3px;
+		margin-right: 5px;
+	}
+
+	.image-container {
+		display: flex;
+		justify-content: center;
 	}
   
 </style>
