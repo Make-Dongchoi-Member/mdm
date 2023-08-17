@@ -21,7 +21,12 @@ export class AlertService {
   async alertSave(alert: AlertData) {
     const sender = await this.userRepository.getUserById(alert.sender.id);
     const receiver = await this.userRepository.getUserById(alert.receiver.id);
-    await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
+    await this.alertRepository.saveAlert(
+      alert.alertType,
+      sender,
+      receiver,
+      alert.roomId,
+    );
   }
 
   async alertDelete(alertId: number) {
@@ -42,6 +47,7 @@ export class AlertService {
         avatar: entity.receiver.avatar,
         nickname: entity.receiver.nickName,
       },
+      roomId: entity.roomId,
       date: entity.date,
     };
   }

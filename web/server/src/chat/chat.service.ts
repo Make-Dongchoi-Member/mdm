@@ -113,6 +113,10 @@ export class ChatService {
   }
 
   async roomEnter(userId: number, roomId: number, password: string) {
+    /**
+     * @TODO
+     * 초대된 사람의 경우 방에 비밀번호 없이 들어올 수 있도록
+     */
     const room = await this.roomRepository.getRoomById(roomId);
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     if (room.roomtype === RoomType.LOCK)

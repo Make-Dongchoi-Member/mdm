@@ -41,11 +41,12 @@ export class ChatGateway {
       유저의 소켓 아이디와 유저 아이디의 쌍이 맞는지 확인
       방 참가 권한 체크
     */
-
     const enterUser = await this.chatService.getEnterUser(
       +data.roomId,
       +data.userId,
     );
+
+    console.log('enterUser=', enterUser);
 
     client.join(data.roomId);
     client.broadcast.to(data.roomId).emit('chat/enter', enterUser);

@@ -19,6 +19,8 @@
 		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
+			console.log(data);
+			
 			getRoomData();
 		});
 

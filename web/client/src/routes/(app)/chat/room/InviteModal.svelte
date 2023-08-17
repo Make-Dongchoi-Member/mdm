@@ -38,13 +38,17 @@
 		}
 	}	
 
-	const isUserExistAPI = async (nickname: any): Promise<boolean> => {		
-		const isAlreayRoom: boolean = Array.from($openedRoom.members.values()).some(member => member.user.nickname === nickname)
-		if (nickname === "" || nickname === $myData.nickname || isAlreayRoom) {
-				return false;
-		}	
+	const isUserExistAPI = async (nickname: string): Promise<boolean> => {		
+		const isAlreayRoom: boolean = Array.from($openedRoom.members.values()).some(member => member.user.nickname === nickname);
+		
+		if (nickname === "" 
+				|| nickname === $myData.nickname 
+				|| isAlreayRoom 
+				|| nickname.length < 3) {
+			return false;
+		}
 		try {
-			const response = await fetch(`http://localhost:3000/api/user/info?nickname=${encodeURIComponent(nickname)}`, {
+			const response = await fetch(`http://localhost:3000/api/user/search?nickname=${nickname}`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {
@@ -52,7 +56,7 @@
 				},
 			});
 			const data = await response.json();
-			if (data.state) {
+			if (data.exist) {
 				receiver = data.user;
 				return true;
 			} else {
@@ -94,7 +98,7 @@
 			<div class="bottom-line">
 				<div class={isInviteButtonActivated ? "invite-check available" : "invite-check"}>
 					unavailable
-				</div>        
+				</div>
 				<button 
 					class={isInviteButtonActivated ? 'make-button able' : 'make-button disable'}
 					on:click={inviteButtonEvent} 
