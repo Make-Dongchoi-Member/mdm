@@ -132,8 +132,8 @@ export class UserRepository extends Repository<Users> {
   }
 
   async setIsAlert(userId: number, state: boolean) {
-    const user = await this.manager.findOne(Users, { where: { id: userId } });
+    const user = await this.findOne({ where: { id: userId } });
     user.isAlert = state;
-    this.manager.save(user);
+    this.save(user);
   }
 }

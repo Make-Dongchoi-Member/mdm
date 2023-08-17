@@ -2,7 +2,7 @@
 	import MatchStat from "./MatchStat.svelte";
 	import { myData, profileModalStore, socketStore } from "../../../store";
   import type { AlertData, OtherUserData } from "../../../interfaces";
-  import { AlertType } from "../../../enums";
+  import { AlertType, Relation } from "../../../enums";
 
 	export let user: OtherUserData;
 
@@ -31,6 +31,31 @@
 			
 		})
 	}
+
+	const sendBlock = async () => {
+		const data = {
+			data: {
+				nickname: user.nickname,
+			}
+		};
+		const endPoint = user.relation === Relation.BLOCK ? "cancel" : "request";
+		const response = fetch(`http://localhost:3000/api/user/block/${endPoint}`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+            },
+			body: JSON.stringify(data),
+        })
+		.then((response) => {
+			if (response.ok) {
+				user.relation = user.relation === Relation.BLOCK ? Relation.NONE : Relation.BLOCK;
+			}
+		})
+		.catch((e) => {
+			console.error(e);
+		})
+	}
 </script>
 
 <div class="personal_box">
@@ -56,8 +81,8 @@
 	<button on:click={sendGame}>
 		PLAY WITH
 	</button>
-	<button>
-		BLOCK
+	<button on:click={sendBlock}>
+		{ user.relation === Relation.BLOCK ? "UNBLOCK" : "BLOCK"}
 	</button>
 </div>
 
