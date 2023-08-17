@@ -44,10 +44,12 @@ export class AlertService {
   async chatAlertSave(alert: AlertData) {
     const sender = await this.userRepository.getUserById(alert.sender.id);
     const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    const room = await this.roomRepository.getRoomById(+alert.roomId);
     if (
       sender.blocks.includes(receiver.id) ||
       receiver.blocks.includes(sender.id) ||
-      receiver.rooms.includes(+alert.roomId)
+      receiver.rooms.includes(+alert.roomId) ||
+      room.ban.includes(receiver.id)
     ) {
       throw new Error();
     }

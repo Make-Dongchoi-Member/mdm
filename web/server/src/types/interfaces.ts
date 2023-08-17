@@ -49,6 +49,7 @@ export interface RoomDetail {
   roomtype: RoomType;
   memberCount: number;
   members: string;
+  banList: number[];
   history: Message[];
 }
 
