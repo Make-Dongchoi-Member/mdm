@@ -16,6 +16,9 @@ export class AlarmEntity extends BaseEntity {
   @Column()
   date: Date;
 
+  @Column({ nullable: true })
+  roomId: number;
+
   @Column('enum', { enum: AlertType })
   type: AlertType;
 

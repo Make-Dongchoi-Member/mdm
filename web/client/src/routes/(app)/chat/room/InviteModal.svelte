@@ -1,16 +1,25 @@
 <script lang="ts">
-	import { modalStatesStore, myData, openedRoom } from "../../../../store";
+	import { modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
 	import { clickOutside, escapeKey } from '../../../../actions';
+  import type { AlertData, OtherUserData, UserData } from "../../../../interfaces";
+  import { AlertType } from "../../../../enums";
+  import { page } from "$app/stores";
 	
 	let isInviteButtonActivated: boolean = false;
 	let inputValue: string = "";
+	let receiver: UserData;
 
 	const inviteButtonEvent = () => {
-		/*
-				@TODO
-				유저 초대 API 요청
-		*/
-		inputValue = "";        
+		if (receiver === undefined) return;
+
+		const data: AlertData = {
+			alertType: AlertType.CHAT_INVITE,
+			sender: $myData,
+			receiver: receiver,
+			roomId: $page.url.searchParams.get("id") as string
+		}
+		$socketStore.emit('alert/chat', data);
+		inputValue = "";
 		$modalStatesStore.isInviteModal = false;
 	}
 
@@ -42,17 +51,17 @@
 					"Content-Type": "application/json",
 				},
 			});
-			if (response.status === 200) {
-				return true;  
-			} else if (response.status === 404 || response.status === 400) {
-				return false; 
+			const data = await response.json();
+			if (data.state) {
+				receiver = data.user;
+				return true;
 			} else {
 				return false;
-			}            
+			}
 		} catch (error) {
 			console.error("실패:", error);
+			return false;
 		}
-		return false;
 	}
 
 

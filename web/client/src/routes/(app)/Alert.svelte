@@ -1,20 +1,24 @@
 <script lang="ts">
   import type { AlertData, AlertListDTO } from "../../interfaces";
 	import { AlertType } from "../../enums";
+  import { goto } from "$app/navigation";
 
 	export let alert: AlertData;
 	export let getAlertList: Function;
 	
-	const postAlertAccept = async (): Promise<void> => {
-		if (alert === undefined) return;
-		let alertType: string = "follow";
+	const acceptButtonClickEvent = () => {
 		if (alert.alertType === AlertType.CHAT_INVITE) {
-			alertType = "chat";
+			postChatAlertAccept();
+		} else if (alert.alertType === AlertType.FRIEND_REQUEST) {
+			postFollowAlertAccept();
 		} else if (alert.alertType === AlertType.GAME_REQUEST) {
-			alertType = "game";
+			postGameAlertAccept();
 		}
+	}
+
+	const postFollowAlertAccept = async (): Promise<void> => {
 		try {
-			const response = await fetch(`http://localhost:3000/api/alert/${alertType}/accept`, {
+			const response = await fetch(`http://localhost:3000/api/alert/follow/accept`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -22,7 +26,48 @@
 				},
 				body: JSON.stringify({ data: { alert } })
 			})
-			.then(() => getAlertList());
+			.then(() => {
+				getAlertList();
+			});
+		} catch (error) {
+			console.error("실패:", error);
+		}
+	}
+
+	const postChatAlertAccept = async (): Promise<void> => {
+		try {
+			const response = await fetch(`http://localhost:3000/api/alert/chat/accept`, {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data: { alert } })
+			})
+			.then(() => {
+				goto(`/chat/room?id=${alert.roomId}`);
+			});
+		} catch (error) {
+			console.error("실패:", error);
+		}
+	}
+
+	const postGameAlertAccept = async (): Promise<void> => {
+		try {
+			const response = await fetch(`http://localhost:3000/api/alert/game/accept`, {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data: { alert } })
+			})
+			.then(() => {
+				/**
+				 * @TODO
+				 * game room으로 보내기
+				*/
+			});
 		} catch (error) {
 			console.error("실패:", error);
 		}
@@ -60,7 +105,7 @@
 		<span>{alert.sender.nickname}</span>
 	</div>
 	<div class="button-area">
-		<button class="yes-button" value={alert.alertType} on:click={postAlertAccept}>&#x2713;</button>
+		<button class="yes-button" on:click={acceptButtonClickEvent}>&#x2713;</button>
 		<button class="no-button" on:click={postAlertDeny}>&#x2715;</button>
 	</div>
 </div>	

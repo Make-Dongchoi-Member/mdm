@@ -24,9 +24,35 @@ export class AlertController {
     await this.alertService.alertDelete(data.alert.alertId);
   }
 
+  @Post('chat/accept')
+  async postChatAccept(@Body('data') data: AlertDTO): Promise<void> {
+    // await this.alertService.acceptFollowAlert(
+    //   data.alert.receiver.id,
+    //   data.alert.sender.id,
+    // );
+    await this.alertService.alertDelete(data.alert.alertId);
+  }
+
+  @Post('game/accept')
+  async postGameAccept(@Body('data') data: AlertDTO): Promise<void> {
+    // await this.alertService.acceptFollowAlert(
+    //   data.alert.receiver.id,
+    //   data.alert.sender.id,
+    // );
+    await this.alertService.alertDelete(data.alert.alertId);
+  }
+
   @Post('deny')
   async postDeny(@Body('data') data: AlertDTO): Promise<void> {
     await this.alertService.alertDelete(data.alert.alertId);
+  }
+
+  @Post('state')
+  async postState(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: { state: boolean },
+  ): Promise<void> {
+    await this.alertService.setAlertState(userId, data.state);
   }
 
   // 알람 저장 TEST

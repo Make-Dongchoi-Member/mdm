@@ -1,9 +1,15 @@
 <script lang="ts">
 	import { modalStatesStore, profileModalStore, myData } from "../../../store";
 	import { clickOutside, escapeKey } from '../../../actions';	
+  import { onMount } from "svelte";
 	
 	let isInviteButtonActivated: boolean = false;
 	let inputValue: string = "";
+
+	onMount(() => {
+		const inputTag = document.querySelector("#find-input") as HTMLInputElement;
+		inputTag.focus();
+	});
 
 	const findButtonEvent = () => {
 		$profileModalStore.nickname = inputValue;		
@@ -53,7 +59,6 @@
 		return false;
 	}
 
-
 	const initialInput = () => {
 		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
 		inputValue = "";
@@ -77,7 +82,7 @@
 		<div class="modal-content">
 			<div class="find-friend">
 				<div class="find-friend-input">
-					<input type="text" placeholder="INPUT FRIEND NICKNAME" bind:value={inputValue} on:input={inputEvent} maxlength=10>
+					<input id="find-input" type="text" placeholder="INPUT FRIEND NICKNAME" bind:value={inputValue} on:input={inputEvent} maxlength=10>
 				</div>
 			</div>
 			<div class="bottom-line">

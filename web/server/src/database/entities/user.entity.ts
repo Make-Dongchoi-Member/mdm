@@ -48,6 +48,9 @@ export class Users extends BaseEntity {
   @Column('int', { array: true, default: [] })
   blocks: number[];
 
+  @Column({ default: false })
+  isAlert: boolean;
+
   @OneToMany(() => GameHistory, (history) => history.user)
   record: GameHistory[];
 

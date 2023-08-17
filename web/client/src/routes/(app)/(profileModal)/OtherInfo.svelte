@@ -7,10 +7,6 @@
 	export let user: OtherUserData;
 
 	const sendFollow = async () => {
-		/**
-		 * @TODO
-		 * follow 요청 보내기
-		 */
 		const data: AlertData = {
 			sender: $myData,
 			receiver: user,
