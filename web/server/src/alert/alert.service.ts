@@ -18,6 +18,18 @@ export class AlertService {
     return user.receiveAlarms.map(this.alertEntityToAlertData);
   }
 
+  async followAlertSave(alert: AlertData) {
+    const sender = await this.userRepository.getUserById(alert.sender.id);
+    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    if (
+      sender.blocks.includes(receiver.id) ||
+      receiver.blocks.includes(sender.id)
+    ) {
+      throw new Error();
+    }
+    await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
+  }
+
   async alertSave(alert: AlertData) {
     const sender = await this.userRepository.getUserById(alert.sender.id);
     const receiver = await this.userRepository.getUserById(alert.receiver.id);

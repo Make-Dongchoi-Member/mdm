@@ -7,12 +7,32 @@
 	export let user: OtherUserData;
 
 	const sendFollow = async () => {
-		const data: AlertData = {
-			sender: $myData,
-			receiver: user,
-			alertType: AlertType.FRIEND_REQUEST,
+		if (user.relation === Relation.BLOCK) return;
+		if (user.relation !== Relation.FRIEND) {
+			const data: AlertData = {
+				sender: $myData,
+				receiver: user,
+				alertType: AlertType.FRIEND_REQUEST,
+			}
+			$socketStore.emit("alert/follow", data);
+		} else {
+			const response = fetch(`http://localhost:3000/api/user/friend/delete`, {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data : { nickname: user.nickname }}),
+			})
+			.then((response) => {
+				if (response.ok) {
+					user.relation = Relation.NONE;
+				}
+			})
+			.catch((e) => {
+				console.error(e);
+			})
 		}
-		$socketStore.emit("alert/follow", data);
 	}
 
 	const sendGame = async () => {
@@ -75,8 +95,8 @@
 	<MatchStat records={user.record}/>
 </div>
 <div class="option_box">
-	<button on:click={sendFollow}>
-		FOLLOW
+	<button disabled='{user.relation === Relation.BLOCK}' on:click={sendFollow}>
+		{ user.relation === Relation.FRIEND ? "UNFOLLOW" : "FOLLOW"}
 	</button>
 	<button on:click={sendGame}>
 		PLAY WITH
@@ -119,6 +139,11 @@
 
 	.option_box > button:hover {
 		background-color: var(--hover-color);
+	}
+
+	.option_box > button:disabled {
+		color: var(--border-color);
+		background-color: var(--bg-color);
 	}
 
 	.profile_image_circle {

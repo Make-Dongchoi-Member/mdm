@@ -20,12 +20,17 @@ export class AlertGateway {
 
   @SubscribeMessage('alert/follow')
   async handleAlertFollow(client: Socket, data: AlertData) {
-    this.alertService.alertSave(data);
-    const receiverSocketId = await this.alertService.getSocketId(
-      data.receiver.id,
-    );
-    this.alertService.setAlertState(data.receiver.id, true);
-    client.to(receiverSocketId).emit('alert');
+    // this.alertService.alertSave(data);
+    try {
+      this.alertService.followAlertSave(data);
+      const receiverSocketId = await this.alertService.getSocketId(
+        data.receiver.id,
+      );
+      this.alertService.setAlertState(data.receiver.id, true);
+      client.to(receiverSocketId).emit('alert');
+    } catch (error) {
+      return;
+    }
   }
 
   @SubscribeMessage('alert/chat')
