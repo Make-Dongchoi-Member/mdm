@@ -16,6 +16,7 @@ import { InfoValidPipe } from './pipes/info.valid.pipe';
 import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
 import { UserNicknameDto } from './dto/UserNickname.dto';
 import { UserState } from 'src/types/enums';
+import { SearchUserDTO } from './dto/SearchUser.dto';
 
 @Controller('api/user')
 export class UserController {
@@ -44,6 +45,19 @@ export class UserController {
     @Query('nickname', InfoValidPipe) nickname: string,
   ): Promise<OtherUserData> {
     return await this.userService.getUserData(userId, nickname);
+  }
+
+  /**
+   * 사용자 검색
+   * GET(/api/user/search?nickname=[nickname])
+   * >> nickname: string
+   * << result: { exist: boolean, user: UserData }
+   */
+  @Get('search')
+  async search(
+    @Query('nickname', InfoValidPipe) nickname: string,
+  ): Promise<SearchUserDTO> {
+    return this.userService.searchUser(nickname);
   }
 
   /**

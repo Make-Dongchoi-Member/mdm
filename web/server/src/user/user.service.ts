@@ -6,10 +6,10 @@ import {
 import { DMRooms } from 'src/database/entities/dm-room.entity';
 import { GameHistory } from 'src/database/entities/game-history.entity';
 import { Users } from 'src/database/entities/user.entity';
-import { AlertRepository } from 'src/database/repositories/alarm.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { UserState } from 'src/types/enums';
 import { MyData, OtherUserData, Record, UserData } from 'src/types/interfaces';
+import { SearchUserDTO } from './dto/SearchUser.dto';
 
 @Injectable()
 export class UserService {
@@ -33,9 +33,9 @@ export class UserService {
     return myData;
   }
 
-  async getUserData(id: number, nickName: string) {
-    const other = await this.userRepository.getUserByNickname(nickName);
-    if (!other) throw new NotFoundException(`nickname ${nickName} Not Found`);
+  async getUserData(id: number, nickname: string) {
+    const other = await this.userRepository.getUserByNickname(nickname);
+    if (!other) throw new NotFoundException(`nickname ${nickname} Not Found`);
     const record = other.record.map(this.convertToRecord);
     const otherUserData: OtherUserData = {
       id: other.id,
@@ -48,12 +48,28 @@ export class UserService {
     return otherUserData;
   }
 
-  async setNickname(id: number, nickName: string) {
-    const alreadyExist = await this.userRepository.isNickNameExist(nickName);
-    if (alreadyExist) {
-      throw new ConflictException(`nickname ${nickName} already exist`);
+  async searchUser(nickname: string) {
+    const user = await this.userRepository.getUserByNickname(nickname);
+    const ret = new SearchUserDTO();
+    if (!user) {
+      ret.exist = false;
+    } else {
+      ret.exist = true;
+      ret.user = {
+        id: user.id,
+        nickname: user.nickName,
+        avatar: user.avatar,
+      };
     }
-    this.userRepository.updateUser(id, { nickName });
+    return ret;
+  }
+
+  async setNickname(id: number, nickname: string) {
+    const alreadyExist = await this.userRepository.isNickNameExist(nickname);
+    if (alreadyExist) {
+      throw new ConflictException(`nickname ${nickname} already exist`);
+    }
+    this.userRepository.updateUser(id, { nickName: nickname });
   }
 
   async setStatus(id: number, status: UserState) {

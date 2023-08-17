@@ -15,7 +15,7 @@ export class SetNicknameValidPipe implements PipeTransform {
   private isValidNickname(nickname: string): boolean {
     const regex = /^[a-zA-Z]+$/;
 
-    if (nickname.length < 3 || nickname.length > 10) return false;
+    if (!nickname || nickname.length < 3 || nickname.length > 10) return false;
 
     if (!regex.test(nickname)) return false;
 
