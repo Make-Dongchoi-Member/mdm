@@ -132,7 +132,7 @@ export class UserController {
   @Post('friend/delete')
   async friendDelete(
     @UserId(ParseIntPipe) userId: number,
-    @Body('data') data: UserNicknameDto,
+    @Body('data', SetNicknameValidPipe) data: UserNicknameDto,
   ) {
     await this.userService.friendDelete(userId, data.nickname);
   }
@@ -146,7 +146,7 @@ export class UserController {
   @Post('block/request')
   async blockRequest(
     @UserId(ParseIntPipe) userId: number,
-    @Body('data') data: UserNicknameDto,
+    @Body('data', SetNicknameValidPipe) data: UserNicknameDto,
   ) {
     await this.userService.blockRequest(userId, data.nickname);
   }
@@ -160,7 +160,7 @@ export class UserController {
   @Post('block/cancel')
   async blockCancel(
     @UserId(ParseIntPipe) userId: number,
-    @Body('data') data: UserNicknameDto,
+    @Body('data', SetNicknameValidPipe) data: UserNicknameDto,
   ) {
     await this.userService.blockCancel(userId, data.nickname);
   }
