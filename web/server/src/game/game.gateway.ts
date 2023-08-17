@@ -95,24 +95,34 @@ export class GameGateway implements OnGatewayDisconnect {
   handleGameStart(client: Socket, data: GameStartDTO) {
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     if (data.nickname !== gameStatus.playerA.nickname) return;
-    if (gameStatus.state === GameState.PAUSE) {
-      this.gameService.setGame(data.roomKey);
-    } else if (gameStatus.state === GameState.READY) {
-      const id = setInterval(
-        this.gameMain,
-        FRAME_PER_MS,
-        data.roomKey,
-        this.gameService,
-        this.io,
-        this.gameManager,
-      );
-      this.gameManager.saveIntervalID(data.roomKey, id);
-    }
+    // if (gameStatus.state === GameState.PAUSE) {
+    //   this.gameService.setGame(data.roomKey);
+    // } else if (gameStatus.state === GameState.READY) {
+    //   const id = setInterval(
+    //     this.gameMain,
+    //     FRAME_PER_MS,
+    //     data.roomKey,
+    //     this.gameService,
+    //     this.io,
+    //     this.gameManager,
+    //   );
+    //   this.gameManager.saveIntervalID(data.roomKey, id);
+    // }
+    const id = setInterval(
+      this.gameMain,
+      FRAME_PER_MS,
+      data.roomKey,
+      this.gameService,
+      this.io,
+      this.gameManager,
+    );
+    this.gameManager.saveIntervalID(data.roomKey, id);
+
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
   }
 
   // 게임 중간에 나간 사용자만
-  @SubscribeMessage('game/end')
+  @SubscribeMessage('game/quit')
   handleGameEnd(client: Socket, data: GameEndDTO) {
     // gmae 도중 사용자가 나갔을 때d
     // gameEnd로 설정
@@ -184,7 +194,7 @@ export class GameGateway implements OnGatewayDisconnect {
     } else if (gameStatus.state === GameState.PAUSE) {
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
-        // gs.setGameState(roomKey, GameState.END);
+        gs.setGameState(roomKey, GameState.END);
         if (gameStatus.playerA.life === 0) {
           gs.saveGameToDB(
             gameStatus.playerB.nickname,

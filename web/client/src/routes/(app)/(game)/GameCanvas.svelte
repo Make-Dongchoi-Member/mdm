@@ -10,7 +10,6 @@
   } from "../../../interfaces";
   import { GameState } from "../../../enums";
 
-  let scoreDiv: HTMLDivElement;
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
 
@@ -21,7 +20,7 @@
   }
 
   interface GamePrefer {
-    page: string;
+    message: string;
     controlWithMouse: boolean;
     myScore: number;
     enemyScore: number;
@@ -34,7 +33,7 @@
   }
 
   let gamePrefer: GamePrefer = {
-    page: "wait",
+    message: "READY FOR THE NEXT MATCH",
     controlWithMouse: false,
     myScore: 5,
     enemyScore: 5,
@@ -90,6 +89,7 @@
   let ready: boolean = false;
   let gaming: boolean = false;
   let gameHost: boolean = false;
+  let gameEnd: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
   let leftLife: number = 5;
@@ -100,6 +100,7 @@
   const gameReady = () => {
     if (ready) return;
     ready = true;
+    gamePrefer.message = "WAITING...";
     $socketStore.emit("game/match", {
       nickname: $myData.nickname,
       gameMode: $gameSettingStore.gameMode,
@@ -108,12 +109,21 @@
   };
 
   const gameStart = () => {
+    gameEnd = false;
     if (matching) {
       $socketStore.emit("game/start", {
         nickname: gameInfo.playerA,
         roomKey: gameInfo.roomKey,
       });
     }
+  };
+
+  const gameQuit = () => {
+    gameEnd = false;
+    $socketStore.emit("game/quit", {
+      nickname: $myData.nickname,
+      roomKey: gameInfo.roomKey,
+    });
   };
 
   const handleMousePointer = (event: MouseEvent) => {
@@ -141,7 +151,6 @@
   };
 
   onMount(() => {
-    scoreDiv = document.getElementById("score") as HTMLDivElement;
     canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -153,7 +162,10 @@
 
     $socketStore.on("game/room", (arg: GameRoom) => {
       gameInfo = arg;
-      if (arg.roomKey.length > 0) matching = true;
+      if (arg.roomKey.length > 0) {
+        matching = true;
+        gamePrefer.message = "WAIT TO START";
+      }
       if (gameInfo.playerA === $myData.nickname) gameHost = true;
     });
 
@@ -211,18 +223,19 @@
       } else {
         winner = arg.playerB.nickname;
       }
-      const scoreDiv = document.querySelector("#score") as HTMLDivElement;
-      if (gameInfo.playerA === winner) {
+      if ($myData.nickname === winner) {
         // 내가 이김
-        scoreDiv.innerText = "WIN";
+        gamePrefer.message = "YOU WIN!";
       } else {
         // 내가 짐
-        scoreDiv.innerText = "LOSE";
+        gamePrefer.message = "YOU LOSE";
       }
       mouseControl();
-      ready = false;
+      // ready = false;
+      // matching = false;
       gameHost = false;
-      matching = false;
+      gaming = false;
+      gameEnd = true;
     });
   });
 
@@ -232,7 +245,7 @@
     canvas.removeEventListener("click", mouseControl);
     document.removeEventListener("mousemove", handleMousePointer);
     if (matching) {
-      $socketStore.emit("game/end", {
+      $socketStore.emit("game/quit", {
         nickname: $myData.nickname,
         roomKey: gameInfo.roomKey,
       });
@@ -249,24 +262,21 @@
   {/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
-<div id="score" />
 <div class="button-area" style={gaming ? "display: none" : "display: flex"}>
   {#if gameHost}
     <button on:click={gameStart}>GAME START</button>
-  {:else if matching && !gameHost}
-    <button class="wait">WAIT TO START</button>
   {:else if !gameHost}
-    <button class={ready ? "wait" : "ready"} on:click={gameReady}
-      >{ready ? "WAITING..." : "READY FOR THE MATCH"}</button
-    >
+    <button disabled={ready} on:click={gameReady}>{gamePrefer.message}</button>
+  {/if}
+  {#if gameEnd}
+    <div class="rematch">
+      <button on:click={gameQuit}>QUIT THE GAME</button>
+      <button on:click={gameStart}>REMATCH</button>
+    </div>
   {/if}
 </div>
 
 <style>
-  #score {
-    /* display: none; */
-  }
-
   .life {
     position: absolute;
     top: 100px;
@@ -292,7 +302,9 @@
     width: 800px;
 
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 
     box-sizing: border-box;
   }
@@ -304,7 +316,25 @@
     font-weight: 100;
   }
 
-  .wait {
+  .button-area > button:disabled {
+    background-color: var(--hover-color);
+    border: 1px solid var(--point-color);
+  }
+
+  .rematch {
+    display: flex;
+    justify-content: space-around;
+    width: 450px;
+    margin-top: 20px;
+  }
+
+  .rematch > button {
+    width: 200px;
+    height: 40px;
+    background-color: var(--dark-color);
+  }
+
+  .rematch > button:hover {
     background-color: var(--hover-color);
   }
 </style>
