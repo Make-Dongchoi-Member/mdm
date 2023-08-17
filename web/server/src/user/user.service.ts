@@ -77,6 +77,12 @@ export class UserService {
     await this.userRepository.updateUser(id, { state: status });
   }
 
+  async getStatus(nickname: string): Promise<UserState> {
+    const other = await this.userRepository.getUserByNickname(nickname);
+    if (!other) throw new NotFoundException(`nickname ${nickname} Not Found`);
+    return other.state;
+  }
+
   async setAvatar(id: number, avatar: string) {
     await this.userRepository.updateUser(id, { avatar });
   }
@@ -156,7 +162,12 @@ export class UserService {
   }
 
   private convertToFriendData(user: Users): UserData {
-    return { id: user.id, nickname: user.nickName, avatar: user.avatar };
+    return {
+      id: user.id,
+      nickname: user.nickName,
+      avatar: user.avatar,
+      state: user.state,
+    };
   }
 
   private convertToRecord(history: GameHistory): Record {
