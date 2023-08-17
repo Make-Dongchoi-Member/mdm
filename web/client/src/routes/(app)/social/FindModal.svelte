@@ -7,7 +7,7 @@
 	let inputValue: string = "";
 
 	onMount(() => {
-		const inputTag = document.querySelector(".find-friend-input") as HTMLInputElement;
+		const inputTag = document.querySelector("#find-input") as HTMLInputElement;
 		inputTag.focus();
 	});
 
@@ -82,7 +82,7 @@
 		<div class="modal-content">
 			<div class="find-friend">
 				<div class="find-friend-input">
-					<input type="text" placeholder="INPUT FRIEND NICKNAME" bind:value={inputValue} on:input={inputEvent} maxlength=10>
+					<input id="find-input" type="text" placeholder="INPUT FRIEND NICKNAME" bind:value={inputValue} on:input={inputEvent} maxlength=10>
 				</div>
 			</div>
 			<div class="bottom-line">

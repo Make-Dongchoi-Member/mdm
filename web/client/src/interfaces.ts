@@ -149,6 +149,7 @@ export interface ModalStates {
 export interface MyData extends UserData {
   rooms: number[];
   friends: UserData[];
+  isAlert: boolean;
 }
 
 export interface SetRequestDTO {
@@ -187,6 +188,7 @@ export interface AlertData {
   alertType: AlertType;
   sender: UserData;
   receiver: UserData;
+  roomId?: string;
   date?: Date;
 }
 

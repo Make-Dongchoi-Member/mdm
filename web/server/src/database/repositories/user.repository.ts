@@ -130,4 +130,10 @@ export class UserRepository extends Repository<Users> {
     dmEntity.room = dmRoom;
     this.manager.save(dmEntity);
   }
+
+  async setIsAlert(userId: number, state: boolean) {
+    const user = await this.manager.findOne(Users, { where: { id: userId } });
+    user.isAlert = state;
+    this.manager.save(user);
+  }
 }

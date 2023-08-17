@@ -18,6 +18,7 @@ export interface UserData {
 export interface MyData extends UserData {
   rooms: number[];
   friends: UserData[];
+  isAlert: boolean;
 }
 
 export interface OtherUserData extends UserData {
@@ -107,5 +108,6 @@ export interface AlertData {
   alertType: AlertType;
   sender: UserData;
   receiver: UserData;
+  roomId?: number;
   date?: Date;
 }

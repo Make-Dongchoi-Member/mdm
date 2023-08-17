@@ -65,4 +65,23 @@ export class AlertService {
     dmRooms.messages = [];
     this.userRepository.manager.save(dmRooms);
   }
+
+  async acceptChatAlert(myId: number, friendId: number) {
+    const friend = await this.userRepository.getUserById(friendId);
+    const me = await this.userRepository.getUserById(myId);
+
+    if (friend.friends.includes(me.id)) return;
+
+    friend.friends.push(me.id);
+    me.friends.push(friend.id);
+    this.userRepository.save([friend, me]);
+    const dmRooms = new DMRooms();
+    dmRooms.users = [friend, me];
+    dmRooms.messages = [];
+    this.userRepository.manager.save(dmRooms);
+  }
+
+  async setAlertState(userId: number, state: boolean) {
+    await this.userRepository.setIsAlert(userId, state);
+  }
 }

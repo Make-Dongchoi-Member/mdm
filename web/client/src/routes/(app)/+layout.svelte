@@ -1,7 +1,7 @@
 <script lang="ts">
     import NotiModal from './NotiModal.svelte';
     import { modalStatesStore, myData, socketStore } from '../../store';
-    import type { AlertListDTO, MyData } from '../../interfaces';
+    import type { MyData } from '../../interfaces';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
 
@@ -10,16 +10,10 @@
 
     onMount(() => {
 			getMyData();
-
 			$socketStore.on("alert", () => {
 				isAlert = true;
 			});
     });
-
-		const alertButtonClickEvent = () => {
-			$modalStatesStore.isNotiModal = true;
-			isAlert = false;
-		}
 
     const getMyData = async (): Promise<void> => {
 			try {
@@ -31,14 +25,15 @@
 					},
 				});
 				if (response.status !== 200) {
-						goto("/signin");
-						return;
+					goto("/signin");
+					return;
 				}
 				const data: Promise<MyData> = response.json();
-							$myData = await data;
+				$myData = await data;
 
 				if ($myData.nickname) {
 					isSigned = true;
+					isAlert = $myData.isAlert;
 					$socketStore.connect();
 				} else {
 					goto("/join");
@@ -47,6 +42,24 @@
 				console.error("실패:", error);
 			}
     }
+
+		const alertButtonClickEvent = async (): Promise<void> => {
+			const response = await fetch("http://localhost:3000/api/alert/state", {
+				method: "POST",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data: { state: false }})
+			})
+			.then(() => {
+				$modalStatesStore.isNotiModal = true;
+				isAlert = false;
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		}
 </script>
 
 {#if isSigned}

@@ -19,11 +19,22 @@ export class AlertGateway {
   @WebSocketServer() io: Server;
 
   @SubscribeMessage('alert/follow')
-  async handleJoinRoom(client: Socket, data: AlertData) {
+  async handleAlertFollow(client: Socket, data: AlertData) {
     this.alertService.alertSave(data);
     const receiverSocketId = await this.alertService.getSocketId(
       data.receiver.id,
     );
+    this.alertService.setAlertState(data.receiver.id, true);
+    client.to(receiverSocketId).emit('alert');
+  }
+
+  @SubscribeMessage('alert/chat')
+  async handleAlertChat(client: Socket, data: AlertData) {
+    this.alertService.alertSave(data);
+    const receiverSocketId = await this.alertService.getSocketId(
+      data.receiver.id,
+    );
+    this.alertService.setAlertState(data.receiver.id, true);
     client.to(receiverSocketId).emit('alert');
   }
 }

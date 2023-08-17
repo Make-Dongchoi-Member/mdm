@@ -29,6 +29,7 @@ export class UserService {
       rooms: user.rooms,
       friends,
       record,
+      isAlert: user.isAlert,
     };
     return myData;
   }
