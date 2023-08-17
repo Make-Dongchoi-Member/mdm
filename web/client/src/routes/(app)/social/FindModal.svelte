@@ -89,9 +89,24 @@
 				</div>
 			</div>
 			<div class="bottom-line">
-				<div class={isInviteButtonActivated ? "invite-check available" : "invite-check"}>
-					unavailable
+				<div class="find-result">
+					{#if !isInviteButtonActivated}
+						<div class="invite-check">
+							unavailable					
+						</div>
+					{:else}
+						<div class="profile-container">
+							<div class="image-container">
+								<img class="profile-photo" src={receiver.avatar} alt={`${receiver.nickname}'s profile image`}>
+							</div>
+							<div>
+								{receiver.nickname}
+							</div>
+						</div>
+					{/if}
+					
 				</div>        
+
 				<button 
 					class={isInviteButtonActivated ? 'make-button able' : 'make-button disable'}
 					on:click={findButtonEvent} 
@@ -188,16 +203,12 @@
 	.invite-check {
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: top;
 
 		width: 320px;
 		height: 35px;
 		background-color: var(--dark-color);        
 		color: var(--border-color);
-	}
-
-	.invite-check.available {
-		color:rgb(0, 255, 0);
 	}
 
 	.make-button {
@@ -218,6 +229,28 @@
 
 	.make-button.disable:hover {
 		background-color: var(--dark-color);
+	}
+
+	.profile-container {
+		display: flex;
+		flex-direction: row;
+		align-items: top;
+
+		height: 35px;
+	}
+
+	.profile-photo {
+		border-radius: 70%;
+		width: 20px;
+		height: 20px;
+
+		margin-left: 3px;
+		margin-right: 5px;
+	}
+
+	.image-container {
+		display: flex;
+		justify-content: center;
 	}
   
 </style>
