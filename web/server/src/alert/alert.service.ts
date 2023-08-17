@@ -33,12 +33,8 @@ export class AlertService {
     ) {
       throw new Error();
     }
-    await this.alertRepository.saveAlert(
-      alert.alertType,
-      sender,
-      receiver,
-      +alert.roomId,
-    );
+    console.log(alert);
+    await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
   }
 
   async chatAlertSave(alert: AlertData) {
@@ -66,7 +62,7 @@ export class AlertService {
   }
 
   private alertEntityToAlertData(entity: AlertEntity): AlertData {
-    return {
+    const alertData: AlertData = {
       alertId: entity.id,
       alertType: entity.type,
       sender: {
@@ -79,9 +75,12 @@ export class AlertService {
         avatar: entity.receiver.avatar,
         nickname: entity.receiver.nickName,
       },
-      roomId: entity.roomId.toString(),
       date: entity.date,
     };
+    if (entity.roomId) {
+      alertData.roomId = entity.roomId.toString();
+    }
+    return alertData;
   }
 
   async getSocketId(userId: number): Promise<string> | null {

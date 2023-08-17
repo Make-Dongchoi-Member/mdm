@@ -20,7 +20,7 @@ export class AlertGateway {
 
   @SubscribeMessage('alert/follow')
   async handleAlertFollow(client: Socket, data: AlertData) {
-    // this.alertService.alertSave(data);
+    // this.alertService.alertSave(data)
     try {
       await this.alertService.followAlertSave(data);
       const receiverSocketId = await this.alertService.getSocketId(

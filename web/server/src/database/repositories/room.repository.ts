@@ -93,12 +93,14 @@ export class RoomRepository extends Repository<Rooms> {
   async pushAdmin(roomId: number, userId: number) {
     await this.update(roomId, {
       admin: () => `array_append("admin", ${userId})`,
+      members: () => `array_remove("members", ${userId})`,
     });
   }
 
   async removeAdmin(roomId: number, userId: number) {
     await this.update(roomId, {
       admin: () => `array_remove("admin", ${userId})`,
+      members: () => `array_append("members", ${userId})`,
     });
   }
 

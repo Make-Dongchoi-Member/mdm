@@ -18,8 +18,10 @@ export class AlertRepository extends Repository<AlertEntity> {
       type,
       sender,
       receiver,
-      roomId,
     });
+    if (roomId) {
+      entity.roomId = roomId;
+    }
     this.save(entity);
   }
 
