@@ -8,14 +8,17 @@ import { DatabaseModule } from 'src/database/database.module';
 import { AlertRepository } from 'src/database/repositories/alarm.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { AlertGateway } from './alert.gateway';
-import { ChatService } from 'src/chat/chat.service';
-import { ChatModule } from 'src/chat/chat.module';
+import { RoomRepository } from 'src/database/repositories/room.repository';
+import { Rooms } from 'src/database/entities/room.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, AlarmEntity]),
-    DatabaseModule.forCustomRepository([AlertRepository, UserRepository]),
-    ChatModule,
+    TypeOrmModule.forFeature([Users, AlarmEntity, Rooms]),
+    DatabaseModule.forCustomRepository([
+      AlertRepository,
+      UserRepository,
+      RoomRepository,
+    ]),
   ],
   providers: [AlertService, AlertGateway],
   controllers: [AlertController],

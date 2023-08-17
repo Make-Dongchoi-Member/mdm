@@ -22,24 +22,28 @@ export class AlertGateway {
   async handleAlertFollow(client: Socket, data: AlertData) {
     // this.alertService.alertSave(data);
     try {
-      this.alertService.followAlertSave(data);
+      await this.alertService.followAlertSave(data);
       const receiverSocketId = await this.alertService.getSocketId(
         data.receiver.id,
       );
       this.alertService.setAlertState(data.receiver.id, true);
       client.to(receiverSocketId).emit('alert');
     } catch (error) {
-      return;
+      console.error(error);
     }
   }
 
   @SubscribeMessage('alert/chat')
   async handleAlertChat(client: Socket, data: AlertData) {
-    this.alertService.alertSave(data);
-    const receiverSocketId = await this.alertService.getSocketId(
-      data.receiver.id,
-    );
-    this.alertService.setAlertState(data.receiver.id, true);
-    client.to(receiverSocketId).emit('alert');
+    try {
+      await this.alertService.chatAlertSave(data);
+      const receiverSocketId = await this.alertService.getSocketId(
+        data.receiver.id,
+      );
+      this.alertService.setAlertState(data.receiver.id, true);
+      client.to(receiverSocketId).emit('alert');
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
