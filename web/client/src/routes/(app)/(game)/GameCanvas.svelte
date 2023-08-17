@@ -161,7 +161,7 @@
       if (arg.state === GameState.GAMING) {
         gaming = true;
       } else {
-        gaming = false;
+        return;
       }
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -203,6 +203,8 @@
     });
 
     $socketStore.on("game/end", (arg: GameStatus) => {
+      ctx.fillStyle = gamePrefer.backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       let winner: string;
       if (arg.playerA.life > 0) {
         winner = arg.playerA.nickname;
@@ -217,6 +219,7 @@
         // 내가 짐
         scoreDiv.innerText = "LOSE";
       }
+      mouseControl();
       ready = false;
       gameHost = false;
       matching = false;
@@ -261,7 +264,7 @@
 
 <style>
   #score {
-    display: none;
+    /* display: none; */
   }
 
   .life {

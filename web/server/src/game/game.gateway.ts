@@ -111,7 +111,7 @@ export class GameGateway implements OnGatewayDisconnect {
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
   }
 
-  // 게임 중간에 나간 사용자만d
+  // 게임 중간에 나간 사용자만
   @SubscribeMessage('game/end')
   handleGameEnd(client: Socket, data: GameEndDTO) {
     // gmae 도중 사용자가 나갔을 때d
@@ -175,14 +175,13 @@ export class GameGateway implements OnGatewayDisconnect {
     io: Server,
     gm: GameRoomManager,
   ) {
-    // console.log(gs, io)
+    // console.log(gs, io)d
     gs.play(roomKey);
     const gameStatus = gs.getGameStatusByKey(roomKey);
     const gamePlayInfo = gs.gamePlayByGameStatus(gameStatus);
     if (gameStatus.state === GameState.GAMING) {
       io.to(roomKey).emit('game/play', gamePlayInfo);
     } else if (gameStatus.state === GameState.PAUSE) {
-      io.to(roomKey).emit('game/play', gamePlayInfo);
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
         // gs.setGameState(roomKey, GameState.END);
@@ -199,9 +198,15 @@ export class GameGateway implements OnGatewayDisconnect {
         }
         gs.setUserState(gameStatus.playerA.nickname, UserState.ONLINE);
         gs.setUserState(gameStatus.playerB.nickname, UserState.ONLINE);
-        gm.deleteGameRoomKey(roomKey);
-        gs.deleteGameStatus(roomKey);
+        // gm.deleteGameRoomKey(roomKey);
+        // gs.deleteGameStatus(roomKey);
         io.to(roomKey).emit('game/end', gamePlayInfo);
+      } else {
+        io.to(roomKey).emit('game/play', gamePlayInfo);
+        setTimeout(() => {
+          gs.setGame(roomKey);
+          gs.setGameState(roomKey, GameState.GAMING);
+        }, 3000);
       }
     }
   }
