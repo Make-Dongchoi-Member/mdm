@@ -47,7 +47,7 @@
 			})
 			.then(() => {
 				goto(`/chat/room?id=${alert.roomId}`);
-				$socketStore.emit("chat/enter", { roomId: alert.roomId, userId: $myData.id });
+				$socketStore.emit("chat/enter", { roomId: `${alert.roomId}`, userId: `${$myData.id}` });
 			});
 		} catch (error) {
 			console.error("실패:", error);
