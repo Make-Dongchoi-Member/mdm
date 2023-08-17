@@ -87,21 +87,21 @@ export interface Bar {
   color: string;
 }
 
-export interface Player {
+export interface PlayerInfo {
   bar: Bar;
   life: number;
   nickname: string;
 }
 
-export interface PlayerInfo extends Player {
+export interface Player extends PlayerInfo {
   socket: Socket;
 }
 
 export interface GameStatus {
   ball: Ball;
-  state: GameState;
   playerA: Player;
   playerB: Player;
+  state: GameState;
 }
 
 export interface AlertData {

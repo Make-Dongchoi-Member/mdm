@@ -1,4 +1,5 @@
 import {
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -8,36 +9,55 @@ import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
 import { GameRoomDTO } from './dto/GameRoom.dto';
 import { GameRoomManager } from './objects/game.RoomManager';
-import { Bar, PlayerInfo } from 'src/types/interfaces';
+import { Player } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
 import { GameState, UserState } from 'src/types/enums';
 import { GameEndDTO } from './dto/GameEnd.dto';
-import {
-  BAR_BASIC_H,
-  BAR_HARD_H,
-  CANVAS_HEIGHT,
-  FRAME_PER_MS,
-  GAME_LIFE,
-} from 'src/configs/constants';
+import { FRAME_PER_MS, GAME_LIFE } from 'src/configs/constants';
+import { GameMatchOutDTO } from './dto/GameMatchOut.dto';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:5173'],
   },
 })
-export class GameGateway {
+export class GameGateway implements OnGatewayDisconnect {
   @WebSocketServer() io: Server;
   gameManager: GameRoomManager = new GameRoomManager();
   constructor(private readonly gameService: GameService) {}
   // queue
+
+  async handleDisconnect(client: Socket) {
+    // 게임 서버가 들고있는 유저 정보 삭제하기
+    if (this.gameManager.hasQueueBySocketId(client.id)) {
+      // 큐에 들어있는 경우 아직 매칭되지 않은 유저
+      this.gameManager.deletePlayerAtQueueBySocketId(client.id);
+    } else {
+      // 큐에 없는 경우 ready하지 않았거나, 게임 진행중이던 유저
+      // 게임 진행중이던 유저인 경우 roomKey가 존재함
+      const roomKey = this.gameService.getRoomKeyBySocketId(client.id);
+      if (roomKey) {
+        const gameStatus = this.gameService.getGameStatusByKey(roomKey);
+        const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
+        this.gameService.deleteAbortedGame(
+          client.id,
+          roomKey,
+          this.gameManager,
+          gameStatus,
+        );
+        this.io.to(roomKey).emit('game/end', gamePlayInfo);
+        client.leave(roomKey);
+      }
+    }
+  }
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
     if (!this.existPlayer(data.nickname)) {
       this.gameManager.enqueue({
         socket: client,
-        bar: this.barSetter(data),
+        bar: this.gameService.barSetter(data),
         life: GAME_LIFE,
         nickname: data.nickname,
       });
@@ -49,8 +69,8 @@ export class GameGateway {
       const key: string = this.gameManager.newGameRoomKey();
 
       // 플레이어 두 명 큐에서 dequeue
-      const playerA: PlayerInfo = this.gameManager.dequeue();
-      const playerB: PlayerInfo = this.gameManager.dequeue();
+      const playerA: Player = this.gameManager.dequeue();
+      const playerB: Player = this.gameManager.dequeue();
 
       // 두 플레이어를 게임방에 join
       playerA.socket.join(key);
@@ -66,7 +86,7 @@ export class GameGateway {
         playerB: playerB.nickname,
         roomKey: key,
       };
-      this.gameService.saveGameRoom(gameRoom, playerA.bar, playerB.bar);
+      this.gameService.saveGameRoom(gameRoom.roomKey, playerA, playerB);
       this.io.to(key).emit('game/room', gameRoom);
     }
   }
@@ -98,6 +118,7 @@ export class GameGateway {
     // gameEnd로 설정
     // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameManager.getIntervalID(data.roomKey));
     if (gameStatus.playerA.nickname === data.nickname) {
       gameStatus.playerA.life = 0;
@@ -122,7 +143,7 @@ export class GameGateway {
     );
     this.gameManager.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
-    this.io.to(data.roomKey).emit('game/end', gameStatus);
+    this.io.to(data.roomKey).emit('game/end', gamePlayInfo);
     client.leave(data.roomKey);
   }
 
@@ -134,7 +155,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('game/matchout')
-  handleGameMatchOut(client: Socket, data: GameReadyDTO) {
+  handleGameMatchOut(client: Socket, data: GameMatchOutDTO) {
     // 대기큐에서 삭제
     this.gameManager.deletePlayerAtQueue(data.nickname);
     if (!this.gameManager.hasQueue(data.nickname)) {
@@ -154,13 +175,13 @@ export class GameGateway {
     io: Server,
     gm: GameRoomManager,
   ) {
-    // console.log(gs, io)
+    // console.log(gs, io)d
     gs.play(roomKey);
     const gameStatus = gs.getGameStatusByKey(roomKey);
+    const gamePlayInfo = gs.gamePlayByGameStatus(gameStatus);
     if (gameStatus.state === GameState.GAMING) {
-      io.to(roomKey).emit('game/play', gameStatus);
+      io.to(roomKey).emit('game/play', gamePlayInfo);
     } else if (gameStatus.state === GameState.PAUSE) {
-      io.to(roomKey).emit('game/play', gameStatus);
       if (gameStatus.playerA.life === 0 || gameStatus.playerB.life === 0) {
         clearInterval(gm.getIntervalID(roomKey));
         // gs.setGameState(roomKey, GameState.END);
@@ -177,9 +198,15 @@ export class GameGateway {
         }
         gs.setUserState(gameStatus.playerA.nickname, UserState.ONLINE);
         gs.setUserState(gameStatus.playerB.nickname, UserState.ONLINE);
-        gm.deleteGameRoomKey(roomKey);
-        gs.deleteGameStatus(roomKey);
-        io.to(roomKey).emit('game/end', gameStatus);
+        // gm.deleteGameRoomKey(roomKey);
+        // gs.deleteGameStatus(roomKey);
+        io.to(roomKey).emit('game/end', gamePlayInfo);
+      } else {
+        io.to(roomKey).emit('game/play', gamePlayInfo);
+        setTimeout(() => {
+          gs.setGame(roomKey);
+          gs.setGameState(roomKey, GameState.GAMING);
+        }, 3000);
       }
     }
   }
@@ -189,23 +216,5 @@ export class GameGateway {
       this.gameManager.hasQueue(nickname) ||
       this.gameService.hasPlayer(nickname)
     );
-  }
-
-  private barSetter(info: GameReadyDTO): Bar {
-    let bar: Bar;
-    if (info.gameMode === 'hard') {
-      bar = {
-        y: (CANVAS_HEIGHT - BAR_HARD_H) / 2,
-        h: BAR_HARD_H,
-        color: info.barColor,
-      };
-    } else {
-      bar = {
-        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
-        h: BAR_BASIC_H,
-        color: info.barColor,
-      };
-    }
-    return bar;
   }
 }

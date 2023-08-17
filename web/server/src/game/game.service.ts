@@ -7,27 +7,29 @@ import {
   BAR_W,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
-  GAME_LIFE,
 } from 'src/configs/constants';
 
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameState, UserState } from 'src/types/enums';
-import { Ball, Bar, GameStatus, PlayerInfo } from 'src/types/interfaces';
-import { GameRoomDTO } from './dto/GameRoom.dto';
+import { Ball, Bar, GameStatus, Player } from 'src/types/interfaces';
 import { GameHistory } from 'src/database/entities/game-history.entity';
+import { GameRoomManager } from './objects/game.RoomManager';
+import { clearInterval } from 'timers';
+import { GameReadyDTO } from './dto/GameReady.dto';
+import { GamePlayDTO } from './dto/GamePlay.dto';
 
 @Injectable()
 export class GameService {
-  private gameRoomMap = new Map<string, GameStatus>();
+  private gameRoomStatusMap = new Map<string, GameStatus>();
 
   constructor(
     private roomRepository: RoomRepository,
     private userRepository: UserRepository,
   ) {}
 
-  saveGameRoom(gameRoom: GameRoomDTO, barA: Bar, barB: Bar) {
-    if (this.gameRoomMap.has(gameRoom.roomKey)) throw new Error();
+  saveGameRoom(roomKey: string, playerA: Player, playerB: Player) {
+    if (this.gameRoomStatusMap.has(roomKey)) throw new Error();
 
     const ball: Ball = {
       x: (CANVAS_WIDTH - BALL_SIZE) / 2,
@@ -35,28 +37,18 @@ export class GameService {
       speedX: BALL_SPEED,
       speedY: BALL_SPEED,
     };
-    // const barA: Bar = gameRoom.playerA.bar;
-    // const barB: Bar = gameRoom.playerB.bar;
 
     const gameStatus: GameStatus = {
-      ball,
+      ball: ball,
       state: GameState.READY,
-      playerA: {
-        bar: barA,
-        life: GAME_LIFE,
-        nickname: gameRoom.playerA,
-      },
-      playerB: {
-        bar: barB,
-        life: GAME_LIFE,
-        nickname: gameRoom.playerB,
-      },
+      playerA: playerA,
+      playerB: playerB,
     };
-    this.gameRoomMap.set(gameRoom.roomKey, gameStatus);
+    this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
   setGame(socketRoom: string) {
-    const gameStatus = this.gameRoomMap.get(socketRoom);
+    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
     const ball: Ball = {
       x: (CANVAS_WIDTH - BALL_SIZE) / 2,
       y: (CANVAS_HEIGHT - BALL_SIZE) / 2,
@@ -64,17 +56,17 @@ export class GameService {
       speedY: BALL_SPEED,
     };
     gameStatus.ball = ball;
-    this.gameRoomMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(socketRoom, gameStatus);
   }
 
   setGameState(socketRoom: string, state: GameState) {
-    const gameStatus = this.gameRoomMap.get(socketRoom);
+    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
     gameStatus.state = state;
-    this.gameRoomMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(socketRoom, gameStatus);
   }
 
   play(socketRoom: string) {
-    const gameStatus = this.gameRoomMap.get(socketRoom);
+    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
     if (gameStatus.state !== GameState.GAMING) return;
 
     const ball = gameStatus.ball;
@@ -142,16 +134,17 @@ export class GameService {
       }
     }
 
-    this.gameRoomMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(socketRoom, gameStatus);
     // emit
   }
 
   getGameStatusByKey(socketRoom: string): GameStatus {
-    return this.gameRoomMap.get(socketRoom);
+    return this.gameRoomStatusMap.get(socketRoom);
   }
 
   barPosition(socketRoom: string, pos: number, nickname: string) {
-    const gameStatus = this.gameRoomMap.get(socketRoom);
+    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
+    if (!gameStatus) return;
     const isLeft = gameStatus.playerA.nickname === nickname;
     if (isLeft) {
       gameStatus.playerA.bar.y += pos;
@@ -159,17 +152,17 @@ export class GameService {
       gameStatus.playerB.bar.y += pos;
     }
     // console.log(gameStatus);
-    this.gameRoomMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(socketRoom, gameStatus);
   }
 
   deleteGameStatus(socketRoom: string) {
-    if (this.gameRoomMap.has(socketRoom)) {
-      this.gameRoomMap.delete(socketRoom);
+    if (this.gameRoomStatusMap.has(socketRoom)) {
+      this.gameRoomStatusMap.delete(socketRoom);
     }
   }
 
   hasPlayer(nickname: string): boolean {
-    for (const [key, value] of this.gameRoomMap) {
+    for (const [key, value] of this.gameRoomStatusMap) {
       if (
         value.playerA.nickname === nickname ||
         value.playerB.nickname === nickname
@@ -177,6 +170,74 @@ export class GameService {
         return true;
     }
     return false;
+  }
+
+  gamePlayByGameStatus(gameStatus: GameStatus): GamePlayDTO {
+    const gamePlayInfo: GamePlayDTO = {
+      ball: gameStatus.ball,
+      state: gameStatus.state,
+      playerA: {
+        bar: gameStatus.playerA.bar,
+        life: gameStatus.playerA.life,
+        nickname: gameStatus.playerA.nickname,
+      },
+      playerB: {
+        bar: gameStatus.playerB.bar,
+        life: gameStatus.playerB.life,
+        nickname: gameStatus.playerB.nickname,
+      },
+    };
+    return gamePlayInfo;
+  }
+
+  barSetter(info: GameReadyDTO): Bar {
+    let bar: Bar;
+    if (info.gameMode === 'hard') {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_HARD_H) / 2,
+        h: BAR_HARD_H,
+        color: info.barColor,
+      };
+    } else {
+      bar = {
+        y: (CANVAS_HEIGHT - BAR_BASIC_H) / 2,
+        h: BAR_BASIC_H,
+        color: info.barColor,
+      };
+    }
+    return bar;
+  }
+
+  getRoomKeyBySocketId(socketId: string): string | null {
+    for (const [key, value] of this.gameRoomStatusMap) {
+      if (
+        value.playerA.socket.id === socketId ||
+        value.playerB.socket.id === socketId
+      )
+        return key;
+    }
+    return null;
+  }
+
+  deleteAbortedGame(
+    socketId: string,
+    roomKey: string,
+    gm: GameRoomManager,
+    gs: GameStatus,
+  ) {
+    const abortPlayer = this.getPlayerBySocketId(socketId);
+    clearInterval(gm.getIntervalID(roomKey));
+    if (gs.playerA.nickname === abortPlayer) {
+      gs.playerA.life = 0;
+      this.saveGameToDB(gs.playerB.nickname, gs.playerA.nickname);
+    } else {
+      gs.playerB.life = 0;
+      this.saveGameToDB(gs.playerA.nickname, gs.playerB.nickname);
+    }
+    this.setUserState(gs.playerA.nickname, UserState.ONLINE);
+    this.setUserState(gs.playerB.nickname, UserState.ONLINE);
+    gm.deleteGameRoomKey(roomKey);
+    this.deleteGameStatus(roomKey);
   }
 
   async setUserState(nickname: string, state: UserState) {
@@ -210,5 +271,12 @@ export class GameService {
 
   private randomSpeed(): number {
     return Math.random() + BALL_SPEED;
+  }
+
+  private getPlayerBySocketId(socketId: string): string {
+    for (const [key, value] of this.gameRoomStatusMap) {
+      if (value.playerA.socket.id === socketId) return value.playerA.nickname;
+      if (value.playerB.socket.id === socketId) return value.playerB.nickname;
+    }
   }
 }

@@ -30,7 +30,7 @@ const myData: Writable<MyData> = writable({
 
 const gameSettingStore: Writable<GameSetting> = writable({
   gameMode: "basic",
-  barColor: "#FF6231",
+  barColor: "#D2D2D2",
   ballShape: "square",
 });
 
