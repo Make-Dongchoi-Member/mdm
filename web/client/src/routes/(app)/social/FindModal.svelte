@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { modalStatesStore, profileModalStore, myData } from "../../../store";
 	import { clickOutside, escapeKey } from '../../../actions';	
+	import type { UserData } from "../../../interfaces";
   import { onMount } from "svelte";
 	
 	let isInviteButtonActivated: boolean = false;
 	let inputValue: string = "";
+	let receiver: UserData;
 
 	onMount(() => {
 		const inputTag = document.querySelector("#find-input") as HTMLInputElement;
@@ -39,20 +41,21 @@
 				return false;
 		}	
 		try {
-			const response = await fetch(`http://localhost:3000/api/user/info?nickname=${encodeURIComponent(nickname)}`, {
+			const response = await fetch(`http://localhost:3000/api/user/search?nickname=${nickname}`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {
 					"Content-Type": "application/json",
-				},
+				},	
 			});
-			if (response.status === 200) {
-				return true;  
-			} else if (response.status === 404 || response.status === 400) {
-				return false; 
+			const data = await response.json();
+			if (data.exist) {
+				receiver = data.user;
+				return true;
 			} else {
 				return false;
-			}            
+			} 
+
 		} catch (error) {
 			console.error("실패:", error);
 		}
