@@ -20,24 +20,21 @@
 		$modalStatesStore.isFindModal = false;
 	}
 
-	const inputEvent = async (e: any) => {
-		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
+	const inputEvent = async (e: any) => {		
 		e.target.value = e.target.value.replace(/\s/g, '');
 		inputValue = e.target.value; 
 
 		const isUser = await isUserExistAPI(inputValue);
 		if (inputValue !== "" && isUser) {
 			isInviteButtonActivated = true;
-			isInviteAvalable.textContent = "available";
 		} else {
 			isInviteButtonActivated = false;
-			isInviteAvalable.textContent = "unavailable";
 		}
 	}	
 
 	const isUserExistAPI = async (nickname: any): Promise<boolean> => {		
-		const isAlreayRoom: boolean = $myData.friends.some(friend => friend.nickname === nickname);		
-		if (nickname === "" || nickname === $myData.nickname || isAlreayRoom) {
+		const isAlreayFriend: boolean = $myData.friends.some(friend => friend.nickname === nickname);		
+		if (nickname === "" || nickname === $myData.nickname || isAlreayFriend) {
 				return false;
 		}	
 		try {
@@ -62,10 +59,8 @@
 		return false;
 	}
 
-	const initialInput = () => {
-		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
+	const initialInput = () => {		
 		inputValue = "";
-		isInviteAvalable.textContent = "unavailable";
 		isInviteButtonActivated = false;
 	}
 
@@ -91,7 +86,7 @@
 			<div class="bottom-line">
 				<div class="find-result">
 					{#if !isInviteButtonActivated}
-						<div class="invite-check">
+						<div class="invite-check" >
 							unavailable					
 						</div>
 					{:else}

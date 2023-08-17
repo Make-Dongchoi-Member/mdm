@@ -24,17 +24,14 @@
 	}
 
 	const inputEvent = async (e: any) => {
-		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
 		e.target.value = e.target.value.replace(/\s/g, '');
 		inputValue = e.target.value; 
 
 		const isUser = await isUserExistAPI(inputValue);
 		if (inputValue !== "" && isUser) {
 			isInviteButtonActivated = true;
-			isInviteAvalable.textContent = "available";
 		} else {
 			isInviteButtonActivated = false;
-			isInviteAvalable.textContent = "unavailable";
 		}
 	}	
 
@@ -68,11 +65,8 @@
 		}
 	}
 
-
-	const initialInput = () => {
-		const isInviteAvalable = document.querySelector(".invite-check") as HTMLDivElement;
+	const initialInput = () => {		
 		inputValue = "";
-		isInviteAvalable.textContent = "unavailable";
 		isInviteButtonActivated = false;
 	}
 
