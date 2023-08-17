@@ -88,6 +88,14 @@ export class UserController {
     await this.userService.setStatus(userId, data.status as UserState);
   }
 
+  @Get('get/status')
+  async getStatus(
+    @UserId(ParseIntPipe) userId: number,
+    @Query('nickname', InfoValidPipe) nickname: string,
+  ) {
+    return { state: await this.userService.getStatus(nickname) };
+  }
+
   /**
    * 유저 avatar 수정 API 요청
    * POST(/api/user/set/avatar)

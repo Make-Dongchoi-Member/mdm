@@ -1,7 +1,29 @@
 <script lang="ts">
-  import { myData } from "../../../store";
+  import { myData, socketStore } from "../../../store";
   import FriendButton from "./FriendButton.svelte";
 	import { modalStatesStore } from "../../../store";
+  import { onMount } from "svelte";
+  import { UserState } from "../../../enums";
+
+	onMount(() => {
+		$socketStore.on("online", (data) => {
+			for (const iterator of $myData.friends) {
+				if (iterator.id === data.who) {
+					iterator.state = UserState.ONLINE;
+				}
+			}
+			$myData = $myData;
+		});
+
+		$socketStore.on("offline", (data) => {
+			for (const iterator of $myData.friends) {
+				if (iterator.id === data.who) {
+					iterator.state = UserState.OFFLINE;
+				}
+			}
+			$myData = $myData;
+		});
+	});
 
 	const findButtonEvent = () => {
 		$modalStatesStore.isFindModal = true;
@@ -12,7 +34,7 @@
 <div class="members">
 	<div class="other-profile-container">
 		{#each $myData.friends as user}
-		<FriendButton {user} />
+		<FriendButton {user}/>
 		{/each}
 	</div>
 	<div class="find-area">
@@ -33,10 +55,6 @@
 		font-size: 12px;
 		box-sizing: border-box;
 		padding-top: 5px;
-	}
-
-	.profile-id {
-		font-size: 12px;
 	}
 
 	.other-profile-container {
@@ -63,17 +81,6 @@
 
 	.other-profile-container::-webkit-scrollbar-thumb:hover {
 		background-color: var(--text-color) /* 스크롤바 썸바 호버 배경색 설정 */
-	}
-
-	.profile-photo {
-		border-radius: 70%;
-		width: 20px;
-		height: 20px;
-	}
-
-	.image-container {
-		display: flex;
-		justify-content: center;
 	}
 
 	.find-area {

@@ -32,6 +32,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleDisconnect(client: Socket) {
     try {
+      const user = await this.userRepository.getUserBySocketId(client.id);
+
+      for (const iterator of user.friends) {
+        const friend = await this.userRepository.findOneBy({ id: iterator });
+        if (friend.socket) {
+          client.to(friend.socket).emit('offline', { who: user.id });
+        }
+      }
+
       await this.userRepository.setStatusBySocketId(
         client.id,
         UserState.OFFLINE,
@@ -50,7 +59,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.config.get(JWT_SECRET),
       });
-      if (this.userRepository.findOneBy({ id: +payload.sub }) === null) {
+      const user = await this.userRepository.findOneBy({ id: +payload.sub });
+      if (user === null) {
         client.disconnect();
       } else {
         await this.userRepository.setSocketId(+payload.sub, client.id);
@@ -58,6 +68,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
           client.id,
           UserState.ONLINE,
         );
+        for (const iterator of user.friends) {
+          const friend = await this.userRepository.findOneBy({ id: iterator });
+          if (friend.socket) {
+            client.to(friend.socket).emit('online', { who: user.id });
+          }
+        }
       }
     } catch (e) {
       console.log('There is error!');

@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { UserData } from "../../../interfaces";
-  import { dm, modalStatesStore, profileModalStore } from "../../../store";
+  import { dm, modalStatesStore, profileModalStore, socketStore } from "../../../store";
+  import { UserState } from "../../../enums";
 
 	export let user: UserData;
 	let isClicked: boolean = false;
+
+	onMount(() => {
+		
+	});
 
 	const friendButtonClickEvent = () => {
 		isClicked = !isClicked;
@@ -38,6 +44,11 @@
 <div class="profile">
 	<button class="profile-button" on:click={friendButtonClickEvent}>
 		<div class="image-container">
+			{#if user.state === UserState.ONLINE}
+			<div class="online"> </div>
+			{:else if user.state === UserState.GAMING}
+			<div class="gaming"> </div>
+			{/if}
 			<img class="profile-photo" src={user.avatar} alt={`${user.nickname}'s profile image`}>
 		</div>
 		<div>
@@ -54,14 +65,15 @@
 
 <style>
 	.profile-button {
+		position: relative;
 		width: 100%;
-		height: 40px;
+		height: 45px;
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
 		border: 1px solid var(--border-color);
-		padding: 4px 10px 4px 10px;
+		padding: 6px 10px 6px 10px;
 		box-sizing: border-box;
 		margin-bottom: 5px;
 	}
@@ -71,7 +83,6 @@
 		width: 20px;
 		height: 20px;
 	}
-
 
 	.menu-list {
 		display: flex;
@@ -88,13 +99,34 @@
 	}
 
 	.profile-photo {
-        border-radius: 70%;
-        width: 20px;
-		height: 20px;
-    }
+		border-radius: 70%;
+		width: 30px;
+		height: 30px;
+	}
 
 	.image-container {
+		position: relative;
 		display: flex;
 		justify-content: center;
+	}
+
+	.online {
+		background-color: greenyellow;
+		width: 10px;
+		height: 10px;
+		border-radius: 100px;
+		position: absolute;
+		top: 20px;
+		right: -3px;
+	}
+
+	.gaming {
+		background-color: var(--point-color);
+		width: 5px;
+		height: 5px;
+		border-radius: 100px;
+		position: absolute;
+		top: 20px;
+		right: -3px;
 	}
 </style>

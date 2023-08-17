@@ -12,6 +12,7 @@ export interface UserData {
   avatar: string;
   nickname: string;
   record?: Record[];
+  state?: UserState;
 }
 
 export interface Record {
