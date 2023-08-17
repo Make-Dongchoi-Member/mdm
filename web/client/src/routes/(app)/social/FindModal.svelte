@@ -32,11 +32,15 @@
 		}
 	}	
 
-	const isUserExistAPI = async (nickname: any): Promise<boolean> => {		
-		const isAlreayFriend: boolean = $myData.friends.some(friend => friend.nickname === nickname);		
-		if (nickname === "" || nickname === $myData.nickname || isAlreayFriend) {
-				return false;
-		}	
+	const isUserExistAPI = async (nickname: string): Promise<boolean> => {		
+		const isAlreayFriend: boolean = $myData.friends.some(friend => friend.nickname === nickname);
+
+		if (nickname === "" 
+				|| nickname === $myData.nickname 
+				|| isAlreayFriend 
+				|| nickname.length < 3) {
+			return false;
+		}
 		try {
 			const response = await fetch(`http://localhost:3000/api/user/search?nickname=${nickname}`, {
 				method: "GET",
