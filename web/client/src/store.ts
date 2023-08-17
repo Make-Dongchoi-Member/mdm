@@ -61,6 +61,7 @@ const openedRoom: Writable<RoomDetail> = writable({
   roomtype: RoomType.NORMAL,
   memberCount: 0,
   members: new Map(),
+  banList: [],
   history: [],
 });
 

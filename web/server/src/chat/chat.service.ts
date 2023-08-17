@@ -77,6 +77,7 @@ export class ChatService {
       roomtype: room.roomtype,
       memberCount: room.memberCount,
       members,
+      banList: room.ban,
       history: room.messages.map(this.convertMessageEntityToMessage),
     };
     return roomDetail;

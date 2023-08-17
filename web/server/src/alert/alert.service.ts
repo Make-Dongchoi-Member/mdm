@@ -33,21 +33,19 @@ export class AlertService {
     ) {
       throw new Error();
     }
-    await this.alertRepository.saveAlert(
-      alert.alertType,
-      sender,
-      receiver,
-      +alert.roomId,
-    );
+    console.log(alert);
+    await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
   }
 
   async chatAlertSave(alert: AlertData) {
     const sender = await this.userRepository.getUserById(alert.sender.id);
     const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    const room = await this.roomRepository.getRoomById(+alert.roomId);
     if (
       sender.blocks.includes(receiver.id) ||
       receiver.blocks.includes(sender.id) ||
-      receiver.rooms.includes(+alert.roomId)
+      receiver.rooms.includes(+alert.roomId) ||
+      room.ban.includes(receiver.id)
     ) {
       throw new Error();
     }
@@ -64,7 +62,7 @@ export class AlertService {
   }
 
   private alertEntityToAlertData(entity: AlertEntity): AlertData {
-    return {
+    const alertData: AlertData = {
       alertId: entity.id,
       alertType: entity.type,
       sender: {
@@ -77,9 +75,12 @@ export class AlertService {
         avatar: entity.receiver.avatar,
         nickname: entity.receiver.nickName,
       },
-      roomId: entity.roomId.toString(),
       date: entity.date,
     };
+    if (entity.roomId) {
+      alertData.roomId = entity.roomId.toString();
+    }
+    return alertData;
   }
 
   async getSocketId(userId: number): Promise<string> | null {

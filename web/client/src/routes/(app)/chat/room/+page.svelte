@@ -85,8 +85,10 @@
 			});
 			$openedRoom.memberCount = data.openedRoom.memberCount;
 			$openedRoom.members = new Map(Object.entries(JSON.parse(data.openedRoom.members)));
+			$openedRoom.banList = data.openedRoom.banList;
 			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
+			console.log('openRoom', $openedRoom);
 		})
 		.catch(error => console.error('Error:', error));
 	}

@@ -111,6 +111,7 @@ export type RoomList = Map<number, Room>;
 
 export interface RoomDetail extends Room {
   members: Map<string, Profile>;
+  banList: number[];
   history: Message[];
   myLevel: Level;
 }
