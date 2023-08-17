@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { AlarmEntity as AlertEntity } from 'src/database/entities/alarm.entity';
 import { DMRooms } from 'src/database/entities/dm-room.entity';
 import { AlertRepository } from 'src/database/repositories/alarm.repository';
+import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { AlertData } from 'src/types/interfaces';
 
@@ -10,6 +15,7 @@ export class AlertService {
   constructor(
     private readonly alertRepository: AlertRepository,
     private readonly userRepository: UserRepository,
+    private readonly roomRepository: RoomRepository,
   ) {}
 
   async alertList(userId: number) {
@@ -27,17 +33,29 @@ export class AlertService {
     ) {
       throw new Error();
     }
-    await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
-  }
-
-  async alertSave(alert: AlertData) {
-    const sender = await this.userRepository.getUserById(alert.sender.id);
-    const receiver = await this.userRepository.getUserById(alert.receiver.id);
     await this.alertRepository.saveAlert(
       alert.alertType,
       sender,
       receiver,
-      alert.roomId,
+      +alert.roomId,
+    );
+  }
+
+  async chatAlertSave(alert: AlertData) {
+    const sender = await this.userRepository.getUserById(alert.sender.id);
+    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    if (
+      sender.blocks.includes(receiver.id) ||
+      receiver.blocks.includes(sender.id) ||
+      receiver.rooms.includes(+alert.roomId)
+    ) {
+      throw new Error();
+    }
+    await this.alertRepository.saveAlert(
+      alert.alertType,
+      sender,
+      receiver,
+      +alert.roomId,
     );
   }
 
@@ -59,7 +77,7 @@ export class AlertService {
         avatar: entity.receiver.avatar,
         nickname: entity.receiver.nickName,
       },
-      roomId: entity.roomId,
+      roomId: entity.roomId.toString(),
       date: entity.date,
     };
   }
@@ -84,19 +102,19 @@ export class AlertService {
     this.userRepository.manager.save(dmRooms);
   }
 
-  async acceptChatAlert(myId: number, friendId: number) {
-    const friend = await this.userRepository.getUserById(friendId);
-    const me = await this.userRepository.getUserById(myId);
+  async acceptChatAlert(userId: number, roomId: number) {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) throw new NotFoundException(`user_id ${userId} Not Found`);
+    const room = await this.roomRepository.getRoomById(roomId);
+    if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
 
-    if (friend.friends.includes(me.id)) return;
-
-    friend.friends.push(me.id);
-    me.friends.push(friend.id);
-    this.userRepository.save([friend, me]);
-    const dmRooms = new DMRooms();
-    dmRooms.users = [friend, me];
-    dmRooms.messages = [];
-    this.userRepository.manager.save(dmRooms);
+    if (room.ban.includes(userId)) throw new NotAcceptableException('ban user');
+    if (user.rooms.includes(roomId)) return;
+    user.rooms.push(roomId);
+    room.members.push(userId);
+    room.memberCount = room.memberCount + 1;
+    this.roomRepository.save(room);
+    this.userRepository.save(user);
   }
 
   async setAlertState(userId: number, state: boolean) {

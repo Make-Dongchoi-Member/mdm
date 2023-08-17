@@ -108,6 +108,6 @@ export interface AlertData {
   alertType: AlertType;
   sender: UserData;
   receiver: UserData;
-  roomId?: number;
+  roomId?: string;
   date?: Date;
 }

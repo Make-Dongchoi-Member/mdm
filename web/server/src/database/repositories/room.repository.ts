@@ -68,7 +68,7 @@ export class RoomRepository extends Repository<Rooms> {
 
   private async createHash(pw: string) {
     const salt = await bcrypt.genSalt(
-      new ConfigService().get<number>(SALT_ROUNDS),
+      Number(new ConfigService().get(SALT_ROUNDS)),
     );
     return bcrypt.hash(pw, salt);
   }

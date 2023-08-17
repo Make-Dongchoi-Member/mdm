@@ -8,10 +8,7 @@ import { ChatService } from 'src/chat/chat.service';
 
 @Controller('api/alert')
 export class AlertController {
-  constructor(
-    private readonly alertService: AlertService,
-    private readonly chatService: ChatService,
-  ) {}
+  constructor(private readonly alertService: AlertService) {}
 
   @Get('list')
   async alertList(@UserId(ParseIntPipe) userId: number): Promise<AlertListDTO> {
@@ -30,10 +27,9 @@ export class AlertController {
 
   @Post('chat/accept')
   async postChatAccept(@Body('data') data: AlertDTO): Promise<void> {
-    await this.chatService.roomEnter(
+    await this.alertService.acceptChatAlert(
       data.alert.receiver.id,
-      data.alert.roomId,
-      '',
+      +data.alert.roomId,
     );
     await this.alertService.alertDelete(data.alert.alertId);
   }
@@ -66,6 +62,6 @@ export class AlertController {
     @UserId(ParseIntPipe) userId: number,
     @Body('data') data: AlertData,
   ) {
-    this.alertService.alertSave(data);
+    // this.alertService.alertSave(data);
   }
 }
