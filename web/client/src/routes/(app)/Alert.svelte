@@ -2,6 +2,7 @@
   import type { AlertData, AlertListDTO } from "../../interfaces";
 	import { AlertType } from "../../enums";
   import { goto } from "$app/navigation";
+  import { myData, socketStore } from "../../store";
 
 	export let alert: AlertData;
 	export let getAlertList: Function;
@@ -46,6 +47,7 @@
 			})
 			.then(() => {
 				goto(`/chat/room?id=${alert.roomId}`);
+				$socketStore.emit("chat/enter", { roomId: alert.roomId, userId: $myData.id });
 			});
 		} catch (error) {
 			console.error("실패:", error);
