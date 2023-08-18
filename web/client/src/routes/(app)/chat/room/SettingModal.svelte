@@ -4,12 +4,9 @@
 	import { RoomType } from '../../../../enums';
 	import type { RoomInfoDTO } from '../../../../interfaces';
 	import { clickOutside, escapeKey } from '../../../../actions';
-	
-	let isPrivate: boolean = $openedRoom.roomtype === RoomType.PRIVATE;
-	let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK;  
+
 	let isPasswordChanged: boolean = false;
-	let isMakeButtonActivation: boolean = false;
-	let roomtype: RoomType = RoomType.NORMAL;
+	let isMakeButtonActivation: boolean = false;	
 
 	const initialRoomInfo: RoomInfoDTO = { 
 		roomId: $openedRoom.roomId,
@@ -18,8 +15,11 @@
 		password: "initialpw",
 		roomtype: $openedRoom.roomtype,
 	};    
-	let roomNameInputValue: string = $openedRoom.roomId;
-	let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
+	export let roomNameInputValue: string = $openedRoom.roomId;
+	export let roomtype: RoomType =$openedRoom.roomtype;
+	export let isPrivate: boolean = $openedRoom.roomtype === RoomType.PRIVATE;
+	export let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK;  
+	export let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
 	
 	async function changeRoom(data: any) {
 		const response = await fetch("http://localhost:3000/api/chat/room/update", {
@@ -35,7 +35,6 @@
 			$openedRoom.roomtype = roomtype;
 			initialRoomInfo.roomname = roomNameInputValue;
 			initialRoomInfo.roomtype = roomtype;
-			roomtype = RoomType.NORMAL;
 			$modalStatesStore.isSettingModal = false;
 		})
 		.catch(error => console.error('Error:', error));
@@ -57,7 +56,7 @@
 					방 설정을 위해 필요한 입력 체크
 					방 설정 변경 API 요청
 			*/
-		
+		roomtype = RoomType.NORMAL;
 		if (isPassword && !isPrivate) {
 			roomtype = RoomType.LOCK;
 		} else if (!isPassword && isPrivate) {
