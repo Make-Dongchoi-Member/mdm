@@ -69,7 +69,7 @@
 		flex-wrap: wrap;
 		align-content: flex-start;
 		width: 775px;
-		height: 300px;
+		height: 350px;
 		overflow-y: auto;
 		margin: 10px 10px 10px 15px;
 	}
@@ -79,7 +79,6 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-
 		height: 45px;
 		width: 775px;
 		margin-right: 10px;

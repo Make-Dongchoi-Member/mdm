@@ -2,7 +2,7 @@
   import type { AlertData, AlertListDTO } from "../../interfaces";
 	import { AlertType } from "../../enums";
   import { goto } from "$app/navigation";
-  import { myData, socketStore } from "../../store";
+  import { modalStatesStore, myData, socketStore } from "../../store";
 
 	export let alert: AlertData;
 	export let getAlertList: Function;
@@ -46,6 +46,8 @@
 				body: JSON.stringify({ data: { alert } })
 			})
 			.then(() => {
+				getAlertList();
+				$modalStatesStore.isNotiModal = false;
 				goto(`/chat/room?id=${alert.roomId}`);
 				$socketStore.emit("chat/enter", { roomId: `${alert.roomId}`, userId: `${$myData.id}` });
 			});
@@ -69,6 +71,8 @@
 				 * @TODO
 				 * game room으로 보내기
 				*/
+				getAlertList();
+				$modalStatesStore.isNotiModal = false;
 			});
 		} catch (error) {
 			console.error("실패:", error);

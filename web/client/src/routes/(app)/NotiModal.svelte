@@ -30,7 +30,7 @@
 	}
 
 	const modalCloseEvent = () => {
-		$modalStatesStore.isNotiModal = false
+		$modalStatesStore.isNotiModal = false;
 	}
 </script>
 

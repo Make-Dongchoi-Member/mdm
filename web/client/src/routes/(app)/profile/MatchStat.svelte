@@ -25,7 +25,7 @@
 
 	const winRate = (record: Record[]) => {
 		if (records.length !== 0) {
-			return win(record) / records.length * 100;
+			return (win(record) / records.length * 100).toFixed(2);
 		}
 		return 0;
 	}

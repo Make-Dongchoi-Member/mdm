@@ -45,9 +45,6 @@
 	<MyInfo {records} />
 </div>
 <div class="data_container">
-	<div class="button_area">
-		<div>HISTORY</div>
-	</div>
 	<ProfileHistory {records} />
 </div>
 
