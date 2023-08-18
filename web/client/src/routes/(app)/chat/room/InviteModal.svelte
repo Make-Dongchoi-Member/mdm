@@ -69,7 +69,8 @@
 		inputValue = "";
 		isInviteButtonActivated = false;
 	}
-
+	
+	
 </script>
 
 	<div class="modal-container" style="{$modalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}"
@@ -103,8 +104,15 @@
 							<div>
 								{receiver.nickname}
 							</div>
+							
+							{#if $openedRoom.banList.includes(Number(receiver.id))}							
+								<div class="banDisplay">
+									(ban)
+								</div>
+							{/if}
 						</div>
 					{/if}
+					
 				</div>
 				<button 
 					class={isInviteButtonActivated ? 'make-button able' : 'make-button disable'}
@@ -250,7 +258,13 @@
 	.image-container {
 		display: flex;
 		justify-content: center;
-	} 
+	}
+	
+	.banDisplay {
+		color: red;
+		margin-left: 5px;
+		font-weight: bold;
+	}
   
 </style>
   

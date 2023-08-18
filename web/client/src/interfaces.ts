@@ -8,7 +8,7 @@ import type {
 } from "./enums";
 
 export interface UserData {
-  id?: string;
+  id: string;
   avatar: string;
   nickname: string;
   record?: Record[];
