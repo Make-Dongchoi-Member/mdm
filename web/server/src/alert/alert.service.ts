@@ -3,11 +3,12 @@ import {
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { AlarmEntity as AlertEntity } from 'src/database/entities/alarm.entity';
+import { AlertEntity as AlertEntity } from 'src/database/entities/alert.entity';
 import { DMRooms } from 'src/database/entities/dm-room.entity';
-import { AlertRepository } from 'src/database/repositories/alarm.repository';
+import { AlertRepository } from 'src/database/repositories/alert.repository';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
+import { GameStore } from 'src/game/game.store';
 import { AlertData } from 'src/types/interfaces';
 
 @Injectable()
@@ -16,12 +17,13 @@ export class AlertService {
     private readonly alertRepository: AlertRepository,
     private readonly userRepository: UserRepository,
     private readonly roomRepository: RoomRepository,
+    private readonly gameStore: GameStore,
   ) {}
 
   async alertList(userId: number) {
-    const user = await this.userRepository.getUserByIdWithAlarm(userId);
+    const user = await this.userRepository.getUserByIdWithAlert(userId);
     if (!user) throw new NotFoundException(`user_id ${userId} Not Found`);
-    return user.receiveAlarms.map(this.alertEntityToAlertData);
+    return user.receiveAlerts.map(this.alertEntityToAlertData);
   }
 
   async followAlertSave(alert: AlertData) {
@@ -33,7 +35,6 @@ export class AlertService {
     ) {
       throw new Error();
     }
-    console.log(alert);
     await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
   }
 
@@ -46,6 +47,23 @@ export class AlertService {
       receiver.blocks.includes(sender.id) ||
       receiver.rooms.includes(+alert.roomId) ||
       room.ban.includes(receiver.id)
+    ) {
+      throw new Error();
+    }
+    await this.alertRepository.saveAlert(
+      alert.alertType,
+      sender,
+      receiver,
+      +alert.roomId,
+    );
+  }
+
+  async gameAlertSave(alert: AlertData) {
+    const sender = await this.userRepository.getUserById(alert.sender.id);
+    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    if (
+      sender.blocks.includes(receiver.id) ||
+      receiver.blocks.includes(sender.id)
     ) {
       throw new Error();
     }
@@ -120,5 +138,9 @@ export class AlertService {
 
   async setAlertState(userId: number, state: boolean) {
     await this.userRepository.setIsAlert(userId, state);
+  }
+
+  getNewGameRoomKey(): string {
+    return this.gameStore.newGameRoomKey();
   }
 }

@@ -45,9 +45,6 @@ export class ChatGateway {
       +data.roomId,
       +data.userId,
     );
-
-    console.log('enterUser=', enterUser);
-
     client.join(data.roomId);
     client.broadcast.to(data.roomId).emit('chat/enter', enterUser);
   }

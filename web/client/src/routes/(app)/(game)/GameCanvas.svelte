@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import { gameSettingStore, socketStore, myData } from "../../../store";
   import type {
+  AlertDTO,
     Ball,
     Bar,
     GameRoom,
@@ -9,6 +10,7 @@
     Position,
   } from "../../../interfaces";
   import { GameState } from "../../../enums";
+  import { page } from "$app/stores";
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -102,6 +104,7 @@
       nickname: $myData.nickname,
       gameMode: $gameSettingStore.gameMode,
       barColor: $gameSettingStore.barColor,
+      roomId: gameInfo.roomKey,
     });
   };
 
@@ -163,6 +166,12 @@
   };
 
   onMount(() => {
+    const roomKey = $page.url.searchParams.get('key');
+    if (roomKey !== null) {
+      gameInfo.roomKey = roomKey;
+      ready = true;
+      gamePrefer.message = "WAITING...";
+    }
     canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -171,6 +180,17 @@
 
     canvas.addEventListener("click", mouseControl);
     document.addEventListener("mousemove", handleMousePointer);
+
+    $socketStore.on("game/private-match-deny", (data: AlertDTO) => {
+      console.log(data);
+      
+      /**
+       * @TODO
+       * 게임 페이지 초기화
+      */
+      alert(`${data.alert.receiver.nickname} refused the game!`);
+      
+    });
 
     $socketStore.on("game/room", (arg: GameRoom) => {
       // 서버로 부터 받은 게임 정보를 저장
@@ -307,6 +327,7 @@
   onDestroy(() => {
     $socketStore.off("game/match");
     $socketStore.off("game/play");
+    $socketStore.off("game/private-match-deny")
     canvas.removeEventListener("click", mouseControl);
     document.removeEventListener("mousemove", handleMousePointer);
     if (matching) {
@@ -316,6 +337,8 @@
       });
     } else {
       $socketStore.emit("game/matchout", { nickname: $myData.nickname });
+      console.log(gameInfo)
+      $socketStore.emit("game/private-matchout", { roomKey : gameInfo.roomKey })
     }
   });
 </script>

@@ -8,6 +8,8 @@ import { RoomRepository } from 'src/database/repositories/room.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/user.entity';
 import { Rooms } from 'src/database/entities/room.entity';
+import { GameStore } from './game.store';
+import { GameUtil } from './game.util';
 
 @Module({
   imports: [
@@ -15,6 +17,7 @@ import { Rooms } from 'src/database/entities/room.entity';
     DatabaseModule.forCustomRepository([UserRepository, RoomRepository]),
   ],
   controllers: [GameController],
-  providers: [GameService, GameGateway],
+  providers: [GameService, GameGateway, GameStore, GameUtil],
+  exports: [GameStore],
 })
 export class GameModule {}

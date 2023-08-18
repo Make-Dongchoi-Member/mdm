@@ -50,7 +50,7 @@
 		</div>
 		<div class="modal-content-box">
 			{#each alerts as a}
-				<Alert alert={a} {getAlertList} />
+				<Alert alertData={a} {getAlertList} />
 			{/each}
 		</div>
 	</div>

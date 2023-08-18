@@ -8,7 +8,7 @@ import { Socket, Server } from 'socket.io';
 import { GameService } from './game.service';
 import { GameReadyDTO } from './dto/GameReady.dto';
 import { GameRoomDTO } from './dto/GameRoom.dto';
-import { GameRoomManager } from './objects/game.RoomManager';
+import { GameStore } from './game.store';
 import { Player } from 'src/types/interfaces';
 import { GameStartDTO } from './dto/GameStart.dto';
 import { GameBarDTO } from './dto/GameBar.dto';
@@ -16,6 +16,8 @@ import { GameState, UserState } from 'src/types/enums';
 import { GameEndDTO } from './dto/GameEnd.dto';
 import { FRAME_PER_MS, GAME_LIFE } from 'src/configs/constants';
 import { GameMatchOutDTO } from './dto/GameMatchOut.dto';
+import { GameUtil } from './game.util';
+import { AlertDTO } from 'src/alert/dto/Alert.dto';
 
 @WebSocketGateway({
   cors: {
@@ -24,15 +26,18 @@ import { GameMatchOutDTO } from './dto/GameMatchOut.dto';
 })
 export class GameGateway implements OnGatewayDisconnect {
   @WebSocketServer() io: Server;
-  gameManager: GameRoomManager = new GameRoomManager();
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly gameStore: GameStore,
+    private readonly util: GameUtil,
+  ) {}
   // queue
 
   async handleDisconnect(client: Socket) {
     // 게임 서버가 들고있는 유저 정보 삭제하기
-    if (this.gameManager.hasQueueBySocketId(client.id)) {
+    if (this.gameStore.hasQueueBySocketId(client.id)) {
       // 큐에 들어있는 경우 아직 매칭되지 않은 유저
-      this.gameManager.deletePlayerAtQueueBySocketId(client.id);
+      this.gameStore.deletePlayerAtQueueBySocketId(client.id);
     } else {
       // 큐에 없는 경우 ready하지 않았거나, 게임 진행중이던 유저
       // 게임 진행중이던 유저인 경우 roomKey가 존재함
@@ -43,7 +48,7 @@ export class GameGateway implements OnGatewayDisconnect {
         this.gameService.deleteAbortedGame(
           client.id,
           roomKey,
-          this.gameManager,
+          this.gameStore,
           gameStatus,
         );
         this.io.to(roomKey).emit('game/quit', gamePlayInfo);
@@ -54,23 +59,23 @@ export class GameGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
-    if (!this.existPlayer(data.nickname)) {
-      this.gameManager.enqueue({
+    if (!this.existPlayer(data.nickname, data.roomId)) {
+      this.gameStore.enqueue({
         socket: client,
-        bar: this.gameService.barSetter(data),
+        bar: this.util.barSetter(data),
         life: GAME_LIFE,
         nickname: data.nickname,
       });
     }
 
     // 큐 안에 두 명 이상 들어온 경우
-    if (this.gameManager.isMatched()) {
+    if (this.gameStore.isMatched()) {
       // 게임방 번호(키) 생성
-      const key: string = this.gameManager.newGameRoomKey();
+      const key: string = this.gameStore.newGameRoomKey();
 
       // 플레이어 두 명 큐에서 dequeue
-      const playerA: Player = this.gameManager.dequeue();
-      const playerB: Player = this.gameManager.dequeue();
+      const playerA: Player = this.gameStore.dequeue();
+      const playerB: Player = this.gameStore.dequeue();
 
       // 매칭된 게임 정보(플레이어 두 명과 키)를 서버에 저장
       this.gameService.saveGameRoom(key, playerA, playerB);
@@ -91,6 +96,54 @@ export class GameGateway implements OnGatewayDisconnect {
       };
       this.io.to(key).emit('game/room', gameRoom);
     }
+  }
+
+  @SubscribeMessage('game/private-match-deny')
+  handlePrivateGameDeny(client: Socket, data: AlertDTO) {
+    if (!this.gameStore.isPrivateGame(data.alert.roomId)) return;
+    const sender = this.gameStore.getPrivateGame(data.alert.roomId);
+    this.io.to(sender.socket.id).emit('game/private-match-deny', data);
+    sender.socket.leave(data.alert.roomId);
+  }
+
+  @SubscribeMessage('game/private-match')
+  handlePrivateGameMatch(client: Socket, data: AlertDTO) {
+    console.log('data', data);
+
+    if (!this.gameStore.isPrivateGame(data.alert.roomId)) return;
+
+    const sender: Player = this.gameStore.getPrivateGame(data.alert.roomId);
+    this.gameStore.deletePrivateGame(data.alert.roomId);
+
+    // 두 플레이어를 게임방에 join
+    sender.socket.join(data.alert.roomId);
+    client.join(data.alert.roomId);
+
+    // 두 플레이어의 현재 상태를 '게임 중' 으로 변경
+    this.gameService.setUserState(data.alert.sender.nickname, UserState.GAMING);
+    this.gameService.setUserState(
+      data.alert.receiver.nickname,
+      UserState.GAMING,
+    );
+
+    // 두 플레이어에게 emitd
+    const gameRoom: GameRoomDTO = {
+      playerA: data.alert.sender.nickname,
+      playerB: data.alert.receiver.nickname,
+      roomKey: data.alert.roomId,
+    };
+    const receiver: Player = {
+      bar: this.util.barSetter({
+        nickname: data.alert.receiver.nickname,
+        gameMode: data.alert.gameSetting.gameMode,
+        barColor: data.alert.gameSetting.barColor,
+      }),
+      life: GAME_LIFE,
+      nickname: data.alert.receiver.nickname,
+      socket: client,
+    };
+    this.gameService.saveGameRoom(gameRoom.roomKey, sender, receiver);
+    this.io.to(gameRoom.roomKey).emit('game/room', gameRoom);
   }
 
   @SubscribeMessage('game/start')
@@ -192,7 +245,7 @@ export class GameGateway implements OnGatewayDisconnect {
     // interval, roomKey, gameStatus 삭제ㅇ
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
-    clearInterval(this.gameManager.getIntervalID(data.roomKey));
+    clearInterval(this.gameStore.getIntervalID(data.roomKey));
     if (gameStatus.playerA.nickname === data.nickname) {
       gameStatus.playerA.life = 0;
       this.gameService.saveGameToDB(
@@ -214,7 +267,7 @@ export class GameGateway implements OnGatewayDisconnect {
       gameStatus.playerB.nickname,
       UserState.ONLINE,
     );
-    this.gameManager.deleteGameRoomKey(data.roomKey);
+    this.gameStore.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
     this.io.to(data.roomKey).emit('game/roomout', gamePlayInfo);
     client.leave(data.roomKey);
@@ -223,10 +276,16 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('game/matchout')
   handleGameMatchOut(client: Socket, data: GameMatchOutDTO) {
     // 대기큐에서 삭제
-    this.gameManager.deletePlayerAtQueue(data.nickname);
-    if (!this.gameManager.hasQueue(data.nickname)) {
+    this.gameStore.deletePlayerAtQueue(data.nickname);
+    if (!this.gameStore.hasQueue(data.nickname)) {
       client.emit('game/matchout');
     }
+  }
+
+  @SubscribeMessage('game/private-matchout')
+  handleGamePrivateMatchOut(client: Socket, data: { roomKey: string }) {
+    // 대기큐에서 삭제
+    this.gameStore.deletePrivateGame(data.roomKey);
   }
 
   @SubscribeMessage('game/bar')
@@ -239,7 +298,7 @@ export class GameGateway implements OnGatewayDisconnect {
     roomKey: string,
     gs: GameService,
     io: Server,
-    gm: GameRoomManager,
+    gm: GameStore,
   ) {
     // 소켓 룸 키를 받아서 실제 게임 계산 처리
     // 게임 상태가 이 함수에서 변경될 수 있음
@@ -278,10 +337,12 @@ export class GameGateway implements OnGatewayDisconnect {
     }
   }
 
-  private existPlayer(nickname: string): boolean {
+  private existPlayer(nickname: string, roomId: string): boolean {
+    console.log('existPlayer', this.gameStore.isPrivateGame(roomId));
     return (
-      this.gameManager.hasQueue(nickname) ||
-      this.gameService.hasPlayer(nickname)
+      this.gameStore.hasQueue(nickname) ||
+      this.gameService.hasPlayer(nickname) ||
+      this.gameStore.isPrivateGame(roomId)
     );
   }
 }

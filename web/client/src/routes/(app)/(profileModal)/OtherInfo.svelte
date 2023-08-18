@@ -1,10 +1,23 @@
 <script lang="ts">
 	import MatchStat from "./MatchStat.svelte";
-	import { myData, profileModalStore, socketStore } from "../../../store";
+	import { gameSettingStore, modalStatesStore, myData, socketStore } from "../../../store";
   import type { AlertData, OtherUserData } from "../../../interfaces";
   import { AlertType, Relation } from "../../../enums";
+  import { goto } from "$app/navigation";
+  import { onDestroy, onMount } from "svelte";
 
 	export let user: OtherUserData;
+
+	onMount(() => {
+		$socketStore.on('alert/redirect', (key: string) => {
+			goto(`/?key=${key}`);
+		});
+	})
+
+	onDestroy(() => {
+		$socketStore.off('alert/redirect');
+		$modalStatesStore.isProfileModal = false;
+	})
 
 	const sendFollow = async () => {
 		if (user.relation === Relation.BLOCK) return;
@@ -36,20 +49,14 @@
 	}
 
 	const sendGame = async () => {
-		/**
-		 * @TODO
-		 * 수정하세요
-		 */
-		const response = fetch(`http://localhost:3000/api/user/game?nickname=${user.nickname}`, {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-		.then((response) => {
-			
-		})
+		if (user.relation === Relation.BLOCK) return;
+		const data: AlertData = {
+			sender: $myData,
+			receiver: user,
+			alertType: AlertType.GAME_REQUEST,
+			gameSetting: $gameSettingStore,
+		}
+		$socketStore.emit("alert/game", data);
 	}
 
 	const sendBlock = async () => {

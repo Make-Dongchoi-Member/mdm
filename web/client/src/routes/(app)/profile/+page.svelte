@@ -63,17 +63,4 @@
 		margin-top: 20px;
 		box-sizing: border-box;
 	}
-
-	.button_area {
-		display: flex;
-		flex-direction: row;
-		width: 750px;
-		height: 30px;
-		margin: 20px 10px 10px 15px;
-	}
-
-	button {
-		width: 150px;
-		margin-right: 15px;
-	}
 </style>
