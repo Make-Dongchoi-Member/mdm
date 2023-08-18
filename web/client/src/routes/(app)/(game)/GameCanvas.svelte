@@ -82,8 +82,8 @@
   let gameEnd: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
-  let leftLife: number = 5;
-  let rightLife: number = 5;
+  let leftLife: number = 1;
+  let rightLife: number = 1;
 
   let ballSpectrums: Position[] = new Array();
 
@@ -233,11 +233,12 @@
     });
 
     $socketStore.on("game/pause", (arg: string) => {
-      if (arg === "0") {
-        $socketStore.emit("game/restart", {
+      if (arg === "restart") {
+        $socketStore.emit("game/start", {
           nickname: $myData.nickname,
           roomKey: gameInfo.roomKey,
         });
+        return;
       }
 
       ctx.fillStyle = gamePrefer.backgroundColor;
@@ -267,7 +268,8 @@
         // 내가 짐
         gamePrefer.message = "YOU LOSE";
       }
-      mouseControl();
+      gamePrefer.controlWithMouse = false;
+      document.exitPointerLock();
       gameRoomMaster = false;
       gaming = false;
       gameEnd = true;
@@ -293,7 +295,8 @@
         gamePrefer.message = "YOU LOSE";
       }
 
-      mouseControl();
+      gamePrefer.controlWithMouse = false;
+      document.exitPointerLock();
       gaming = false;
       gameRoomMaster = false;
       ready = false;

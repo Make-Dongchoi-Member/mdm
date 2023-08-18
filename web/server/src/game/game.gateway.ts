@@ -104,36 +104,26 @@ export class GameGateway implements OnGatewayDisconnect {
     // 게임 상태를 GAMING 으로 변경
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
 
-    // 반복함수에 게임 엔진과 게임 정보 넘겨서 게임 진행d
-    const id = setInterval(
-      this.gameMain,
-      FRAME_PER_MS,
-      data.roomKey,
-      this.gameService,
-      this.io,
-      this.gameManager,
-    );
-
-    // 반복함수 관리를 위해 해당 반복함수 ID를 소켓 룸 키와 함께 저장d
-    this.gameManager.saveIntervalID(data.roomKey, id);
-  }
-
-  @SubscribeMessage('game/restart')
-  handleGameRestart(client: Socket, data: GameStartDTO) {
-    const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
-    if (data.nickname !== gameStatus.playerA.nickname) return;
-
-    this.gameService.setGameState(data.roomKey, GameState.GAMING);
-
-    const id = setInterval(
-      this.gameMain,
-      FRAME_PER_MS,
-      data.roomKey,
-      this.gameService,
-      this.io,
-      this.gameManager,
-    );
-    this.gameManager.saveIntervalID(data.roomKey, id);
+    // 반복함수에 게임 엔진과 게임 정보 넘겨서 3초 후 게임 진행
+    this.io.to(data.roomKey).emit('game/pause', '3');
+    setTimeout(() => {
+      this.io.to(data.roomKey).emit('game/pause', '2');
+      setTimeout(() => {
+        this.io.to(data.roomKey).emit('game/pause', '1');
+        // 게임 정보 세팅 및 반복함수 재등록
+        setTimeout(() => {
+          const id = setInterval(
+            this.gameMain,
+            FRAME_PER_MS,
+            data.roomKey,
+            this.gameService,
+            this.io,
+            this.gameManager,
+          );
+          this.gameManager.saveIntervalID(data.roomKey, id);
+        }, 1000);
+      }, 1000);
+    }, 1000);
   }
 
   @SubscribeMessage('game/revenge')
@@ -174,9 +164,29 @@ export class GameGateway implements OnGatewayDisconnect {
     }
   }
 
-  // 게임 중간에 나간 사용자만
+  // 게임 end 이후 그만 뒀을 때
   @SubscribeMessage('game/quit')
   handleGameEnd(client: Socket, data: GameEndDTO) {
+    const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
+    clearInterval(this.gameManager.getIntervalID(data.roomKey));
+    this.gameService.setUserState(
+      gameStatus.playerA.nickname,
+      UserState.ONLINE,
+    );
+    this.gameService.setUserState(
+      gameStatus.playerB.nickname,
+      UserState.ONLINE,
+    );
+    this.gameManager.deleteGameRoomKey(data.roomKey);
+    this.gameService.deleteGameStatus(data.roomKey);
+    this.io.to(data.roomKey).emit('game/quit', gamePlayInfo);
+    client.leave(data.roomKey);
+  }
+
+  // 게임 중간에 나간 사용자만
+  @SubscribeMessage('game/roomout')
+  handleGameRoomOut(client: Socket, data: GameEndDTO) {
     // gmae 도중 사용자가 나갔을 때
     // gameEnd로 설정
     // interval, roomKey, gameStatus 삭제ㅇ
@@ -206,14 +216,7 @@ export class GameGateway implements OnGatewayDisconnect {
     );
     this.gameManager.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
-    this.io.to(data.roomKey).emit('game/quit', gamePlayInfo);
-    client.leave(data.roomKey);
-  }
-
-  // 게임이 종료되면 둘 다
-  @SubscribeMessage('game/roomout')
-  handleGameRoomOut(client: Socket, data: GameEndDTO) {
-    // game 종료후 사용자가 속한 room 제거 요청
+    this.io.to(data.roomKey).emit('game/roomout', gamePlayInfo);
     client.leave(data.roomKey);
   }
 
@@ -250,43 +253,28 @@ export class GameGateway implements OnGatewayDisconnect {
       io.to(roomKey).emit('game/play', gamePlayInfo);
     } else if (gameStatus.state === GameState.PAUSE) {
       clearInterval(gm.getIntervalID(roomKey));
-      // 스코어 소진으로 인해 게임이 정상적으로 종료된 경우 처리
-      if (gameStatus.playerA.life <= 0 || gameStatus.playerB.life <= 0) {
-        // 게임 상태를 END로 변경
-        gs.setGameState(roomKey, GameState.END);
+      // 일시 정지된 게임 정보를 클라이언트에게 emit, 게임 상태 PAUSE
+      gs.setGame(roomKey);
+      io.to(roomKey).emit('game/play', gamePlayInfo);
 
-        // 게임 결과 DB에 저장
-        if (gameStatus.playerA.life <= 0) {
-          gs.saveGameToDB(
-            gameStatus.playerB.nickname,
-            gameStatus.playerA.nickname,
-          );
-        } else if (gameStatus.playerB.life <= 0) {
-          gs.saveGameToDB(
-            gameStatus.playerA.nickname,
-            gameStatus.playerB.nickname,
-          );
-        }
-        // 진행되고 있던 게임이 종료되었다는 정보를 클라이언트에게 emit, 게임 상태 END
-        io.to(roomKey).emit('game/end', gamePlayInfo);
-      } else {
-        // 일시 정지된 게임 정보를 클라이언트에게 emit, 게임 상태 PAUSE
-        gs.setGame(roomKey);
-        io.to(roomKey).emit('game/play', gamePlayInfo);
-
-        // 1초에 한 번 씩 시간정보를 emit, 3번 반복
-        io.to(roomKey).emit('game/pause', '3');
-        setTimeout(() => {
-          io.to(roomKey).emit('game/pause', '2');
-          setTimeout(() => {
-            io.to(roomKey).emit('game/pause', '1');
-            // 게임 정보 세팅 및 반복함수 재등록
-            setTimeout(() => {
-              io.to(roomKey).emit('game/pause', '0');
-            }, 1000);
-          }, 1000);
-        }, 1000);
+      // 1초에 한 번 씩 시간정보를 emit, 3번 반복
+      io.to(roomKey).emit('game/pause', 'restart');
+    } else if (gameStatus.state === GameState.END) {
+      clearInterval(gm.getIntervalID(roomKey));
+      // 게임 결과 DB에 저장
+      if (gameStatus.playerA.life <= 0) {
+        gs.saveGameToDB(
+          gameStatus.playerB.nickname,
+          gameStatus.playerA.nickname,
+        );
+      } else if (gameStatus.playerB.life <= 0) {
+        gs.saveGameToDB(
+          gameStatus.playerA.nickname,
+          gameStatus.playerB.nickname,
+        );
       }
+      // 진행되고 있던 게임이 종료되었다는 정보를 클라이언트에게 emit, 게임 상태 END
+      io.to(roomKey).emit('game/end', gamePlayInfo);
     }
   }
 

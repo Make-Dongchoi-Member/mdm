@@ -86,25 +86,36 @@ export class GameService {
 
     const ball = gameStatus.ball;
     const barA = gameStatus.playerA.bar;
+    if (barA.y < 0) barA.y = 0;
+    if (barA.y > CANVAS_HEIGHT - barA.h) barA.y = CANVAS_HEIGHT - barA.h;
+
     const barB = gameStatus.playerB.bar;
+    if (barB.y < 0) barB.y = 0;
+    if (barB.y > CANVAS_HEIGHT - barB.h) barB.y = CANVAS_HEIGHT - barB.h;
 
     ball.x += ball.speedX;
     ball.y += ball.speedY;
-
-    // console.log(ball, barA, barB);
 
     //공이 왼쪽 벽에 부딪혔을 때의 조건
     if (ball.x < 0) {
       // console.log('left wall');
       gameStatus.playerA.life = gameStatus.playerA.life - 1;
-      gameStatus.state = GameState.PAUSE;
+      if (gameStatus.playerA.life === 0) {
+        gameStatus.state = GameState.END;
+      } else {
+        gameStatus.state = GameState.PAUSE;
+      }
     }
 
     //공이 오른쪽 벽에 부딪혔을 때의 조건
     else if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
       // console.log('right wall');
       gameStatus.playerB.life = gameStatus.playerB.life - 1;
-      gameStatus.state = GameState.PAUSE;
+      if (gameStatus.playerB.life === 0) {
+        gameStatus.state = GameState.END;
+      } else {
+        gameStatus.state = GameState.PAUSE;
+      }
     }
 
     //공이 위, 아래 벽에 부딪혔을 때의 조건
@@ -120,7 +131,6 @@ export class GameService {
       ball.y < barA.y + barA.h &&
       ball.y > barA.y
     ) {
-      // console.log('left bar');
       if (ball.speedX < 0) {
         ball.speedX = this.randomSpeed();
         if (ball.speedY < 0) {
@@ -138,7 +148,6 @@ export class GameService {
       ball.y < barB.y + barB.h &&
       ball.y > barB.y
     ) {
-      // console.log('right bar');
       if (ball.speedX > 0) {
         ball.speedX = this.randomSpeed() * -1;
         if (ball.speedY < 0) {
@@ -150,7 +159,6 @@ export class GameService {
     }
 
     this.gameRoomStatusMap.set(roomKey, gameStatus);
-    // emit
   }
 
   getGameStatusByKey(roomKey: string): GameStatus {
@@ -166,7 +174,6 @@ export class GameService {
     } else {
       gameStatus.playerB.bar.y += pos;
     }
-    // console.log(gameStatus);
     this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
