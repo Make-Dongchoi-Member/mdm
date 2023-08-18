@@ -1,5 +1,5 @@
 import { CustomRepository } from 'src/decorators/customrepository.decorator';
-import { AlarmEntity as AlertEntity } from '../entities/alarm.entity';
+import { AlertEntity as AlertEntity } from '../entities/alert.entity';
 import { ArrayContains, Repository } from 'typeorm';
 import { AlertType as AlertType } from 'src/types/enums';
 import { Users } from '../entities/user.entity';
@@ -26,11 +26,11 @@ export class AlertRepository extends Repository<AlertEntity> {
   }
 
   async userHasAlert(user: Users) {
-    const alarm = this.findOne({
+    const alert = this.findOne({
       where: {
         receiver: ArrayContains([user]),
       },
     });
-    return alarm !== null;
+    return alert !== null;
   }
 }

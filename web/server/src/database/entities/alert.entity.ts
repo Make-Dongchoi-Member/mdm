@@ -9,7 +9,7 @@ import {
 import { Users } from './user.entity';
 
 @Entity()
-export class AlarmEntity extends BaseEntity {
+export class AlertEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,13 +22,13 @@ export class AlarmEntity extends BaseEntity {
   @Column('enum', { enum: AlertType })
   type: AlertType;
 
-  @ManyToOne(() => Users, (user) => user.sendAlarms, {
+  @ManyToOne(() => Users, (user) => user.sendAlerts, {
     cascade: true,
     eager: true,
   })
   sender: Users;
 
-  @ManyToOne(() => Users, (user) => user.receiveAlarms, {
+  @ManyToOne(() => Users, (user) => user.receiveAlerts, {
     cascade: true,
     eager: true,
   })

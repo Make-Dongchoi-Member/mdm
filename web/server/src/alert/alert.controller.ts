@@ -2,11 +2,8 @@ import { Body, Controller, Get, ParseIntPipe, Post } from '@nestjs/common';
 import { AlertService } from './alert.service';
 import { UserId } from 'src/decorators/user-id.decorator';
 import { AlertListDTO } from './dto/AlertList.dto';
-import { AlertData } from 'src/types/interfaces';
 import { AlertDTO } from './dto/Alert.dto';
-import { ChatService } from 'src/chat/chat.service';
 import { GameStore } from 'src/game/game.store';
-import { AlertType } from 'src/types/enums';
 
 @Controller('api/alert')
 export class AlertController {
@@ -17,8 +14,8 @@ export class AlertController {
 
   @Get('list')
   async alertList(@UserId(ParseIntPipe) userId: number): Promise<AlertListDTO> {
-    const alarms = await this.alertService.alertList(userId);
-    return { alerts: alarms };
+    const alerts = await this.alertService.alertList(userId);
+    return { alerts: alerts };
   }
 
   @Post('follow/accept')
@@ -47,9 +44,9 @@ export class AlertController {
 
   @Post('deny')
   async postDeny(@Body('data') data: AlertDTO): Promise<void> {
-    if (data.alert.alertType === AlertType.GAME_REQUEST) {
-      this.gameStore.deletePrivateGame(data.alert.roomId);
-    }
+    // if (data.alert.alertType === AlertType.GAME_REQUEST) {
+    //   this.gameStore.deletePrivateGame(data.alert.roomId);
+    // }
     await this.alertService.alertDelete(data.alert.alertId);
   }
 

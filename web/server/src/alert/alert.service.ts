@@ -3,9 +3,9 @@ import {
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { AlarmEntity as AlertEntity } from 'src/database/entities/alarm.entity';
+import { AlertEntity as AlertEntity } from 'src/database/entities/alert.entity';
 import { DMRooms } from 'src/database/entities/dm-room.entity';
-import { AlertRepository } from 'src/database/repositories/alarm.repository';
+import { AlertRepository } from 'src/database/repositories/alert.repository';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameStore } from 'src/game/game.store';
@@ -21,9 +21,9 @@ export class AlertService {
   ) {}
 
   async alertList(userId: number) {
-    const user = await this.userRepository.getUserByIdWithAlarm(userId);
+    const user = await this.userRepository.getUserByIdWithAlert(userId);
     if (!user) throw new NotFoundException(`user_id ${userId} Not Found`);
-    return user.receiveAlarms.map(this.alertEntityToAlertData);
+    return user.receiveAlerts.map(this.alertEntityToAlertData);
   }
 
   async followAlertSave(alert: AlertData) {

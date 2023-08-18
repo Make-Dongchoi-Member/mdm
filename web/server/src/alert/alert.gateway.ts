@@ -62,6 +62,7 @@ export class AlertGateway {
       );
       this.alertService.setAlertState(data.receiver.id, true);
       client.to(receiverSocketId).emit('alert');
+      this.io.to(client.id).emit('alert/redirect', data.roomId);
     } catch (error) {
       console.error(error);
     }

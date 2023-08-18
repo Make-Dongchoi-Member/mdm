@@ -59,7 +59,7 @@ export class GameGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
-    if (!this.existPlayer(data.nickname)) {
+    if (!this.existPlayer(data.nickname, data.roomId)) {
       this.gameStore.enqueue({
         socket: client,
         bar: this.util.barSetter(data),
@@ -99,7 +99,9 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('game/private-match-deny')
   handlePrivateGameDeny(client: Socket, data: AlertDTO) {
     if (!this.gameStore.isPrivateGame(data.alert.roomId)) return;
-    client.to(`${data.alert.sender.id}`).emit('game/private-match-deny', data);
+    const sender = this.gameStore.getPrivateGame(data.alert.roomId);
+    this.io.to(sender.socket.id).emit('game/private-match-deny', data);
+    sender.socket.leave(data.alert.roomId);
   }
 
   @SubscribeMessage('game/private-match')
@@ -109,6 +111,7 @@ export class GameGateway implements OnGatewayDisconnect {
     if (!this.gameStore.isPrivateGame(data.alert.roomId)) return;
 
     const sender: Player = this.gameStore.getPrivateGame(data.alert.roomId);
+    this.gameStore.deletePrivateGame(data.alert.roomId);
 
     // 두 플레이어를 게임방에 join
     sender.socket.join(data.alert.roomId);
@@ -223,6 +226,12 @@ export class GameGateway implements OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('game/private-matchout')
+  handleGamePrivateMatchOut(client: Socket, data: { roomKey: string }) {
+    // 대기큐에서 삭제
+    this.gameStore.deletePrivateGame(data.roomKey);
+  }
+
   @SubscribeMessage('game/bar')
   handleGameBarMove(client: Socket, data: GameBarDTO) {
     // console.log(data
@@ -271,9 +280,12 @@ export class GameGateway implements OnGatewayDisconnect {
     }
   }
 
-  private existPlayer(nickname: string): boolean {
+  private existPlayer(nickname: string, roomId: string): boolean {
+    console.log('existPlayer', this.gameStore.isPrivateGame(roomId));
     return (
-      this.gameStore.hasQueue(nickname) || this.gameService.hasPlayer(nickname)
+      this.gameStore.hasQueue(nickname) ||
+      this.gameService.hasPlayer(nickname) ||
+      this.gameStore.isPrivateGame(roomId)
     );
   }
 }

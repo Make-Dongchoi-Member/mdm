@@ -1,18 +1,18 @@
 <script lang="ts">
-  import type { AlertData, AlertListDTO } from "../../interfaces";
-	import { AlertType } from "../../enums";
+  import type { AlertData } from "../../interfaces";
+  import { AlertType } from "../../enums";
   import { goto } from "$app/navigation";
   import { gameSettingStore, modalStatesStore, myData, socketStore } from "../../store";
 
-	export let alert: AlertData;
+	export let alertData: AlertData;
 	export let getAlertList: Function;
 	
 	const acceptButtonClickEvent = () => {
-		if (alert.alertType === AlertType.CHAT_INVITE) {
+		if (alertData.alertType === AlertType.CHAT_INVITE) {
 			postChatAlertAccept();
-		} else if (alert.alertType === AlertType.FRIEND_REQUEST) {
+		} else if (alertData.alertType === AlertType.FRIEND_REQUEST) {
 			postFollowAlertAccept();
-		} else if (alert.alertType === AlertType.GAME_REQUEST) {
+		} else if (alertData.alertType === AlertType.GAME_REQUEST) {
 			postGameAlertAccept();
 		}
 	}
@@ -25,7 +25,7 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ data: { alert } })
+				body: JSON.stringify({ data: { alert: alertData } })
 			})
 			.then(() => {
 				getAlertList();
@@ -43,13 +43,13 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ data: { alert } })
+				body: JSON.stringify({ data: { alert: alertData } })
 			})
 			.then(() => {
 				getAlertList();
 				$modalStatesStore.isNotiModal = false;
-				goto(`/chat/room?id=${alert.roomId}`);
-				$socketStore.emit("chat/enter", { roomId: `${alert.roomId}`, userId: `${$myData.id}` });
+				goto(`/chat/room?id=${alertData.roomId}`);
+				$socketStore.emit("chat/enter", { roomId: `${alertData.roomId}`, userId: `${$myData.id}` });
 			});
 		} catch (error) {
 			console.error("실패:", error);
@@ -64,16 +64,18 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ data: { alert } })
+				body: JSON.stringify({ data: { alert: alertData } })
 			})
 			.then((response) => response.json())
 			.then((response) => {
 				if (response) {
-					alert.gameSetting = $gameSettingStore;
-					$socketStore.emit("game/private-match", { alert });
-					goto("/");
-					$modalStatesStore.isNotiModal = false;
+					alertData.gameSetting = $gameSettingStore;
+					$socketStore.emit("game/private-match", { alert: alertData });
+					goto(`/?key=${alertData.roomId}`);
+				} else {
+					alert('room not found');
 				}
+				$modalStatesStore.isNotiModal = false;
 				getAlertList();
 			});
 		} catch (error) {
@@ -82,7 +84,7 @@
 	}
 
 	const postAlertDeny = async (): Promise<void> => {
-		if (alert === undefined) return;
+		if (alertData === undefined) return;
 		try {
 			const response = await fetch(`http://localhost:3000/api/alert/deny`, {
 				method: "POST",
@@ -90,11 +92,11 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ data: { alert } })
+				body: JSON.stringify({ data: { alert: alertData } })
 			})
 			.then(() => {
-				if (alert.alertType === AlertType.GAME_REQUEST) {
-					$socketStore.emit("game/private-match-deny", { alert });
+				if (alertData.alertType === AlertType.GAME_REQUEST) {
+					$socketStore.emit("game/private-match-deny", { alert: alertData });
 				}
 				getAlertList();
 			});
@@ -104,18 +106,18 @@
 	}
 </script>
 
-{#if alert}
+{#if alertData}
 <div class="modal-content">
-	{#if alert.alertType === AlertType.CHAT_INVITE}
+	{#if alertData.alertType === AlertType.CHAT_INVITE}
 	<div>GO TO CHATTING ROOM</div>
-	{:else if alert.alertType === AlertType.FRIEND_REQUEST}
+	{:else if alertData.alertType === AlertType.FRIEND_REQUEST}
 	<div>GET RELATIONSHIP</div>
-	{:else if alert.alertType === AlertType.GAME_REQUEST}
+	{:else if alertData.alertType === AlertType.GAME_REQUEST}
 	<div>GO TO MATCH</div>
 	{/if}
 	<div>
 		<span class="simple-text">with</span>
-		<span>{alert.sender.nickname}</span>
+		<span>{alertData.sender.nickname}</span>
 	</div>
 	<div class="button-area">
 		<button class="yes-button" on:click={acceptButtonClickEvent}>&#x2713;</button>

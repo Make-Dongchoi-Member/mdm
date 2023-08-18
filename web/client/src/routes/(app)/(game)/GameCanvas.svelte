@@ -10,6 +10,7 @@
     Position,
   } from "../../../interfaces";
   import { GameState } from "../../../enums";
+  import { page } from "$app/stores";
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -96,6 +97,7 @@
       nickname: $myData.nickname,
       gameMode: $gameSettingStore.gameMode,
       barColor: $gameSettingStore.barColor,
+      roomId: gameInfo.roomKey,
     });
   };
 
@@ -142,6 +144,12 @@
   };
 
   onMount(() => {
+    const roomKey = $page.url.searchParams.get('key');
+    if (roomKey !== null) {
+      gameInfo.roomKey = roomKey;
+      ready = true;
+      gamePrefer.message = "WAITING...";
+    }
     canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -152,7 +160,13 @@
     document.addEventListener("mousemove", handleMousePointer);
 
     $socketStore.on("game/private-match-deny", (data: AlertDTO) => {
-      alert(`${data.alert.receiver.nickname}님이 게임 초대를 거절하셨습니다!`);
+      console.log(data);
+      
+      /**
+       * @TODO
+       * 게임 페이지 초기화
+      */
+      alert(`${data.alert.receiver.nickname} refused the game!`);
       
     });
 
@@ -238,6 +252,7 @@
   onDestroy(() => {
     $socketStore.off("game/match");
     $socketStore.off("game/play");
+    $socketStore.off("game/private-match-deny")
     canvas.removeEventListener("click", mouseControl);
     document.removeEventListener("mousemove", handleMousePointer);
     if (matching) {
@@ -247,6 +262,8 @@
       });
     } else {
       $socketStore.emit("game/matchout", { nickname: $myData.nickname });
+      console.log(gameInfo)
+      $socketStore.emit("game/private-matchout", { roomKey : gameInfo.roomKey })
     }
   });
 </script>
