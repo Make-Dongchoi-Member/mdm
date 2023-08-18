@@ -102,7 +102,7 @@
 		isMakeButtonActivation = makeButtonActivationEvent();            
 	}
 
-	const passwordButtonToggle = () => {		
+	const passwordButtonToggle = () => {
 		isPassword = !isPassword;
 		if (!isPassword) {
 			passwordInput = "";
@@ -112,12 +112,12 @@
 			passwordInput = initialRoomInfo.password;
 		}
 		isPrivate = false;         
-		isMakeButtonActivation = makeButtonActivationEvent();
+		isMakeButtonActivation = makeButtonActivationEvent();		
 	}
 
-	const makeButtonActivationEvent = () => {			
-		if ((initialRoomInfo.roomtype === RoomType.PRIVATE && !isPrivate)
-				|| (initialRoomInfo.roomtype !== RoomType.PRIVATE && isPrivate)) {
+	const makeButtonActivationEvent = () => {
+		if (!isPassword && ((initialRoomInfo.roomtype === RoomType.PRIVATE && !isPrivate)
+				|| (initialRoomInfo.roomtype !== RoomType.PRIVATE && isPrivate))) {
 			return true;
 		}
 		if ((initialRoomInfo.roomtype === RoomType.LOCK && !isPassword)
