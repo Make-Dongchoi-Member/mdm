@@ -105,7 +105,7 @@
 	<button disabled='{user.relation === Relation.BLOCK}' on:click={sendFollow}>
 		{ user.relation === Relation.FRIEND ? "UNFOLLOW" : "FOLLOW"}
 	</button>
-	<button on:click={sendGame}>
+	<button disabled='{user.relation === Relation.BLOCK}' on:click={sendGame}>
 		PLAY WITH
 	</button>
 	<button on:click={sendBlock}>

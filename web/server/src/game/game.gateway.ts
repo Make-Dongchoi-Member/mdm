@@ -171,9 +171,9 @@ export class GameGateway implements OnGatewayDisconnect {
             data.roomKey,
             this.gameService,
             this.io,
-            this.gameManager,
+            this.gameStore,
           );
-          this.gameManager.saveIntervalID(data.roomKey, id);
+          this.gameStore.saveIntervalID(data.roomKey, id);
         }, 1000);
       }, 1000);
     }, 1000);
@@ -208,9 +208,9 @@ export class GameGateway implements OnGatewayDisconnect {
               data.roomKey,
               this.gameService,
               this.io,
-              this.gameManager,
+              this.gameStore,
             );
-            this.gameManager.saveIntervalID(data.roomKey, id);
+            this.gameStore.saveIntervalID(data.roomKey, id);
           }, 1000);
         }, 1000);
       }, 1000);
@@ -222,7 +222,7 @@ export class GameGateway implements OnGatewayDisconnect {
   handleGameEnd(client: Socket, data: GameEndDTO) {
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
-    clearInterval(this.gameManager.getIntervalID(data.roomKey));
+    clearInterval(this.gameStore.getIntervalID(data.roomKey));
     this.gameService.setUserState(
       gameStatus.playerA.nickname,
       UserState.ONLINE,
@@ -231,7 +231,7 @@ export class GameGateway implements OnGatewayDisconnect {
       gameStatus.playerB.nickname,
       UserState.ONLINE,
     );
-    this.gameManager.deleteGameRoomKey(data.roomKey);
+    this.gameStore.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
     this.io.to(data.roomKey).emit('game/quit', gamePlayInfo);
     client.leave(data.roomKey);

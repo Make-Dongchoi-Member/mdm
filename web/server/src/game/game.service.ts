@@ -2,28 +2,22 @@ import { Injectable } from '@nestjs/common';
 import {
   BALL_SIZE,
   BALL_SPEED,
-  BAR_BASIC_H,
-  BAR_HARD_H,
   BAR_W,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
   GAME_LIFE,
 } from 'src/configs/constants';
-
-import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
 import { GameState, UserState } from 'src/types/enums';
-import { Ball, Bar, GameStatus, Player } from 'src/types/interfaces';
+import { Ball, GameStatus, Player } from 'src/types/interfaces';
 import { GameHistory } from 'src/database/entities/game-history.entity';
 import { GameStore } from './game.store';
 import { clearInterval } from 'timers';
-import { GameReadyDTO } from './dto/GameReady.dto';
 import { GamePlayDTO } from './dto/GamePlay.dto';
 
 @Injectable()
 export class GameService {
   constructor(
-    private readonly roomRepository: RoomRepository,
     private readonly userRepository: UserRepository,
     private readonly gameStore: GameStore,
   ) {}
@@ -48,7 +42,7 @@ export class GameService {
   }
 
   setNewGame(roomKey: string) {
-    const gameStatus = this.gameRoomStatusMap.get(roomKey);
+    const gameStatus = this.gameStore.getStatusMap().get(roomKey);
     const ball: Ball = {
       x: (CANVAS_WIDTH - BALL_SIZE) / 2,
       y: (CANVAS_HEIGHT - BALL_SIZE) / 2,
@@ -58,7 +52,7 @@ export class GameService {
     gameStatus.ball = ball;
     gameStatus.playerA.life = GAME_LIFE;
     gameStatus.playerB.life = GAME_LIFE;
-    this.gameRoomStatusMap.set(roomKey, gameStatus);
+    this.gameStore.getStatusMap().set(roomKey, gameStatus);
   }
 
   setGame(roomKey: string) {
