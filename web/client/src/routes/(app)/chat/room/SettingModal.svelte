@@ -8,8 +8,7 @@
 	let isPrivate: boolean = $openedRoom.roomtype === RoomType.PRIVATE;
 	let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK;  
 	let isPasswordChanged: boolean = false;
-	let isMakeButtonActivation: boolean = false;
-	let roomtype: RoomType = RoomType.NORMAL;
+	let isMakeButtonActivation: boolean = false;	
 
 	const initialRoomInfo: RoomInfoDTO = { 
 		roomId: $openedRoom.roomId,
@@ -19,6 +18,7 @@
 		roomtype: $openedRoom.roomtype,
 	};    
 	let roomNameInputValue: string = $openedRoom.roomId;
+	let roomtype: RoomType =$openedRoom.roomtype;
 	let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
 	
 	async function changeRoom(data: any) {
@@ -57,7 +57,7 @@
 					방 설정을 위해 필요한 입력 체크
 					방 설정 변경 API 요청
 			*/
-		
+		roomtype = RoomType.NORMAL;
 		if (isPassword && !isPrivate) {
 			roomtype = RoomType.LOCK;
 		} else if (!isPassword && isPrivate) {
@@ -71,6 +71,9 @@
 			password: isPasswordChanged ? passwordInput : "",
 			roomtype: roomtype,
 		}
+		console.log("isPassword : ", isPassword);
+		console.log("password : ", roomInfo.password);
+		console.log("roomtype : ", roomtype);
 		changeRoom({data: {roomInfo}});
 	}
 
