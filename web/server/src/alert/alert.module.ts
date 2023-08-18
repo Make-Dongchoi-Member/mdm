@@ -10,6 +10,7 @@ import { UserRepository } from 'src/database/repositories/user.repository';
 import { AlertGateway } from './alert.gateway';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { Rooms } from 'src/database/entities/room.entity';
+import { GameModule } from 'src/game/game.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { Rooms } from 'src/database/entities/room.entity';
       UserRepository,
       RoomRepository,
     ]),
+    GameModule,
   ],
   providers: [AlertService, AlertGateway],
   controllers: [AlertController],

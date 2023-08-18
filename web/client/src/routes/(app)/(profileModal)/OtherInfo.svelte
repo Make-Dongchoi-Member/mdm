@@ -1,8 +1,9 @@
 <script lang="ts">
 	import MatchStat from "./MatchStat.svelte";
-	import { myData, profileModalStore, socketStore } from "../../../store";
+	import { gameSettingStore, myData, profileModalStore, socketStore } from "../../../store";
   import type { AlertData, OtherUserData } from "../../../interfaces";
   import { AlertType, Relation } from "../../../enums";
+  import { goto } from "$app/navigation";
 
 	export let user: OtherUserData;
 
@@ -36,20 +37,15 @@
 	}
 
 	const sendGame = async () => {
-		/**
-		 * @TODO
-		 * 수정하세요
-		 */
-		const response = fetch(`http://localhost:3000/api/user/game?nickname=${user.nickname}`, {
-            method: "POST",
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-		.then((response) => {
-			
-		})
+		if (user.relation === Relation.BLOCK) return;
+		const data: AlertData = {
+			sender: $myData,
+			receiver: user,
+			alertType: AlertType.GAME_REQUEST,
+			gameSetting: $gameSettingStore,
+		}
+		$socketStore.emit("alert/game", data);
+		goto("/");
 	}
 
 	const sendBlock = async () => {

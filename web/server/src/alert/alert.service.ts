@@ -8,6 +8,7 @@ import { DMRooms } from 'src/database/entities/dm-room.entity';
 import { AlertRepository } from 'src/database/repositories/alarm.repository';
 import { RoomRepository } from 'src/database/repositories/room.repository';
 import { UserRepository } from 'src/database/repositories/user.repository';
+import { GameStore } from 'src/game/game.store';
 import { AlertData } from 'src/types/interfaces';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class AlertService {
     private readonly alertRepository: AlertRepository,
     private readonly userRepository: UserRepository,
     private readonly roomRepository: RoomRepository,
+    private readonly gameStore: GameStore,
   ) {}
 
   async alertList(userId: number) {
@@ -33,7 +35,6 @@ export class AlertService {
     ) {
       throw new Error();
     }
-    console.log(alert);
     await this.alertRepository.saveAlert(alert.alertType, sender, receiver);
   }
 
@@ -46,6 +47,23 @@ export class AlertService {
       receiver.blocks.includes(sender.id) ||
       receiver.rooms.includes(+alert.roomId) ||
       room.ban.includes(receiver.id)
+    ) {
+      throw new Error();
+    }
+    await this.alertRepository.saveAlert(
+      alert.alertType,
+      sender,
+      receiver,
+      +alert.roomId,
+    );
+  }
+
+  async gameAlertSave(alert: AlertData) {
+    const sender = await this.userRepository.getUserById(alert.sender.id);
+    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    if (
+      sender.blocks.includes(receiver.id) ||
+      receiver.blocks.includes(sender.id)
     ) {
       throw new Error();
     }
@@ -120,5 +138,9 @@ export class AlertService {
 
   async setAlertState(userId: number, state: boolean) {
     await this.userRepository.setIsAlert(userId, state);
+  }
+
+  getNewGameRoomKey(): string {
+    return this.gameStore.newGameRoomKey();
   }
 }

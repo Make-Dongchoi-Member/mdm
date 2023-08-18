@@ -5,10 +5,15 @@ import { AlertListDTO } from './dto/AlertList.dto';
 import { AlertData } from 'src/types/interfaces';
 import { AlertDTO } from './dto/Alert.dto';
 import { ChatService } from 'src/chat/chat.service';
+import { GameStore } from 'src/game/game.store';
+import { AlertType } from 'src/types/enums';
 
 @Controller('api/alert')
 export class AlertController {
-  constructor(private readonly alertService: AlertService) {}
+  constructor(
+    private readonly alertService: AlertService,
+    private readonly gameStore: GameStore,
+  ) {}
 
   @Get('list')
   async alertList(@UserId(ParseIntPipe) userId: number): Promise<AlertListDTO> {
@@ -35,16 +40,16 @@ export class AlertController {
   }
 
   @Post('game/accept')
-  async postGameAccept(@Body('data') data: AlertDTO): Promise<void> {
-    // await this.alertService.acceptFollowAlert(
-    //   data.alert.receiver.id,
-    //   data.alert.sender.id,
-    // );
+  async postGameAccept(@Body('data') data: AlertDTO): Promise<boolean> {
     await this.alertService.alertDelete(data.alert.alertId);
+    return this.gameStore.isPrivateGame(data.alert.roomId);
   }
 
   @Post('deny')
   async postDeny(@Body('data') data: AlertDTO): Promise<void> {
+    if (data.alert.alertType === AlertType.GAME_REQUEST) {
+      this.gameStore.deletePrivateGame(data.alert.roomId);
+    }
     await this.alertService.alertDelete(data.alert.alertId);
   }
 
@@ -54,14 +59,5 @@ export class AlertController {
     @Body('data') data: { state: boolean },
   ): Promise<void> {
     await this.alertService.setAlertState(userId, data.state);
-  }
-
-  // 알람 저장 TEST
-  @Post('save')
-  async alertSave(
-    @UserId(ParseIntPipe) userId: number,
-    @Body('data') data: AlertData,
-  ) {
-    // this.alertService.alertSave(data);
   }
 }

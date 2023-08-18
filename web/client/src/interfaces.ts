@@ -186,6 +186,7 @@ export interface AlertData {
   sender: UserData;
   receiver: UserData;
   roomId?: string;
+  gameSetting?: GameSetting;
   date?: Date;
 }
 

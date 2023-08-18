@@ -26,6 +26,7 @@ const myData: Writable<MyData> = writable({
   friends: [],
   rooms: [],
   record: [],
+  isAlert: false,
 });
 
 const gameSettingStore: Writable<GameSetting> = writable({

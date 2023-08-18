@@ -6,6 +6,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { AlertService } from './alert.service';
 import { AlertData } from 'src/types/interfaces';
+import { GameStore } from 'src/game/game.store';
 
 @WebSocketGateway({
   cors: {
@@ -14,13 +15,15 @@ import { AlertData } from 'src/types/interfaces';
   },
 })
 export class AlertGateway {
-  constructor(private readonly alertService: AlertService) {}
+  constructor(
+    private readonly alertService: AlertService,
+    private readonly gameStore: GameStore,
+  ) {}
 
   @WebSocketServer() io: Server;
 
   @SubscribeMessage('alert/follow')
   async handleAlertFollow(client: Socket, data: AlertData) {
-    // this.alertService.alertSave(data)
     try {
       await this.alertService.followAlertSave(data);
       const receiverSocketId = await this.alertService.getSocketId(
@@ -37,6 +40,23 @@ export class AlertGateway {
   async handleAlertChat(client: Socket, data: AlertData) {
     try {
       await this.alertService.chatAlertSave(data);
+      const receiverSocketId = await this.alertService.getSocketId(
+        data.receiver.id,
+      );
+      this.alertService.setAlertState(data.receiver.id, true);
+      client.to(receiverSocketId).emit('alert');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  @SubscribeMessage('alert/game')
+  async handleAlertGame(client: Socket, data: AlertData) {
+    try {
+      data.roomId = this.alertService.getNewGameRoomKey();
+      this.gameStore.pushPrivateGame(client, data);
+      client.join(data.roomId);
+      await this.alertService.gameAlertSave(data);
       const receiverSocketId = await this.alertService.getSocketId(
         data.receiver.id,
       );

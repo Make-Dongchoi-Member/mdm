@@ -70,7 +70,6 @@ export class ChatController {
     @UserId(ParseIntPipe) userId: number,
     @Body('data') data: RoomInfoDTO,
   ) {
-    console.log(data);
     await this.chatService.updateRoom(userId, data.roomInfo);
   }
 

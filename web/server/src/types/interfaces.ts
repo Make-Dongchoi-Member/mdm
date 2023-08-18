@@ -105,6 +105,12 @@ export interface GameStatus {
   state: GameState;
 }
 
+export interface GameSetting {
+  gameMode: string;
+  barColor: string;
+  ballShape: string;
+}
+
 export interface AlertData {
   alertId?: number;
   alertType: AlertType;
@@ -112,4 +118,5 @@ export interface AlertData {
   receiver: UserData;
   roomId?: string;
   date?: Date;
+  gameSetting?: GameSetting;
 }

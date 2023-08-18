@@ -2,6 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import { gameSettingStore, socketStore, myData } from "../../../store";
   import type {
+  AlertDTO,
     Ball,
     Bar,
     GameRoom,
@@ -149,6 +150,11 @@
 
     canvas.addEventListener("click", mouseControl);
     document.addEventListener("mousemove", handleMousePointer);
+
+    $socketStore.on("game/private-match-deny", (data: AlertDTO) => {
+      alert(`${data.alert.receiver.nickname}님이 게임 초대를 거절하셨습니다!`);
+      
+    });
 
     $socketStore.on("game/room", (arg: GameRoom) => {
       gameInfo = arg;
