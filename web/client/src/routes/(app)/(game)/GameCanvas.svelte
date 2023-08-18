@@ -80,19 +80,26 @@
   let matching: boolean = false;
   let ready: boolean = false;
   let gaming: boolean = false;
-  let gameHost: boolean = false;
+  let gameRoomMaster: boolean = false;
   let gameEnd: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
-  let leftLife: number = 5;
-  let rightLife: number = 5;
+  let leftLife: number = 1;
+  let rightLife: number = 1;
 
   let ballSpectrums: Position[] = new Array();
 
   const gameReady = () => {
+    // 이미 레디 눌렀으면 동작 안 함
     if (ready) return;
+
+    // 레디 상태로 변경
     ready = true;
+
+    // 게임 버튼 메시지 변경
     gamePrefer.message = "WAITING...";
+
+    // 소켓에 "game/match" 로 emit, 내 닉네임과 게임 모드, 막대 컬러를 전송
     $socketStore.emit("game/match", {
       nickname: $myData.nickname,
       gameMode: $gameSettingStore.gameMode,
@@ -102,7 +109,8 @@
   };
 
   const gameStart = () => {
-    gameEnd = false;
+    // 서버로부터 게임 정보를 받아서 매칭이 된 경우에만 동작
+    // 소켓에 "game/start" 로 emit, 방장 플레이어의 닉네임과 소켓 룸 키를 전송
     if (matching) {
       $socketStore.emit("game/start", {
         nickname: gameInfo.playerA,
@@ -111,18 +119,32 @@
     }
   };
 
+  const revengeMatch = () => {
+    gameEnd = false;
+    ready = true;
+    gaming = true;
+    gamePrefer.message = "WAIT FOR THE ENEMY";
+    if (gameInfo.playerA === $myData.nickname) gameRoomMaster = true;
+
+    $socketStore.emit("game/revenge", {
+      nickname: $myData.nickname,
+      roomKey: gameInfo.roomKey,
+    });
+  };
+
   const gameQuit = () => {
     gameEnd = false;
     $socketStore.emit("game/quit", {
       nickname: $myData.nickname,
       roomKey: gameInfo.roomKey,
     });
+    gamePrefer.controlWithMouse = false;
+    document.exitPointerLock();
   };
 
   const handleMousePointer = (event: MouseEvent) => {
     if (gamePrefer.controlWithMouse) {
       const pos = event.movementY;
-      console.log(pos);
 
       $socketStore.emit("game/bar", {
         nickname: $myData.nickname,
@@ -171,22 +193,28 @@
     });
 
     $socketStore.on("game/room", (arg: GameRoom) => {
+      // 서버로 부터 받은 게임 정보를 저장
       gameInfo = arg;
       if (arg.roomKey.length > 0) {
         matching = true;
         gamePrefer.message = "WAIT TO START";
       }
-      if (gameInfo.playerA === $myData.nickname) gameHost = true;
+
+      // 서버 큐에 먼저 들어갔던 플레이어(방장 플레이어)가 왼쪽에 배치되어야 하므로 변수에 해당 정보 저장
+      if (gameInfo.playerA === $myData.nickname) gameRoomMaster = true;
     });
 
     $socketStore.on("game/play", (arg: GameStatus) => {
-      if (arg.state === GameState.GAMING) {
-        gaming = true;
-      } else {
-        return;
-      }
+      gaming = true;
+
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.strokeStyle = "#d2d2d2";
+      ctx.setLineDash([20]);
+      ctx.stroke();
 
       ballSpectrums.push({ x: ball.x, y: ball.y });
       if (ballSpectrums.length > 35) {
@@ -224,13 +252,33 @@
       rightLife = arg.playerB.life;
     });
 
-    $socketStore.on("game/end", (arg: GameStatus) => {
+    $socketStore.on("game/pause", (arg: string) => {
+      if (arg === "restart") {
+        $socketStore.emit("game/start", {
+          nickname: $myData.nickname,
+          roomKey: gameInfo.roomKey,
+        });
+        return;
+      }
+
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      let winner: string;
-      if (arg.playerA.life > 0) {
-        winner = arg.playerA.nickname;
-      } else {
+
+      ctx.fillStyle = "#d2d2d2";
+      ctx.font = "bold 60px sans-serif";
+      ctx.fillText(arg, canvas.width / 2, canvas.height / 2);
+    });
+
+    $socketStore.on("game/end", (arg: GameStatus) => {
+      leftLife = arg.playerA.life;
+      rightLife = arg.playerB.life;
+
+      ctx.fillStyle = gamePrefer.backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 승자의 닉네임을 저장
+      let winner: string = arg.playerA.nickname;
+      if (arg.playerB.life > 0) {
         winner = arg.playerB.nickname;
       }
       if ($myData.nickname === winner) {
@@ -240,12 +288,39 @@
         // 내가 짐
         gamePrefer.message = "YOU LOSE";
       }
-      mouseControl();
-      // ready = false;
-      // matching = false;
-      gameHost = false;
+      gamePrefer.controlWithMouse = false;
+      document.exitPointerLock();
+      gameRoomMaster = false;
       gaming = false;
       gameEnd = true;
+    });
+
+    $socketStore.on("game/quit", (arg: GameStatus) => {
+      leftLife = arg.playerA.life;
+      rightLife = arg.playerB.life;
+
+      ctx.fillStyle = gamePrefer.backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 승자의 닉네임을 저장
+      let winner: string = arg.playerA.nickname;
+      if (arg.playerB.life > 0) {
+        winner = arg.playerB.nickname;
+      }
+      if ($myData.nickname === winner) {
+        // 내가 이김
+        gamePrefer.message = "YOU WIN!";
+      } else {
+        // 내가 짐
+        gamePrefer.message = "YOU LOSE";
+      }
+
+      gamePrefer.controlWithMouse = false;
+      document.exitPointerLock();
+      gaming = false;
+      gameRoomMaster = false;
+      ready = false;
+      gameEnd = false;
     });
   });
 
@@ -276,15 +351,15 @@
 </div>
 <canvas id="game-canvas">Canvas</canvas>
 <div class="button-area" style={gaming ? "display: none" : "display: flex"}>
-  {#if gameHost}
+  {#if gameRoomMaster}
     <button on:click={gameStart}>GAME START</button>
-  {:else if !gameHost}
+  {:else if !gameRoomMaster}
     <button disabled={ready} on:click={gameReady}>{gamePrefer.message}</button>
   {/if}
   {#if gameEnd}
     <div class="rematch">
       <button on:click={gameQuit}>QUIT THE GAME</button>
-      <button on:click={gameStart}>REMATCH</button>
+      <button on:click={revengeMatch}>REMATCH</button>
     </div>
   {/if}
 </div>
