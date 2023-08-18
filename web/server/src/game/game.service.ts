@@ -7,6 +7,7 @@ import {
   BAR_W,
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
+  GAME_LIFE,
 } from 'src/configs/constants';
 
 import { RoomRepository } from 'src/database/repositories/room.repository';
@@ -44,6 +45,20 @@ export class GameService {
       playerA: playerA,
       playerB: playerB,
     };
+    this.gameRoomStatusMap.set(roomKey, gameStatus);
+  }
+
+  setNewGame(roomKey: string) {
+    const gameStatus = this.gameRoomStatusMap.get(roomKey);
+    const ball: Ball = {
+      x: (CANVAS_WIDTH - BALL_SIZE) / 2,
+      y: (CANVAS_HEIGHT - BALL_SIZE) / 2,
+      speedX: BALL_SPEED,
+      speedY: BALL_SPEED,
+    };
+    gameStatus.ball = ball;
+    gameStatus.playerA.life = GAME_LIFE;
+    gameStatus.playerB.life = GAME_LIFE;
     this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
