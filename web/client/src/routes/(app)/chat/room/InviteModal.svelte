@@ -6,7 +6,8 @@
   import { page } from "$app/stores";
 	
 	let isInviteButtonActivated: boolean = false;
-	let inputValue: string = "";
+	let isBanUser: boolean = false;
+	let inputValue: string = "";	
 	let receiver: UserData;
 
 	const inviteButtonEvent = () => {
@@ -26,11 +27,15 @@
 	const inputEvent = async (e: any) => {
 		e.target.value = e.target.value.replace(/\s/g, '');
 		inputValue = e.target.value; 
+		isBanUser = false;
 
 		const isUser = await isUserExistAPI(inputValue);
 		if (inputValue !== "" && isUser) {
 			isInviteButtonActivated = true;
 		} else {
+			isInviteButtonActivated = false;
+		}
+		if (isBanUser) {
 			isInviteButtonActivated = false;
 		}
 	}	
@@ -55,6 +60,9 @@
 			const data = await response.json();
 			if (data.exist) {
 				receiver = data.user;
+				if ($openedRoom.banList.includes(Number(receiver.id))) {
+					isBanUser = true;					
+				}
 				return true;
 			} else {
 				return false;
@@ -68,8 +76,10 @@
 	const initialInput = () => {		
 		inputValue = "";
 		isInviteButtonActivated = false;
+		isBanUser = false;
 	}
-
+	
+	
 </script>
 
 	<div class="modal-container" style="{$modalStatesStore.isInviteModal ? 'display: block;' : 'display: none;'}"
@@ -91,7 +101,7 @@
 			</div>
 			<div class="bottom-line">
 				<div class="find-result">
-					{#if !isInviteButtonActivated}
+					{#if !isInviteButtonActivated && !isBanUser}
 						<div class="invite-check">
 							unavailable
 						</div>
@@ -103,8 +113,15 @@
 							<div>
 								{receiver.nickname}
 							</div>
+							
+							{#if isBanUser}								
+								<div class="banDisplay">
+									(ban)
+								</div>
+							{/if}
 						</div>
 					{/if}
+					
 				</div>
 				<button 
 					class={isInviteButtonActivated ? 'make-button able' : 'make-button disable'}
@@ -250,7 +267,13 @@
 	.image-container {
 		display: flex;
 		justify-content: center;
-	} 
+	}
+	
+	.banDisplay {
+		color: red;
+		margin-left: 5px;
+		font-weight: bold;
+	}
   
 </style>
   

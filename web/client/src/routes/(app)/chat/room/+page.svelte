@@ -19,8 +19,6 @@
 		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
-			console.log(data);
-			
 			getRoomData();
 		});
 
@@ -88,7 +86,6 @@
 			$openedRoom.banList = data.openedRoom.banList;
 			$openedRoom.myLevel = ($openedRoom.members.get(`${$myData.id}`) as Profile).level;
 			$openedRoom = $openedRoom;
-			console.log('openRoom', $openedRoom);
 		})
 		.catch(error => console.error('Error:', error));
 	}
