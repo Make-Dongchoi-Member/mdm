@@ -91,7 +91,7 @@ export class ChatService {
     return newRoom.id.toString();
   }
 
-  async updateRoom(userId: number, roomInfo: RoomInfo) {
+  async updateRoom(userId: number, roomInfo: RoomInfo) {        
     const room = await this.roomRepository.getRoomById(+roomInfo.roomId);
     if (!room) {
       throw new NotFoundException(`room_id ${roomInfo.roomId} Not Found`);

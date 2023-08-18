@@ -9,40 +9,41 @@
 	let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK;  
 	let isPasswordChanged: boolean = false;
 	let isMakeButtonActivation: boolean = false;
+	let roomtype: RoomType = RoomType.NORMAL;
+
 	const initialRoomInfo: RoomInfoDTO = { 
 		roomId: $openedRoom.roomId,
 		hostId: $myData.id,
 		roomname: $openedRoom.roomname,
-		password:"initialpw",
+		password: "initialpw",
 		roomtype: $openedRoom.roomtype,
 	};    
-	let roomNameInputValue: string = "asfdasdf";
+	let roomNameInputValue: string = initialRoomInfo.roomname;
 	let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
 	
 	async function changeRoom(data: any) {
-	const response = await fetch("http://localhost:3000/api/chat/create", {
-		method: "POST",
-		credentials: 'include',
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(data),
-	})
-	.then(response => response.json())
-	.then(data => {			
-		$modalStatesStore.isRoomCreateModal = false;
-	})
-	.catch(error => console.error('Error:', error));
-}
+		const response = await fetch("http://localhost:3000/api/chat/room/update", {
+			method: "POST",
+			credentials: 'include',
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		})
+		.then( () => {
+			$openedRoom.roomname = roomNameInputValue;
+			$openedRoom.roomtype = roomtype;
+			initialRoomInfo.roomname = roomNameInputValue;
+			initialRoomInfo.roomtype = roomtype;
+			roomtype = RoomType.NORMAL;
+			$modalStatesStore.isSettingModal = false;
+		})
+		.catch(error => console.error('Error:', error));
+	}
 	
 	onMount(() => {
 		const makeButton = document.querySelector(".make-button") as HTMLButtonElement;        
-		makeButton.disabled = !isMakeButtonActivation;                
-		/*
-				@TODO
-				방 설정 정보 API 요청
-				방 설정 값 input 채워넣기
-		*/
+		makeButton.disabled = !isMakeButtonActivation;
 	});
 
 	const closeButtonEvent = () => {        
@@ -56,16 +57,21 @@
 					방 설정을 위해 필요한 입력 체크
 					방 설정 변경 API 요청
 			*/
-			// const roomInfo: RoomInfoDTO = {
-	// 	roomId: "",
-	// 	hostId: $myData.id,
-	// 	roomname: roomNameInputValue,
-	// 	password: passwordInput,
-	// 	roomtype: roomtype
-	// }
+		
+		if (isPassword && !isPrivate) {
+			roomtype = RoomType.LOCK;
+		} else if (!isPassword && isPrivate) {
+			roomtype = RoomType.PRIVATE;
+		}
 
-	//    changeRoom({data: {}});
-		$modalStatesStore.isSettingModal = false;
+		const roomInfo: RoomInfoDTO = {		
+			roomId: $openedRoom.roomId,
+			hostId: $openedRoom.hostId,
+			roomname: roomNameInputValue,
+			password: isPasswordChanged ? passwordInput : "",
+			roomtype: roomtype,
+		}
+		changeRoom({data: {roomInfo}});
 	}
 
 	const roomnameInputBoxEvent = (e: any) => {
@@ -81,7 +87,7 @@
 
 	const passwordInitialEvent = (e: any) => {
 		if (e.target.value === "initialpw") {
-				e.target.value = "";
+			e.target.value = "";
 		}
 		isPasswordChanged = true;
 	}
