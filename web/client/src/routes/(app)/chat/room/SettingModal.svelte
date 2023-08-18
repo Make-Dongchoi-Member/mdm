@@ -70,9 +70,6 @@
 			password: isPasswordChanged ? passwordInput : "",
 			roomtype: roomtype,
 		}
-		console.log("isPassword : ", isPassword);
-		console.log("password : ", roomInfo.password);
-		console.log("roomtype : ", roomtype);
 		changeRoom({data: {roomInfo}});
 	}
 
