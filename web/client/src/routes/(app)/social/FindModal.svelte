@@ -134,6 +134,7 @@
 		background-color: var(--dark-color);
 		border: 1px solid var(--point-color);
 		border-radius: 0.5rem;
+		z-index: 1;
 	}
 
 	.modal-title {      
