@@ -47,8 +47,8 @@ export class GameService {
     this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
-  setGame(socketRoom: string) {
-    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
+  setGame(roomKey: string) {
+    const gameStatus = this.gameRoomStatusMap.get(roomKey);
     const ball: Ball = {
       x: (CANVAS_WIDTH - BALL_SIZE) / 2,
       y: (CANVAS_HEIGHT - BALL_SIZE) / 2,
@@ -56,17 +56,17 @@ export class GameService {
       speedY: BALL_SPEED,
     };
     gameStatus.ball = ball;
-    this.gameRoomStatusMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
-  setGameState(socketRoom: string, state: GameState) {
-    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
+  setGameState(roomKey: string, state: GameState) {
+    const gameStatus = this.gameRoomStatusMap.get(roomKey);
     gameStatus.state = state;
-    this.gameRoomStatusMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
-  play(socketRoom: string) {
-    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
+  play(roomKey: string) {
+    const gameStatus = this.gameRoomStatusMap.get(roomKey);
     if (gameStatus.state !== GameState.GAMING) return;
 
     const ball = gameStatus.ball;
@@ -134,16 +134,16 @@ export class GameService {
       }
     }
 
-    this.gameRoomStatusMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(roomKey, gameStatus);
     // emit
   }
 
-  getGameStatusByKey(socketRoom: string): GameStatus {
-    return this.gameRoomStatusMap.get(socketRoom);
+  getGameStatusByKey(roomKey: string): GameStatus {
+    return this.gameRoomStatusMap.get(roomKey);
   }
 
-  barPosition(socketRoom: string, pos: number, nickname: string) {
-    const gameStatus = this.gameRoomStatusMap.get(socketRoom);
+  barPosition(roomKey: string, pos: number, nickname: string) {
+    const gameStatus = this.gameRoomStatusMap.get(roomKey);
     if (!gameStatus) return;
     const isLeft = gameStatus.playerA.nickname === nickname;
     if (isLeft) {
@@ -152,12 +152,12 @@ export class GameService {
       gameStatus.playerB.bar.y += pos;
     }
     // console.log(gameStatus);
-    this.gameRoomStatusMap.set(socketRoom, gameStatus);
+    this.gameRoomStatusMap.set(roomKey, gameStatus);
   }
 
-  deleteGameStatus(socketRoom: string) {
-    if (this.gameRoomStatusMap.has(socketRoom)) {
-      this.gameRoomStatusMap.delete(socketRoom);
+  deleteGameStatus(roomKey: string) {
+    if (this.gameRoomStatusMap.has(roomKey)) {
+      this.gameRoomStatusMap.delete(roomKey);
     }
   }
 

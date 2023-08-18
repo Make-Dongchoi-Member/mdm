@@ -22,27 +22,17 @@
   interface GamePrefer {
     message: string;
     controlWithMouse: boolean;
-    myScore: number;
-    enemyScore: number;
-    speed: number;
     backgroundColor: string;
     ballColor: BallColorRGB;
     barColor: string;
-    basicModeBar: number;
-    hardModeBar: number;
   }
 
   let gamePrefer: GamePrefer = {
     message: "READY FOR THE NEXT MATCH",
     controlWithMouse: false,
-    myScore: 5,
-    enemyScore: 5,
-    speed: 2.5,
     backgroundColor: "#424242",
     ballColor: { red: 200, green: 200, blue: 200 },
     barColor: $gameSettingStore.barColor,
-    basicModeBar: 120,
-    hardModeBar: 50,
   };
 
   let ballColorString: string = `rgb(
@@ -63,7 +53,7 @@
 
   let leftBar: Bar = {
     w: 7,
-    h: gamePrefer.basicModeBar,
+    h: 120,
     x: 0,
     y: 180,
     speed: 0,
@@ -72,7 +62,7 @@
 
   let rightBar: Bar = {
     w: 7,
-    h: gamePrefer.basicModeBar,
+    h: 120,
     x: 793,
     y: 180,
     speed: 0,
