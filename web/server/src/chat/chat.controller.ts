@@ -30,11 +30,6 @@ export class ChatController {
   async list(@UserId() userId: string): Promise<GetListDTO> {
     const rooms = await this.chatService.getRoomListOfUser(+userId);
     return { rooms };
-    /**
-     * @TODO
-     *  RoomInfo의 리스트를 보내주세요!!!
-     *  내가 들어간 방 + 프라이빗 제외한 모든 방 목록을 보내주세요!!!!!
-     */
   }
 
   /**
@@ -56,9 +51,11 @@ export class ChatController {
    * << roomID: string
    */
   @Post('create')
-  async create(@Body('data') data: RoomInfoDTO): Promise<PostCreateDTO> {
-    // 요청 userID와 roomInfo의 hostID 비교 로직 필요
-    const roomId = await this.chatService.createRoom(data.roomInfo);
+  async create(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: RoomInfoDTO,
+  ): Promise<PostCreateDTO> {
+    const roomId = await this.chatService.createRoom(userId, data.roomInfo);
     return { roomId };
   }
 
@@ -69,9 +66,12 @@ export class ChatController {
    * <<
    */
   @Post('room/update')
-  async roomUpdate(@Body('data') data: RoomInfoDTO) {
-    // 요청 userID와 roomInfo의 hostID 비교 로직 필요
-    await this.chatService.updateRoom(data.roomInfo);
+  async roomUpdate(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: RoomInfoDTO,
+  ) {
+    console.log(data);
+    await this.chatService.updateRoom(userId, data.roomInfo);
   }
 
   /**
@@ -81,8 +81,11 @@ export class ChatController {
    * <<
    */
   @Post('room/out')
-  async roomOut(@UserId() userId: string, @Body('data') data: RoomOutDTO) {
-    await this.chatService.roomOut(+userId, +data.roomId);
+  async roomOut(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: RoomOutDTO,
+  ) {
+    await this.chatService.roomOut(userId, +data.roomId);
   }
 
   /**
@@ -92,7 +95,10 @@ export class ChatController {
    * <<
    */
   @Post('room/enter')
-  async roomEnter(@UserId() userId: string, @Body('data') data: RoomEnterDTO) {
-    await this.chatService.roomEnter(+userId, +data.roomId, data.password);
+  async roomEnter(
+    @UserId(ParseIntPipe) userId: number,
+    @Body('data') data: RoomEnterDTO,
+  ) {
+    await this.chatService.roomEnter(userId, +data.roomId, data.password);
   }
 }

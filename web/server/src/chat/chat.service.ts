@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotAcceptableException,
@@ -83,17 +84,21 @@ export class ChatService {
     return roomDetail;
   }
 
-  async createRoom(roomInfo: RoomInfo) {
+  async createRoom(userId: number, roomInfo: RoomInfo) {
+    if (userId !== +roomInfo.hostId) throw new BadRequestException();
     const newRoom = await this.roomRepository.saveRoom(roomInfo);
     this.userRepository.appendRoomAtUser(newRoom.host, newRoom.id);
     return newRoom.id.toString();
   }
 
-  async updateRoom(roomInfo: RoomInfo) {
+  async updateRoom(userId: number, roomInfo: RoomInfo) {
     const room = await this.roomRepository.getRoomById(+roomInfo.roomId);
     if (!room) {
       throw new NotFoundException(`room_id ${roomInfo.roomId} Not Found`);
-    } else if (room.host.toString() !== roomInfo.hostId) {
+    } else if (
+      userId !== room.host ||
+      room.host.toString() !== roomInfo.hostId
+    ) {
       throw new ForbiddenException();
     }
     await this.roomRepository.updateRoomInfo(roomInfo);
@@ -114,10 +119,6 @@ export class ChatService {
   }
 
   async roomEnter(userId: number, roomId: number, password: string) {
-    /**
-     * @TODO
-     * 초대된 사람의 경우 방에 비밀번호 없이 들어올 수 있도록
-     */
     const room = await this.roomRepository.getRoomById(roomId);
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     if (room.roomtype === RoomType.LOCK)
