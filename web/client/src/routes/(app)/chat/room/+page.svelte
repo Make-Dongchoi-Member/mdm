@@ -7,11 +7,17 @@
 	import ChatMember from './ChatMember.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { Level } from '../../../../enums';
+	import { Level, RoomType } from '../../../../enums';
 	import { goto } from '$app/navigation';
 	import type { Message, Profile, SetRequestDTO } from '../../../../interfaces';
 	import ProfileModal from "../../(profileModal)/ProfileModal.svelte";
-	
+
+	let roomNameInputValue: string = $openedRoom.roomId;
+	let roomtype: RoomType =$openedRoom.roomtype;
+	let isPrivate: boolean = $openedRoom.roomtype === RoomType.PRIVATE;
+	let isPassword: boolean = $openedRoom.roomtype === RoomType.LOCK; 
+	let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
+
 
 	onMount(() => {
 		getRoomData();
@@ -105,7 +111,12 @@
 <ProfileModal />
 {/if}
 <InviteModal />
-<SettingModal />
+<SettingModal 
+	roomNameInputValue={roomNameInputValue} 
+	roomtype={roomtype} 
+	isPrivate={isPrivate} 
+	isPassword={isPassword} 
+	passwordInput={passwordInput} />
 <RoomoutModal />
 
 <div class="chat-box">
@@ -119,7 +130,13 @@
             </div>
             {#if $openedRoom.myLevel === Level.HOST}
                 <div class="chat-setting-button">
-                    <button on:click={() => { $modalStatesStore.isSettingModal = true; }}>&#9881;</button>
+                    <button on:click={() => { 
+											roomNameInputValue = $openedRoom.roomname;
+											roomtype = $openedRoom.roomtype;
+											isPrivate = $openedRoom.roomtype === RoomType.PRIVATE;
+											isPassword = $openedRoom.roomtype === RoomType.LOCK;
+											passwordInput = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
+											$modalStatesStore.isSettingModal = true; }}>&#9881;</button>
                 </div>
             {:else}
                 <div class="chat-setting-button"></div>
