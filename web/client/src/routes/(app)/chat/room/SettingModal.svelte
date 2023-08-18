@@ -18,7 +18,7 @@
 		password: "initialpw",
 		roomtype: $openedRoom.roomtype,
 	};    
-	let roomNameInputValue: string = initialRoomInfo.roomname;
+	let roomNameInputValue: string = $openedRoom.roomId;
 	let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
 	
 	async function changeRoom(data: any) {
@@ -243,7 +243,7 @@
 		font-weight: 500;
 		flex-grow: 0;
 		text-align: right;
-		background-color: var(--bg-color);
+		background-color: var(--dark-color);
 		color: var(--text-color);
 		border: none;
 		outline: none;
