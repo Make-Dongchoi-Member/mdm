@@ -89,6 +89,18 @@
 
   let ballSpectrums: Position[] = new Array();
 
+  const refreshInfo = () => {
+    gameInfo.playerA = "";
+    gameInfo.playerB = "";
+    gameInfo.roomKey = "";
+    matching = false;
+    ready = false;
+    gaming = false;
+    gameRoomMaster = false;
+    gameEnd = false;
+    ballSpectrums = new Array();
+  }
+
   const gameReady = () => {
     // 이미 레디 눌렀으면 동작 안 함
     if (ready) return;
@@ -166,6 +178,7 @@
   };
 
   onMount(() => {
+    refreshInfo();
     const roomKey = $page.url.searchParams.get('key');
     if (roomKey !== null) {
       gameInfo.roomKey = roomKey;
@@ -184,10 +197,7 @@
     $socketStore.on("game/private-match-deny", (data: AlertDTO) => {
       console.log(data);
       
-      /**
-       * @TODO
-       * 게임 페이지 초기화
-      */
+      refreshInfo();
       alert(`${data.alert.receiver.nickname} refused the game!`);
       
     });
@@ -253,6 +263,7 @@
     });
 
     $socketStore.on("game/pause", (arg: string) => {
+      ballSpectrums = new Array();
       if (arg === "restart") {
         $socketStore.emit("game/start", {
           nickname: $myData.nickname,
@@ -314,7 +325,7 @@
         // 내가 짐
         gamePrefer.message = "YOU LOSE";
       }
-
+      refreshInfo();
       gamePrefer.controlWithMouse = false;
       document.exitPointerLock();
       gaming = false;

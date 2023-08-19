@@ -39,19 +39,31 @@ export class GameGateway implements OnGatewayDisconnect {
       // 큐에 들어있는 경우 아직 매칭되지 않은 유저
       this.gameStore.deletePlayerAtQueueBySocketId(client.id);
     } else {
-      // 큐에 없는 경우 ready하지 않았거나, 게임 진행중이던 유저
+      // 큐에 없는 경우 ready하지 않았거나, 게임이 이미 끝났거나, 재경기 대기 중이거나, 게임 진행중이던 유저
       // 게임 진행중이던 유저인 경우 roomKey가 존재함
       const roomKey = this.gameService.getRoomKeyBySocketId(client.id);
       if (roomKey) {
         const gameStatus = this.gameService.getGameStatusByKey(roomKey);
         const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
-        this.gameService.deleteAbortedGame(
-          client.id,
-          roomKey,
-          this.gameStore,
-          gameStatus,
-        );
-        this.io.to(roomKey).emit('game/quit', gamePlayInfo);
+
+        if (
+          gameStatus.state === GameState.GAMING ||
+          gameStatus.state === GameState.PAUSE
+        ) {
+          this.gameService.deleteAbortedGame(
+            client.id,
+            roomKey,
+            this.gameStore,
+            gameStatus,
+          );
+          this.io.to(roomKey).emit('game/quit', gamePlayInfo);
+        } else {
+          // 게임 종료 후 재경기 대기 중에 이탈자 발생한 경우
+          // 또는 게임 종료 후 추가 행동 없이 이탈한 경우
+          // 게임 결과 저장하지 않고 게임 정보만 삭제
+          // 'game/roomout'
+        }
+
         client.leave(roomKey);
       }
     }
@@ -148,7 +160,7 @@ export class GameGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('game/start')
   handleGameStart(client: Socket, data: GameStartDTO) {
-    // 서버에 저장해뒀던 게임 정보를 소켓 룸 키를 이용해 불러오기d
+    // 서버에 저장해뒀던 게임 정보를 소켓 룸 키를 이용해 불러오기
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
 
     // 방장 플레이어의 닉네임으로 온 요청이 아니라면 동작하지 않음
@@ -237,12 +249,12 @@ export class GameGateway implements OnGatewayDisconnect {
     client.leave(data.roomKey);
   }
 
-  // 게임 중간에 나간 사용자만
+  // 게임 중간 이탈자 발생 시 처리하는 핸들러
   @SubscribeMessage('game/roomout')
   handleGameRoomOut(client: Socket, data: GameEndDTO) {
     // gmae 도중 사용자가 나갔을 때
     // gameEnd로 설정
-    // interval, roomKey, gameStatus 삭제ㅇ
+    // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameStore.getIntervalID(data.roomKey));
@@ -316,7 +328,6 @@ export class GameGateway implements OnGatewayDisconnect {
       gs.setGame(roomKey);
       io.to(roomKey).emit('game/play', gamePlayInfo);
 
-      // 1초에 한 번 씩 시간정보를 emit, 3번 반복
       io.to(roomKey).emit('game/pause', 'restart');
     } else if (gameStatus.state === GameState.END) {
       clearInterval(gm.getIntervalID(roomKey));
