@@ -81,7 +81,7 @@
   let ready: boolean = false;
   let gaming: boolean = false;
   let gameRoomMaster: boolean = false;
-  let gameEnd: boolean = false;
+  let gameOver: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
   let leftLife: number = 1;
@@ -97,7 +97,7 @@
     ready = false;
     gaming = false;
     gameRoomMaster = false;
-    gameEnd = false;
+    gameOver = false;
     ballSpectrums = new Array();
   }
 
@@ -132,7 +132,7 @@
   };
 
   const revengeMatch = () => {
-    gameEnd = false;
+    gameOver = false;
     ready = true;
     gaming = true;
     gamePrefer.message = "WAIT FOR THE ENEMY";
@@ -145,7 +145,7 @@
   };
 
   const gameQuit = () => {
-    gameEnd = false;
+    gameOver = false;
     $socketStore.emit("game/quit", {
       nickname: $myData.nickname,
       roomKey: gameInfo.roomKey,
@@ -299,11 +299,10 @@
         // 내가 짐
         gamePrefer.message = "YOU LOSE";
       }
+      refreshInfo();
       gamePrefer.controlWithMouse = false;
       document.exitPointerLock();
-      gameRoomMaster = false;
-      gaming = false;
-      gameEnd = true;
+      gameOver = true;
     });
 
     $socketStore.on("game/quit", (arg: GameStatus) => {
@@ -328,10 +327,6 @@
       refreshInfo();
       gamePrefer.controlWithMouse = false;
       document.exitPointerLock();
-      gaming = false;
-      gameRoomMaster = false;
-      ready = false;
-      gameEnd = false;
     });
   });
 
@@ -367,7 +362,7 @@
   {:else if !gameRoomMaster}
     <button disabled={ready} on:click={gameReady}>{gamePrefer.message}</button>
   {/if}
-  {#if gameEnd}
+  {#if gameOver}
     <div class="rematch">
       <button on:click={gameQuit}>QUIT THE GAME</button>
       <button on:click={revengeMatch}>REMATCH</button>
