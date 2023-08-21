@@ -33,6 +33,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     try {
       const user = await this.userRepository.getUserBySocketId(client.id);
+      if (!user) return;
 
       for (const iterator of user.friends) {
         const friend = await this.userRepository.findOneBy({ id: iterator });
