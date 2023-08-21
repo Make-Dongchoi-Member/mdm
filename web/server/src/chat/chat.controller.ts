@@ -27,8 +27,8 @@ export class ChatController {
    * << rooms: Room[]
    */
   @Get('list')
-  async list(@UserId() userId: string): Promise<GetListDTO> {
-    const rooms = await this.chatService.getRoomListOfUser(+userId);
+  async list(@UserId(ParseIntPipe) userId: number): Promise<GetListDTO> {
+    const rooms = await this.chatService.getRoomListOfUser(userId);
     return { rooms };
   }
 
@@ -39,8 +39,11 @@ export class ChatController {
    * << openedRoom: RoomDetail
    */
   @Get('room')
-  async room(@Query('room_id') roomId: string): Promise<GetRoomDTO> {
-    const openedRoom = await this.chatService.getRoomDetail(+roomId);
+  async room(
+    @UserId(ParseIntPipe) userId: number,
+    @Query('room_id', ParseIntPipe) roomId: number,
+  ): Promise<GetRoomDTO> {
+    const openedRoom = await this.chatService.getRoomDetail(userId, roomId);
     return { openedRoom };
   }
 

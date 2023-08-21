@@ -18,7 +18,10 @@ import { APP_URL, DEV_URL } from 'src/configs/constants';
 @Controller('api/login')
 @JwtPublic()
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly config: ConfigService,
+  ) {}
 
   /**
    * 쿠키확인(access_token)
@@ -40,10 +43,10 @@ export class LoginController {
       // token vaild check
       const tokenValid = await this.loginService.tokenValidCheck(token);
       if (tokenValid) {
-        if (new ConfigService().get('NODE_ENV') === 'prod') {
-          url = new ConfigService().get(APP_URL);
+        if (this.config.get('NODE_ENV') === 'prod') {
+          url = this.config.get(APP_URL);
         } else {
-          url = new ConfigService().get(DEV_URL);
+          url = this.config.get(DEV_URL);
         }
       } else {
         url = await this.loginService.oAuth42AccessUrl();
@@ -63,12 +66,10 @@ export class LoginController {
   @Get('oauth42')
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
-    let url: string;
-    if (new ConfigService().get('NODE_ENV') === 'prod') {
-      url = new ConfigService().get(APP_URL) + '/verify';
-    } else {
-      url = new ConfigService().get(DEV_URL) + '/verify';
-    }
+    let url: string =
+      this.config.get('NODE_ENV') === 'prod'
+        ? this.config.get(APP_URL)
+        : this.config.get(DEV_URL);
     if (!code) {
       // error
       throw new BadRequestException();
@@ -77,7 +78,8 @@ export class LoginController {
       const user = await this.loginService.generatePendingUser(code);
       res.cookie('user_id', user.id);
     }
-    return { url };
+    console.log('redirect', url);
+    return { url: url + '/verify' };
   }
 
   /**

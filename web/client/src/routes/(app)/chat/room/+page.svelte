@@ -2,7 +2,7 @@
 	import InviteModal from './InviteModal.svelte';
 	import SettingModal from './SettingModal.svelte';
 	import RoomoutModal from './RoomoutModal.svelte';
-	import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
+	import { modalStatesStore, socketStore, myData, openedRoom, apiUrl } from '../../../../store';
 	import ChatMessage from './ChatMessage.svelte';
 	import ChatMember from './ChatMember.svelte';
 	import { onDestroy, onMount } from 'svelte';
@@ -70,7 +70,7 @@
 	});
 
 	const getRoomData = async () => {
-		const response = await fetch(`http://localhost:3000/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
+		const response = await fetch(`${apiUrl}/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
 			method: "GET",
 			credentials: 'include',
 			headers: {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, profileModalStore, myData } from "../../../store";
+	import { modalStatesStore, profileModalStore, myData, apiUrl } from "../../../store";
 	import { clickOutside, escapeKey } from '../../../actions';	
 	import type { UserData } from "../../../interfaces";
   import { onMount } from "svelte";
@@ -42,7 +42,7 @@
 			return false;
 		}
 		try {
-			const response = await fetch(`http://localhost:3000/api/user/search?nickname=${nickname}`, {
+			const response = await fetch(`${apiUrl}/api/user/search?nickname=${nickname}`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {

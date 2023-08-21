@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import type { MyData, Record } from "../../../interfaces";
-  import { myData } from "../../../store";
+  import { apiUrl, myData } from "../../../store";
 
 	let records: Record[] = [];
 	onMount(() => {
@@ -15,7 +15,7 @@
 
 	const getMyData = async (): Promise<void> => {
 		try {
-			const response = await fetch("http://localhost:3000/api/user/me", {
+			const response = await fetch(`${apiUrl}/api/user/me`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {

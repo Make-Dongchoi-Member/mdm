@@ -35,6 +35,8 @@ export class ChatService {
   async getEnterUser(roomId: number, userId: number) {
     const userdata = await this.userRepository.getUserById(userId);
     const room = await this.roomRepository.getRoomById(roomId);
+    const roomMembers = [room.host, ...room.admin, ...room.members];
+    if (!roomMembers.includes(userId)) return null;
     const res = {
       user: {
         id: userdata.id,
@@ -65,10 +67,11 @@ export class ChatService {
     return roomList;
   }
 
-  async getRoomDetail(roomId: number) {
+  async getRoomDetail(userId: number, roomId: number) {
     const room = await this.roomRepository.getRoomById(roomId);
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);
     const ids = [room.host, ...room.admin, ...room.members];
+    if (!ids.includes(userId)) throw new ForbiddenException();
     const users = await this.userRepository.getUserList(ids);
     const members = this.roomMembers(room, users);
     const roomDetail: RoomDetail = {
@@ -91,7 +94,7 @@ export class ChatService {
     return newRoom.id.toString();
   }
 
-  async updateRoom(userId: number, roomInfo: RoomInfo) {        
+  async updateRoom(userId: number, roomInfo: RoomInfo) {
     const room = await this.roomRepository.getRoomById(+roomInfo.roomId);
     if (!room) {
       throw new NotFoundException(`room_id ${roomInfo.roomId} Not Found`);

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
+	import { apiUrl, modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
 	import { page } from '$app/stores';
     import { clickOutside, escapeKey } from "../../../../actions";
 
@@ -10,7 +10,7 @@
 	
 	const roomOut = async (roomId: string) => {
 		try {
-			const response = await fetch("http://localhost:3000/api/chat/room/out", {
+			const response = await fetch(`${apiUrl}/api/chat/room/out`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
