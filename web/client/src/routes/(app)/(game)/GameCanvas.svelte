@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import { gameSettingStore, socketStore, myData } from "../../../store";
   import type {
-  AlertDTO,
+    AlertDTO,
     Ball,
     Bar,
     GameRoom,
@@ -93,13 +93,17 @@
     gameInfo.playerA = "";
     gameInfo.playerB = "";
     gameInfo.roomKey = "";
+
+    gamePrefer.message = "READY FOR THE NEXT MATCH";
+    gamePrefer.controlWithMouse = false;
+
     matching = false;
     ready = false;
     gaming = false;
     gameRoomMaster = false;
     gameOver = false;
     ballSpectrums = new Array();
-  }
+  };
 
   const gameReady = () => {
     // 이미 레디 눌렀으면 동작 안 함
@@ -134,9 +138,9 @@
   const revengeMatch = () => {
     gameOver = false;
     ready = true;
-    gaming = true;
     gamePrefer.message = "WAIT FOR THE ENEMY";
-    if (gameInfo.playerA === $myData.nickname) gameRoomMaster = true;
+    gameRoomMaster = false;
+    // if (gameInfo.playerA === $myData.nickname) gameRoomMaster = true;
 
     $socketStore.emit("game/revenge", {
       nickname: $myData.nickname,
@@ -179,7 +183,7 @@
 
   onMount(() => {
     refreshInfo();
-    const roomKey = $page.url.searchParams.get('key');
+    const roomKey = $page.url.searchParams.get("key");
     if (roomKey !== null) {
       gameInfo.roomKey = roomKey;
       ready = true;
@@ -196,10 +200,9 @@
 
     $socketStore.on("game/private-match-deny", (data: AlertDTO) => {
       console.log(data);
-      
+
       refreshInfo();
       alert(`${data.alert.receiver.nickname} refused the game!`);
-      
     });
 
     $socketStore.on("game/room", (arg: GameRoom) => {
@@ -215,8 +218,6 @@
     });
 
     $socketStore.on("game/play", (arg: GameStatus) => {
-      gaming = true;
-
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
@@ -263,6 +264,7 @@
     });
 
     $socketStore.on("game/pause", (arg: string) => {
+      gaming = true;
       ballSpectrums = new Array();
       if (arg === "restart") {
         $socketStore.emit("game/start", {
@@ -299,7 +301,11 @@
         // 내가 짐
         gamePrefer.message = "YOU LOSE";
       }
-      refreshInfo();
+      // refreshInfo();
+      ready = false;
+      gaming = false;
+      gameRoomMaster = false;
+      ballSpectrums = new Array();
       gamePrefer.controlWithMouse = false;
       document.exitPointerLock();
       gameOver = true;
@@ -332,19 +338,30 @@
 
   onDestroy(() => {
     $socketStore.off("game/match");
+    $socketStore.off("game/room");
     $socketStore.off("game/play");
-    $socketStore.off("game/private-match-deny")
+    $socketStore.off("game/private-match-deny");
+    $socketStore.off("game/pause");
+    $socketStore.off("game/end");
+    $socketStore.off("game/quit");
     canvas.removeEventListener("click", mouseControl);
     document.removeEventListener("mousemove", handleMousePointer);
     if (matching) {
-      $socketStore.emit("game/quit", {
-        nickname: $myData.nickname,
-        roomKey: gameInfo.roomKey,
-      });
+      if (gameOver) {
+        $socketStore.emit("game/quit", {
+          nickname: $myData.nickname,
+          roomKey: gameInfo.roomKey,
+        });
+      } else {
+        $socketStore.emit("game/roomout", {
+          nickname: $myData.nickname,
+          roomKey: gameInfo.roomKey,
+        });
+      }
     } else {
       $socketStore.emit("game/matchout", { nickname: $myData.nickname });
-      console.log(gameInfo)
-      $socketStore.emit("game/private-matchout", { roomKey : gameInfo.roomKey })
+      console.log(gameInfo);
+      $socketStore.emit("game/private-matchout", { roomKey: gameInfo.roomKey });
     }
   });
 </script>
