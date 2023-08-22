@@ -1,6 +1,6 @@
 <script lang="ts">
   import NotiModal from "./NotiModal.svelte";
-  import { modalStatesStore, myData, socketStore } from "../../store";
+  import { apiUrl, modalStatesStore, myData, socketStore } from "../../store";
   import type { MyData } from "../../interfaces";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
@@ -17,7 +17,7 @@
 
   const getMyData = async (): Promise<void> => {
     try {
-      const response = await fetch("http://localhost:3000/api/user/me", {
+      const response = await fetch(`${apiUrl}/api/user/me`, {
         method: "GET",
         credentials: "include",
         headers: {
@@ -44,7 +44,7 @@
   };
 
   const alertButtonClickEvent = async (): Promise<void> => {
-    const response = await fetch("http://localhost:3000/api/alert/state", {
+    const response = await fetch(`${apiUrl}/api/alert/state`, {
       method: "POST",
       credentials: "include",
       headers: {

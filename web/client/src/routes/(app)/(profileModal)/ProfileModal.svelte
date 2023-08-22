@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, profileModalStore } from "../../../store";
+	import { apiUrl, modalStatesStore, profileModalStore } from "../../../store";
 	import OtherInfo from "./OtherInfo.svelte";
 	import { clickOutside, escapeKey } from "../../../actions";
 	import ModalHistory from "./ModalHistory.svelte";
@@ -18,7 +18,7 @@
 
 	const getUserData = async () => {
 		const nickname: string = $profileModalStore.nickname;
-		const uri: string = `http://localhost:3000/api/user/info?nickname=${nickname}`;
+		const uri: string = `${apiUrl}/api/user/info?nickname=${nickname}`;
 		const response = await fetch(uri, {
 			method: "GET",
 			credentials: 'include',

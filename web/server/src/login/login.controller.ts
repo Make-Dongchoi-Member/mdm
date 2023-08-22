@@ -13,12 +13,15 @@ import { LoginService } from './login.service';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { JwtPublic } from './guards/login.jwt.public.decorator';
-import { APP_URL, DEV_URL } from 'src/configs/constants';
+import { APP_URL } from 'src/configs/constants';
 
 @Controller('api/login')
 @JwtPublic()
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly config: ConfigService,
+  ) {}
 
   /**
    * 쿠키확인(access_token)
@@ -40,11 +43,7 @@ export class LoginController {
       // token vaild check
       const tokenValid = await this.loginService.tokenValidCheck(token);
       if (tokenValid) {
-        if (new ConfigService().get('NODE_ENV') === 'prod') {
-          url = new ConfigService().get(APP_URL);
-        } else {
-          url = new ConfigService().get(DEV_URL);
-        }
+        url = this.config.get(APP_URL);
       } else {
         url = await this.loginService.oAuth42AccessUrl();
       }
@@ -63,17 +62,10 @@ export class LoginController {
   @Get('oauth42')
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
-    let url: string;
-    if (new ConfigService().get('NODE_ENV') === 'prod') {
-      url = new ConfigService().get(APP_URL) + '/verify';
-    } else {
-      url = new ConfigService().get(DEV_URL) + '/verify';
-    }
+    const url: string = this.config.get(APP_URL) + '/verify';
     if (!code) {
-      // error
       throw new BadRequestException();
     } else {
-      // email 인증 url로 redirect
       const user = await this.loginService.generatePendingUser(code);
       res.cookie('user_id', user.id);
     }
@@ -95,10 +87,7 @@ export class LoginController {
     const userId = req.cookies['user_id'];
     if (!userId) throw new BadRequestException();
     const accessToken = await this.loginService.verifyEmailCode(+userId, code);
-    res.cookie('access_token', accessToken, {
-      // sameSite: 'none',
-    });
-
+    res.cookie('access_token', accessToken);
     return res.send();
   }
 }

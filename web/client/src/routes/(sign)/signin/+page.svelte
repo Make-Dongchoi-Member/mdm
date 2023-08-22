@@ -1,9 +1,12 @@
 <script lang="ts">
+  import { apiUrl } from "../../../store";
+
   const test: string = "";
 </script>
 
 <div class="logo">LOGO</div>
-<a href="http://localhost:3000/api/login">
+<!-- <a href="http://localhost:3000/api/login"> -->
+<a href={ `${apiUrl}/api/login`}>
   <button>LOGIN WITH 42</button>
 </a>
 

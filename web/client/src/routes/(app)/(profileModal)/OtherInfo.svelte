@@ -1,6 +1,6 @@
 <script lang="ts">
 	import MatchStat from "./MatchStat.svelte";
-	import { gameSettingStore, modalStatesStore, myData, socketStore } from "../../../store";
+	import { apiUrl, gameSettingStore, modalStatesStore, myData, socketStore } from "../../../store";
   import type { AlertData, OtherUserData } from "../../../interfaces";
   import { AlertType, Relation } from "../../../enums";
   import { goto } from "$app/navigation";
@@ -29,7 +29,7 @@
 			}
 			$socketStore.emit("alert/follow", data);
 		} else {
-			const response = fetch(`http://localhost:3000/api/user/friend/delete`, {
+			const response = fetch(`${apiUrl}/api/user/friend/delete`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -66,7 +66,7 @@
 			}
 		};
 		const endPoint = user.relation === Relation.BLOCK ? "cancel" : "request";
-		const response = fetch(`http://localhost:3000/api/user/block/${endPoint}`, {
+		const response = fetch(`${apiUrl}/api/user/block/${endPoint}`, {
             method: "POST",
             credentials: 'include',
             headers: {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, myData } from "../../../store";
+	import { apiUrl, modalStatesStore, myData } from "../../../store";
     import { clickOutside, escapeKey } from "../../../actions";
 
 	let isInvalidNickname: boolean = false;
@@ -35,7 +35,7 @@
 
 	async function nicknameSetAPI(data: any) {
 		try {
-			const response = await fetch("http://localhost:3000/api/user/set/nickname", {
+			const response = await fetch(`${apiUrl}/api/user/set/nickname`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {

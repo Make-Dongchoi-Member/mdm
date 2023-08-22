@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
 	import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
-	import { modalStatesStore, myData, roomList, socketStore } from '../../../store';
+	import { apiUrl, modalStatesStore, myData, roomList, socketStore } from '../../../store';
 	import type { Room, RoomEnterDTO } from '../../../interfaces';
 	import { onMount } from 'svelte';
 	import { RoomType } from '../../../enums';
@@ -15,7 +15,7 @@
 	});
 
 	const getRoomList = async () => {
-		const response = await fetch(`http://localhost:3000/api/chat/list`, {
+		const response = await fetch(`${apiUrl}/api/chat/list`, {
 			method: "GET",
 			credentials: 'include',
 			headers: {
@@ -41,7 +41,7 @@
 				password,
 			}
 		}
-		const response = fetch(`http://localhost:3000/api/chat/room/enter`, {
+		const response = fetch(`${apiUrl}/api/chat/room/enter`, {
 			method: "POST",
 			credentials: 'include',
 			headers: {
