@@ -13,6 +13,10 @@
     $socketStore.on("alert", () => {
       isAlert = true;
     });
+    $socketStore.on('app/disconnect-another-user', () => {
+      alert('Account in use by another user. Session will be terminated.');      
+      goto('/signin');
+    })
   });
 
   const getMyData = async (): Promise<void> => {
