@@ -9,7 +9,7 @@ import type {
 
 export interface UserData {
   id: string;
-  avatar: string;
+  avatar?: string;
   nickname: string;
   record?: Record[];
   state?: UserState;
