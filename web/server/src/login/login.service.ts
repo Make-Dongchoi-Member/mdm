@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { PendingUser } from './objects/pending-user.object';
@@ -7,7 +7,7 @@ import { PendingUserService } from './objects/pending-user.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { JwtService } from '@nestjs/jwt';
 import {
-  APP_URL,
+  API_URL,
   AUTHORIZE_PATH,
   CLIENT_ID,
   CLIENT_SECRET,
@@ -34,7 +34,7 @@ export class LoginService {
     const path = this.config.get(AUTHORIZE_PATH);
     const queryParams = {
       client_id: this.config.get(CLIENT_ID),
-      redirect_uri: `${this.config.get(APP_URL)}/api/login/oauth42`,
+      redirect_uri: `${this.config.get(API_URL)}/api/login/oauth42`,
       response_type: 'code',
     };
     const queryString = Object.entries(queryParams)
@@ -84,7 +84,7 @@ export class LoginService {
       client_id: this.config.get(CLIENT_ID),
       client_secret: this.config.get(CLIENT_SECRET),
       code: code,
-      redirect_uri: `${this.config.get(APP_URL)}/api/login/oauth42`,
+      redirect_uri: `${this.config.get(API_URL)}/api/login/oauth42`,
     };
     const response = await firstValueFrom(
       this.httpService.post(oauthTokenUrl, data),
