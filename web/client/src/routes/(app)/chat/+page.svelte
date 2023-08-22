@@ -110,21 +110,22 @@
 	</div>
 	<div class="room-list">		
 		{#each $myData.rooms as roomNum}
+			{#if $roomList.get(roomNum) !== undefined}
+				<button on:click={()=>(myRoomEnter(roomNum))}>
 
-			<button on:click={()=>(myRoomEnter(roomNum))}>
-
-				<div>
-					{$roomList.get(roomNum)?.roomname}
-				</div>
-				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
-					<div>&#x1F512</div>
-				{:else}
-					<div></div>
-				{/if}
-				<div>
-					{$roomList.get(roomNum)?.memberCount}
-				</div>
-			</button>
+					<div>
+						{$roomList.get(roomNum)?.roomname}
+					</div>
+					{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
+						<div>&#x1F512</div>
+					{:else}
+						<div></div>
+					{/if}
+					<div>
+						{$roomList.get(roomNum)?.memberCount}
+					</div>
+				</button>
+			{/if}
 		{/each}
 		{#if $myData.rooms.length > 0}
 			<div class="divider">
