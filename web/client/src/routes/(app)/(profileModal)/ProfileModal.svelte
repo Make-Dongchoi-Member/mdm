@@ -112,26 +112,10 @@
 		margin-top: 20px;
 	}
 
-	.button_area {
-		display: flex;
-		flex-direction: row;
-		width: 750px;
-		height: 30px;
-		margin: 20px 10px 10px 15px;
-	}
-
 	button {
 		width: 150px;
 		margin-right: 15px;
 		background-color: var(--dark-color);
 	}
 
-	.button_area > button:hover {
-		background-color: var(--hover-color);
-	}
-
-	.selected {
-		border: 1px solid var(--point-color);
-		background-color: var(--hover-color);
-	}
 </style>
