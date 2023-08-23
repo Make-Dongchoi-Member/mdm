@@ -10,6 +10,7 @@
 			for (const iterator of $myData.friends) {
 				if (iterator.id === data.who) {
 					iterator.state = UserState.ONLINE;
+					break;
 				}
 			}
 			$myData = $myData;
@@ -19,10 +20,21 @@
 			for (const iterator of $myData.friends) {
 				if (iterator.id === data.who) {
 					iterator.state = UserState.OFFLINE;
+					break;
 				}
 			}
 			$myData = $myData;
 		});
+
+		$socketStore.on('gaming', (data) => {
+			for (const iterator of $myData.friends) {
+				if (iterator.id === data.who) {
+					iterator.state = UserState.GAMING;
+					break;
+				}
+			}
+			$myData = $myData;
+		})
 	});
 
 	const findButtonEvent = () => {

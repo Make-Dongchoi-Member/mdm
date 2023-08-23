@@ -21,7 +21,6 @@
 
 	onMount(() => {
 		getRoomData();
-		myDataUpdate(Number($page.url.searchParams.get("id")) as number);
 		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
@@ -87,6 +86,7 @@
 				goto('/chat')
 				throw Error
 			}
+			myDataUpdate(Number($page.url.searchParams.get("id")) as number);
 			return response.json()
 		})
 		.then(data => {

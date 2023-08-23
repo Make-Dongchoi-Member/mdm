@@ -103,6 +103,8 @@ export class GameGateway implements OnGatewayDisconnect {
       // 두 플레이어의 현재 상태를 '게임 중' 으로 변경
       this.gameService.setUserState(playerA.nickname, UserState.GAMING);
       this.gameService.setUserState(playerB.nickname, UserState.GAMING);
+      this.sendStateToFriends(playerA.nickname, UserState.GAMING);
+      this.sendStateToFriends(playerB.nickname, UserState.GAMING);
 
       // 두 플레이어에게 emitd
       const gameRoom: GameRoomDTO = {
@@ -141,6 +143,8 @@ export class GameGateway implements OnGatewayDisconnect {
       data.alert.receiver.nickname,
       UserState.GAMING,
     );
+    this.sendStateToFriends(data.alert.sender.nickname, UserState.GAMING);
+    this.sendStateToFriends(data.alert.receiver.nickname, UserState.GAMING);
 
     // 두 플레이어에게 emitd
     const gameRoom: GameRoomDTO = {
@@ -264,6 +268,8 @@ export class GameGateway implements OnGatewayDisconnect {
       gameStatus.playerB.nickname,
       UserState.ONLINE,
     );
+    this.sendStateToFriends(gameStatus.playerA.nickname, UserState.ONLINE);
+    this.sendStateToFriends(gameStatus.playerB.nickname, UserState.ONLINE);
     this.gameStore.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
     this.io.to(data.roomKey).emit('game/quit', gamePlayInfo);
@@ -300,6 +306,8 @@ export class GameGateway implements OnGatewayDisconnect {
       gameStatus.playerB.nickname,
       UserState.ONLINE,
     );
+    this.sendStateToFriends(gameStatus.playerA.nickname, UserState.ONLINE);
+    this.sendStateToFriends(gameStatus.playerB.nickname, UserState.ONLINE);
     this.gameStore.deleteGameRoomKey(data.roomKey);
     this.gameService.deleteGameStatus(data.roomKey);
     this.io.to(data.roomKey).emit('game/quit', gamePlayInfo);
@@ -376,5 +384,22 @@ export class GameGateway implements OnGatewayDisconnect {
       this.gameService.hasPlayer(nickname) ||
       this.gameStore.isPrivateGame(roomId)
     );
+  }
+
+  private async sendStateToFriends(nickname: string, state: UserState) {
+    const user = await this.gameService.getUserByNickname(nickname);
+    if (!user) return;
+    let event: string;
+    if (state === UserState.GAMING) {
+      event = 'gaming';
+    } else if (state === UserState.ONLINE) {
+      event = 'online';
+    }
+    for (const iter of user.friends) {
+      const friend = await this.gameService.getUserById(iter);
+      if (friend.socket) {
+        this.io.to(friend.socket).emit(event, { who: user.id });
+      }
+    }
   }
 }
