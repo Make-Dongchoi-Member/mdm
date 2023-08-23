@@ -21,7 +21,6 @@
 
 	onMount(() => {
 		getRoomData();
-		myDataUpdate(Number($page.url.searchParams.get("id")) as number);
 		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
@@ -77,7 +76,19 @@
 				"Content-Type": "application/json",
 			},
 		})
-		.then(response => response.json())
+		.then(response => {
+			if (!response.ok) {
+				if (response.status === 404) {
+					alert(`room${$page.url.searchParams.get('id')} not found`)
+				} else if (response.status === 403) {
+					alert(`You do not have permission`)
+				}
+				goto('/chat')
+				throw Error
+			}
+			myDataUpdate(Number($page.url.searchParams.get("id")) as number);
+			return response.json()
+		})
 		.then(data => {
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;

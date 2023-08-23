@@ -5,11 +5,12 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 import { JWT_SECRET } from './configs/constants';
 import { UserRepository } from './database/repositories/user.repository';
-import { UserService } from './user/user.service';
 import { UserState } from './types/enums';
 
 @WebSocketGateway({
@@ -24,6 +25,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private config: ConfigService,
     private userRepository: UserRepository,
   ) {}
+
+  @WebSocketServer() server: Server;
 
   async handleConnection(client: Socket, ...args: any[]) {
     const token = this.extractAccessToken(client.handshake.headers.cookie);
@@ -52,6 +55,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('app/logout')
+  async handleLogout(client: Socket) {
+    client.disconnect();
+  }
+
   private async verify(token: string, client: Socket) {
     if (!token) {
       throw new UnauthorizedException();
@@ -64,6 +72,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (user === null) {
         client.disconnect();
       } else {
+        if (user.socket) {
+          const socket = this.server.sockets.sockets.get(user.socket);
+          this.server.to(user.socket).emit('app/disconnect-another-user');
+          if (socket) {
+            socket.disconnect();
+          }
+        }
         await this.userRepository.setSocketId(+payload.sub, client.id);
         await this.userRepository.setStatusBySocketId(
           client.id,
