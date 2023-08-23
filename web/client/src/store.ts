@@ -10,7 +10,7 @@ import type {
   UserData,
   OtherUserData,
 } from "./interfaces";
-import { Level, RoomType } from "./enums";
+import { Level, RoomType, UserState } from "./enums";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:3000", {
@@ -27,12 +27,13 @@ const myData: Writable<MyData> = writable({
   rooms: [],
   record: [],
   isAlert: false,
+  isInGame: false,
 });
 
 const gameSettingStore: Writable<GameSetting> = writable({
   gameMode: "basic",
   barColor: "#D2D2D2",
-  ballShape: "square",
+  ballColor: "#D2D2D2",
 });
 
 const modalStatesStore: Writable<ModalStates> = writable({

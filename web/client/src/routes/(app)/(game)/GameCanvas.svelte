@@ -98,6 +98,7 @@
     gamePrefer.message = "READY FOR THE NEXT MATCH";
     gamePrefer.controlWithMouse = false;
 
+    $myData.isInGame = false;
     matching = false;
     ready = false;
     wait = false;
@@ -111,6 +112,7 @@
     if (ready === true) {
       ready = false;
       gamePrefer.message = "READY FOR THE NEXT MATCH";
+      $myData.isInGame = false;
       $socketStore.emit("game/matchout", { nickname: $myData.nickname });
     } else if (ready === false) {
       // 레디 상태로 변경
@@ -118,6 +120,9 @@
 
       // 게임 버튼 메시지 변경
       gamePrefer.message = "WAITING...";
+
+      // 게임 스킨 설정창 비활성화
+      $myData.isInGame = true;
 
       // 소켓에 "game/match" 로 emit, 내 닉네임과 게임 모드, 막대 컬러를 전송
       $socketStore.emit("game/match", {
@@ -224,8 +229,11 @@
     });
 
     $socketStore.on("game/play", (arg: GameStatus) => {
+      // 배경 그리기
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 배경 가운데 점선 그리기
       ctx.beginPath();
       ctx.moveTo(canvas.width / 2, 0);
       ctx.lineTo(canvas.width / 2, canvas.height);
@@ -233,38 +241,55 @@
       ctx.setLineDash([20]);
       ctx.stroke();
 
+      // 공 좌표를 받아서 잔상 만들기
       ballSpectrums.push({ x: ball.x, y: ball.y });
       if (ballSpectrums.length > 35) {
         ballSpectrums.shift();
       }
 
+      // 왼쪽 막대 정보 받아 저장하기
       leftBar.y = arg.playerA.bar.y;
       leftBar.h = arg.playerA.bar.h;
       leftBar.color = arg.playerA.bar.color;
 
+      // 오른쪽 막대 정보 받아 저장하기
       rightBar.y = arg.playerB.bar.y;
       rightBar.h = arg.playerB.bar.h;
       rightBar.color = arg.playerB.bar.color;
 
+      // 왼쪽, 오른쪽 막대 그리기
       ctx.fillStyle = leftBar.color;
       ctx.fillRect(leftBar.x, leftBar.y, leftBar.w, leftBar.h);
       ctx.fillStyle = rightBar.color;
       ctx.fillRect(rightBar.x, rightBar.y, rightBar.w, rightBar.h);
 
+      // 공 정보 받아 저장하기
       ball.x = arg.ball.x;
       ball.y = arg.ball.y;
+
+      // 공 잔상 그리기
       for (const i in ballSpectrums) {
-        ctx.fillStyle = `rgba(
-        ${gamePrefer.ballColor.red},
-        ${gamePrefer.ballColor.green},
-        ${gamePrefer.ballColor.blue},
-        ${0.02 * +i}
-        )`;
+        // TODO *****************************************
+        // 이 부분에서 공 색깔에 따라 잔상 색깔도 반영되도록 변경해야함
+        // gamesettingstore의 ballcolor를 활용하되, fillStyle말고 다른 메소드를 활용해 투명도만 조절할 수 있는지 찾아볼 것.
+        // 밑의 코드대로 구현할 경우 공의 바뀐 색깔은 반영이 되지만 잔상의 자국이 남는 버그가 있으므로 고칠 것.
+
+        // ctx.fillStyle = `rgba(
+        // ${gamePrefer.ballColor.red},
+        // ${gamePrefer.ballColor.green},
+        // ${gamePrefer.ballColor.blue},
+        // ${0.02 * +i}
+        // )`;
+        ctx.fillStyle = $gameSettingStore.ballColor;
+        ctx.globalAlpha = 0.02 * +i;
         ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
       }
-      ctx.fillStyle = ball.color;
+
+      // 공 그리기
+      ctx.fillStyle = $gameSettingStore.ballColor;
       ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
 
+      // 목숨 정보 받아 저장하기
       leftLife = arg.playerA.life;
       rightLife = arg.playerB.life;
     });
