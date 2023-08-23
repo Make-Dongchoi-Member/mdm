@@ -79,6 +79,7 @@
 
   let matching: boolean = false;
   let ready: boolean = false;
+  let wait: boolean = false;
   let gaming: boolean = false;
   let gameRoomMaster: boolean = false;
   let gameOver: boolean = false;
@@ -99,6 +100,7 @@
 
     matching = false;
     ready = false;
+    wait = false;
     gaming = false;
     gameRoomMaster = false;
     gameOver = false;
@@ -106,22 +108,25 @@
   };
 
   const gameReady = () => {
-    // 이미 레디 눌렀으면 동작 안 함
-    if (ready) return;
+    if (ready === true) {
+      ready = false;
+      gamePrefer.message = "READY FOR THE NEXT MATCH";
+      $socketStore.emit("game/matchout", { nickname: $myData.nickname });
+    } else if (ready === false) {
+      // 레디 상태로 변경
+      ready = true;
 
-    // 레디 상태로 변경
-    ready = true;
+      // 게임 버튼 메시지 변경
+      gamePrefer.message = "WAITING...";
 
-    // 게임 버튼 메시지 변경
-    gamePrefer.message = "WAITING...";
-
-    // 소켓에 "game/match" 로 emit, 내 닉네임과 게임 모드, 막대 컬러를 전송
-    $socketStore.emit("game/match", {
-      nickname: $myData.nickname,
-      gameMode: $gameSettingStore.gameMode,
-      barColor: $gameSettingStore.barColor,
-      roomId: gameInfo.roomKey,
-    });
+      // 소켓에 "game/match" 로 emit, 내 닉네임과 게임 모드, 막대 컬러를 전송
+      $socketStore.emit("game/match", {
+        nickname: $myData.nickname,
+        gameMode: $gameSettingStore.gameMode,
+        barColor: $gameSettingStore.barColor,
+        roomId: gameInfo.roomKey,
+      });
+    }
   };
 
   const gameStart = () => {
@@ -137,7 +142,8 @@
 
   const revengeMatch = () => {
     gameOver = false;
-    ready = true;
+    ready = false;
+    wait = true;
     gamePrefer.message = "WAIT FOR THE ENEMY";
     gameRoomMaster = false;
     // if (gameInfo.playerA === $myData.nickname) gameRoomMaster = true;
@@ -360,7 +366,6 @@
       }
     } else {
       $socketStore.emit("game/matchout", { nickname: $myData.nickname });
-      console.log(gameInfo);
       $socketStore.emit("game/private-matchout", { roomKey: gameInfo.roomKey });
     }
   });
@@ -377,7 +382,11 @@
   {#if gameRoomMaster}
     <button on:click={gameStart}>GAME START</button>
   {:else if !gameRoomMaster}
-    <button disabled={ready} on:click={gameReady}>{gamePrefer.message}</button>
+    <button
+      disabled={wait}
+      class={ready ? "ready-off" : "ready-on"}
+      on:click={gameReady}>{gamePrefer.message}</button
+    >
   {/if}
   {#if gameOver}
     <div class="rematch">
@@ -427,6 +436,7 @@
     font-weight: 100;
   }
 
+  .button-area > .ready-off,
   .button-area > button:disabled {
     background-color: var(--hover-color);
     border: 1px solid var(--point-color);

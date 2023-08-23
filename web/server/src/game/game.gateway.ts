@@ -273,9 +273,6 @@ export class GameGateway implements OnGatewayDisconnect {
   // 게임 중간 이탈자 발생 시 처리하는 핸들러
   @SubscribeMessage('game/roomout')
   handleGameRoomOut(client: Socket, data: GameEndDTO) {
-    // gmae 도중 사용자가 나갔을 때
-    // gameEnd로 설정
-    // interval, roomKey, gameStatus 삭제
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameStore.getIntervalID(data.roomKey));
