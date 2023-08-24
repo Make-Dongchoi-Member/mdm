@@ -1,6 +1,11 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { gameSettingStore, socketStore, myData } from "../../../store";
+  import {
+    gameSettingStore,
+    socketStore,
+    myData,
+    apiUrl,
+  } from "../../../store";
   import type {
     AlertDTO,
     Ball,
@@ -9,8 +14,7 @@
     GameStatus,
     Position,
   } from "../../../interfaces";
-  import { GameState } from "../../../enums";
-  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -85,8 +89,8 @@
   let gameOver: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
-  let leftLife: number = 1;
-  let rightLife: number = 1;
+  let leftLife: number;
+  let rightLife: number;
 
   let ballSpectrums: Position[] = new Array();
 
@@ -94,7 +98,6 @@
     gameInfo.playerA = "";
     gameInfo.playerB = "";
     gameInfo.roomKey = "";
-
     gamePrefer.message = "READY FOR THE NEXT MATCH";
     gamePrefer.controlWithMouse = false;
 
@@ -192,13 +195,41 @@
     }
   };
 
-  onMount(() => {
+  const getRoomKeyAPI = async () => {
+    const gameRoom = await fetch(
+      `${apiUrl}/api/game/key?nickname=${$myData.nickname}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => data.gameRoom)
+      .catch((error) => {
+        console.error("Error:", error);
+        return null;
+      });
+    return gameRoom;
+  };
+
+  onMount(async () => {
     refreshInfo();
-    const roomKey = $page.url.searchParams.get("key");
-    if (roomKey !== null) {
-      gameInfo.roomKey = roomKey;
+    // const roomKey = $page.url.searchParams.get("key");
+    const gameRoom = await getRoomKeyAPI();
+    // console.log(gameRoom);
+    if (gameRoom && gameRoom.playerB === undefined) {
+      gameInfo.roomKey = gameRoom.roomKey;
+      $myData.isInGame = true;
       ready = true;
-      gamePrefer.message = "WAITING...";
+      gamePrefer.message = "WAIT ENEMY...";
+    } else if (gameRoom && gameRoom.playerB) {
+      gameInfo = gameRoom;
+      $myData.isInGame = true;
+      matching = true;
+      gamePrefer.message = "WAIT TO START";
     }
     canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -219,6 +250,7 @@
       gameInfo = arg;
       if (arg.roomKey.length > 0) {
         matching = true;
+        $myData.isInGame = true;
         gamePrefer.message = "WAIT TO START";
       }
 
@@ -351,6 +383,17 @@
       refreshInfo();
       gamePrefer.controlWithMouse = false;
       document.exitPointerLock();
+      goto("/");
+    });
+
+    $socketStore.on("game/disconnect", () => {
+      console.log("emit: disconnect");
+      ctx.fillStyle = gamePrefer.backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      refreshInfo();
+      gamePrefer.controlWithMouse = false;
+      document.exitPointerLock();
+      goto("/");
     });
   });
 
@@ -385,8 +428,8 @@
 
 <div class="life">
   {#if matching}
-    <span>{gameInfo.playerA} : {leftLife}</span>
-    <span>{gameInfo.playerB} : {rightLife}</span>
+    <span>{gameInfo.playerA} : {leftLife !== undefined ? leftLife : ""}</span>
+    <span>{gameInfo.playerB} : {rightLife !== undefined ? rightLife : ""}</span>
   {/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>

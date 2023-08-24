@@ -14,6 +14,7 @@ import { GameHistory } from 'src/database/entities/game-history.entity';
 import { GameStore } from './game.store';
 import { clearInterval } from 'timers';
 import { GamePlayDTO } from './dto/GamePlay.dto';
+import { GameRoomDTO } from './dto/GameRoom.dto';
 
 @Injectable()
 export class GameService {
@@ -270,6 +271,10 @@ export class GameService {
 
   async getUserById(id: number) {
     return await this.userRepository.getUserById(id);
+  }
+
+  getPrivateRoomKey(nickname: string): GameRoomDTO | null {
+    return this.gameStore.getPrivateRoomKeyByNickname(nickname);
   }
 
   private randomSpeed(): number {
