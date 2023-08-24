@@ -13,29 +13,27 @@
     getMyData();
   });
 
-	const getMyData = async (): Promise<void> => {
-		try {
-			const response = await fetch(`${apiUrl}/api/user/me`, {
-				method: "GET",
-				credentials: 'include',
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			if (response.status !== 200) {
-					goto("/signin");
-					return;
-			}
-			const data: Promise<MyData> = response.json();
-			$myData = await data;
-			$myData = $myData;
-			records = $myData.record as Record[];
-			console.log("$myData", $myData);
-			
-		} catch (error) {
-			console.error("실패:", error);
-		}
-	}
+  const getMyData = async (): Promise<void> => {
+    try {
+      const response = await fetch(`${apiUrl}/api/user/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status !== 200) {
+        goto("/signin");
+        return;
+      }
+      const data: Promise<MyData> = response.json();
+      $myData = await data;
+      $myData = $myData;
+      records = $myData.record as Record[];
+    } catch (error) {
+      console.error("실패:", error);
+    }
+  };
 </script>
 
 <LogoutModal />

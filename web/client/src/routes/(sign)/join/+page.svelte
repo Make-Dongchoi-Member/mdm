@@ -16,7 +16,6 @@
 
   async function avatarSetAPI(data: any) {
     try {
-      console.log("data", data);
       const response = await fetch(
         "http://localhost:3000/api/user/set/avatar",
         {
@@ -81,17 +80,14 @@
 
   async function nicknameSetAPI(data: any) {
     try {
-      const response = await fetch(
-        `${apiUrl}/api/user/set/nickname`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/user/set/nickname`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
       return response;
     } catch (error) {
       console.error("실패:", error);

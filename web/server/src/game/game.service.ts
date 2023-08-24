@@ -91,7 +91,6 @@ export class GameService {
 
     //공이 왼쪽 벽에 부딪혔을 때의 조건
     if (ball.x < 0) {
-      // console.log('left wall');
       gameStatus.playerA.life = gameStatus.playerA.life - 1;
       if (gameStatus.playerA.life === 0) {
         gameStatus.state = GameState.END;
@@ -102,7 +101,6 @@ export class GameService {
 
     //공이 오른쪽 벽에 부딪혔을 때의 조건
     else if (ball.x > CANVAS_WIDTH - BALL_SIZE) {
-      // console.log('right wall');
       gameStatus.playerB.life = gameStatus.playerB.life - 1;
       if (gameStatus.playerB.life === 0) {
         gameStatus.state = GameState.END;
@@ -113,7 +111,6 @@ export class GameService {
 
     //공이 위, 아래 벽에 부딪혔을 때의 조건
     else if (ball.y < 0 || ball.y > CANVAS_HEIGHT - BALL_SIZE) {
-      // console.log('up down wall');
       ball.speedY *= -1;
     }
 

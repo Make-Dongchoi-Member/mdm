@@ -16,8 +16,6 @@ export class PendingUserService {
   }
 
   verify(userId: number, emailCode: string) {
-    console.log(userId, emailCode);
-    console.log(this.users);
     const findUser = this.search(userId);
     const currentTime = new Date();
     if (!findUser) {

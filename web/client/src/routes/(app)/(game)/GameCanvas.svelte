@@ -210,8 +210,6 @@
     document.addEventListener("mousemove", handleMousePointer);
 
     $socketStore.on("game/private-match-deny", (data: AlertDTO) => {
-      console.log(data);
-
       refreshInfo();
       alert(`${data.alert.receiver.nickname} refused the game!`);
     });

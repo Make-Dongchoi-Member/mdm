@@ -51,14 +51,6 @@ export class GameStore {
     }
     this.gameRoomList.set(randomString, undefined);
     return randomString;
-    // for (let i in this.GameRoomList) {
-    //   const key: string = 'g' + i;
-    //   console.log(key);
-    //   if (!this.GameRoomList.has(key)) {
-    //     this.GameRoomList.set(key, undefined);
-    //     return key;
-    //   }
-    // }
   }
 
   deleteGameRoomKey(key: string) {

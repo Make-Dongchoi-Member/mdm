@@ -73,9 +73,7 @@ export class GameGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('game/match')
   handleGameMatch(client: Socket, data: GameReadyDTO) {
-    console.log(data);
     if (!this.existPlayer(data.nickname, data.roomId)) {
-      console.log('enqueue');
       this.gameStore.enqueue({
         socket: client,
         bar: this.util.barSetter(data),
@@ -126,8 +124,6 @@ export class GameGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('game/private-match')
   handlePrivateGameMatch(client: Socket, data: AlertDTO) {
-    console.log('data', data);
-
     if (!this.gameStore.isPrivateGame(data.alert.roomId)) return;
 
     const sender: Player = this.gameStore.getPrivateGame(data.alert.roomId);
@@ -208,7 +204,6 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('game/revenge')
   handleGameRevenge(client: Socket, data: GameStartDTO) {
     let gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
-    console.log(data.roomKey);
     this.gameService.setNewGame(data.roomKey);
 
     if (gameStatus.playerA.nickname === data.nickname) {
@@ -328,7 +323,6 @@ export class GameGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('game/bar')
   handleGameBarMove(client: Socket, data: GameBarDTO) {
-    // console.log(data
     this.gameService.barPosition(data.roomKey, data.pos, data.nickname);
   }
 
@@ -375,7 +369,6 @@ export class GameGateway implements OnGatewayDisconnect {
   }
 
   private existPlayer(nickname: string, roomId: string): boolean {
-    console.log('existPlayer', this.gameStore.isPrivateGame(roomId));
     return (
       this.gameStore.hasQueue(nickname) ||
       this.gameService.hasPlayer(nickname) ||

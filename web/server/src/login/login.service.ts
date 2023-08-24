@@ -122,11 +122,7 @@ export class LoginService {
           verificationCode: user.authCode,
         },
       })
-      .then(() => {
-        // console.log('sendMail');
-      })
       .catch((error) => {
-        // 메일 전송 실패
         console.error(error);
       });
   }

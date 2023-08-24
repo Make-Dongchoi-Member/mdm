@@ -16,8 +16,6 @@ export class LimitGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const limit = this.reflector.get<string[]>('limit', context.getHandler());
-    console.log('bytesRead', request.socket.bytesRead);
-    console.log('limit', limit);
     if (limit < request.socket.bytesRead) {
       throw new PayloadTooLargeException();
     }

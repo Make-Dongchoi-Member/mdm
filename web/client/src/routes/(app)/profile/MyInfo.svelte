@@ -13,7 +13,6 @@
 
   async function avatarSetAPI(data: any) {
     try {
-      console.log("data", data);
       const response = await fetch(
         "http://localhost:3000/api/user/set/avatar",
         {
