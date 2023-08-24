@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { modalStatesStore, myData, openedRoom } from '../../../../store';
+	import { apiUrl, modalStatesStore, myData, openedRoom } from '../../../../store';
 	import { RoomType } from '../../../../enums';
 	import type { RoomInfoDTO } from '../../../../interfaces';
 	import { clickOutside, escapeKey } from '../../../../actions';
@@ -22,7 +22,7 @@
 	export let passwordInput: string = $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "" ;
 	
 	async function changeRoom(data: any) {
-		const response = await fetch("http://localhost:3000/api/chat/room/update", {
+		const response = await fetch(`${apiUrl}/api/chat/room/update`, {
 			method: "POST",
 			credentials: 'include',
 			headers: {

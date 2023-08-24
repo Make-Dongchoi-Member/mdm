@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, myData } from '../../../store';
+	import { apiUrl, modalStatesStore, myData } from '../../../store';
 	import { goto } from '$app/navigation';
 	import type { PostCreateDTO, RoomInfoDTO } from '../../../interfaces';
 	import { RoomType } from '../../../enums';
@@ -14,7 +14,7 @@
 
 
 	async function createRoom(data: any) {
-		const response = await fetch("http://localhost:3000/api/chat/create", {
+		const response = await fetch(`${apiUrl}/api/chat/create`, {
 			method: "POST",
 			credentials: 'include',
 			headers: {

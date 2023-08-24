@@ -6,35 +6,36 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import type { MyData, Record } from "../../../interfaces";
-  import { myData } from "../../../store";
+  import { apiUrl, myData } from "../../../store";
 
   let records: Record[] = [];
   onMount(() => {
     getMyData();
   });
 
-  const getMyData = async (): Promise<void> => {
-    try {
-      const response = await fetch("http://localhost:3000/api/user/me", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.status !== 200) {
-        goto("/signin");
-        return;
-      }
-      const data: Promise<MyData> = response.json();
-      $myData = await data;
-      $myData = $myData;
-      records = $myData.record as Record[];
-      console.log("$myData", $myData);
-    } catch (error) {
-      console.error("실패:", error);
-    }
-  };
+	const getMyData = async (): Promise<void> => {
+		try {
+			const response = await fetch(`${apiUrl}/api/user/me`, {
+				method: "GET",
+				credentials: 'include',
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (response.status !== 200) {
+					goto("/signin");
+					return;
+			}
+			const data: Promise<MyData> = response.json();
+			$myData = await data;
+			$myData = $myData;
+			records = $myData.record as Record[];
+			console.log("$myData", $myData);
+			
+		} catch (error) {
+			console.error("실패:", error);
+		}
+	}
 </script>
 
 <LogoutModal />

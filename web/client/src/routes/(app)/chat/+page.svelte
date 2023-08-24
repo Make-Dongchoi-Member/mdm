@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ChatRoomCreateModal from './ChatRoomCreateModal.svelte';
 	import ChatRoomEnterPasswordModal from './ChatRoomEnterPasswordModal.svelte';
-	import { modalStatesStore, myData, roomList, socketStore } from '../../../store';
+	import { apiUrl, modalStatesStore, myData, roomList, socketStore } from '../../../store';
 	import type { Room, RoomEnterDTO } from '../../../interfaces';
 	import { onMount } from 'svelte';
 	import { RoomType } from '../../../enums';
@@ -15,7 +15,7 @@
 	});
 
 	const getRoomList = async () => {
-		const response = await fetch(`http://localhost:3000/api/chat/list`, {
+		const response = await fetch(`${apiUrl}/api/chat/list`, {
 			method: "GET",
 			credentials: 'include',
 			headers: {
@@ -41,7 +41,7 @@
 				password,
 			}
 		}
-		const response = fetch(`http://localhost:3000/api/chat/room/enter`, {
+		const response = fetch(`${apiUrl}/api/chat/room/enter`, {
 			method: "POST",
 			credentials: 'include',
 			headers: {
@@ -110,21 +110,22 @@
 	</div>
 	<div class="room-list">		
 		{#each $myData.rooms as roomNum}
+			{#if $roomList.get(roomNum) !== undefined}
+				<button on:click={()=>(myRoomEnter(roomNum))}>
 
-			<button on:click={()=>(myRoomEnter(roomNum))}>
-
-				<div>
-					{$roomList.get(roomNum)?.roomname}
-				</div>
-				{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
-					<div>&#x1F512</div>
-				{:else}
-					<div></div>
-				{/if}
-				<div>
-					{$roomList.get(roomNum)?.memberCount}
-				</div>
-			</button>
+					<div>
+						{$roomList.get(roomNum)?.roomname}
+					</div>
+					{#if $roomList.get(roomNum)?.roomtype === RoomType.LOCK}
+						<div>&#x1F512</div>
+					{:else}
+						<div></div>
+					{/if}
+					<div>
+						{$roomList.get(roomNum)?.memberCount}
+					</div>
+				</button>
+			{/if}
 		{/each}
 		{#if $myData.rooms.length > 0}
 			<div class="divider">

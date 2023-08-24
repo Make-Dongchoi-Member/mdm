@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore } from "../../store";
+	import { apiUrl, modalStatesStore } from "../../store";
 	import type { AlertData, AlertListDTO, Notification } from "../../interfaces";
 	import { clickOutside, escapeKey } from "../../actions";
   import { onMount } from "svelte";
@@ -13,7 +13,7 @@
 
 	const getAlertList = async (): Promise<void> => {
 		try {
-			const response = await fetch("http://localhost:3000/api/alert/list", {
+			const response = await fetch(`${apiUrl}/api/alert/list`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {

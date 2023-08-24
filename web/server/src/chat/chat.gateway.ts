@@ -30,7 +30,11 @@ export class ChatGateway {
   @WebSocketServer() io: Server;
 
   @SubscribeMessage('chat/join')
-  handleJoinRoom(client: Socket, data: JoinChatRoomDTO) {
+  async handleJoinRoom(client: Socket, data: JoinChatRoomDTO) {
+    const room = await this.roomRepository.getRoomById(+data.roomId);
+    if (!room) return;
+    const ids = [room.host, ...room.admin, ...room.members];
+    if (!ids.includes(+data.userId)) return;
     client.join(data.roomId);
   }
 
@@ -45,6 +49,7 @@ export class ChatGateway {
       +data.roomId,
       +data.userId,
     );
+    if (!enterUser) return;
     client.join(data.roomId);
     client.broadcast.to(data.roomId).emit('chat/enter', enterUser);
   }
@@ -57,8 +62,13 @@ export class ChatGateway {
         룸 아이디가 맞는지 확인
         방 참가 권한 체크
     */
-    const muteList = await this.roomRepository.getMute(+data.message.roomId);
-    if (muteList.includes(data.message.sender.id)) return;
+
+    const senderId = data.message.sender.id;
+    const room = await this.roomRepository.getRoomById(+data.message.roomId);
+    const ids = [room.host, ...room.admin, ...room.members];
+    if (room.mute.includes(senderId) || !ids.includes(senderId)) {
+      return;
+    }
 
     const sender = await this.userRepository.getUserById(
       data.message.sender.id,

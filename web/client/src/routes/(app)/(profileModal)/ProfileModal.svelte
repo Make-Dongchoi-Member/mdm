@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, profileModalStore } from "../../../store";
+	import { apiUrl, modalStatesStore, profileModalStore } from "../../../store";
 	import OtherInfo from "./OtherInfo.svelte";
 	import { clickOutside, escapeKey } from "../../../actions";
 	import ModalHistory from "./ModalHistory.svelte";
@@ -18,7 +18,7 @@
 
 	const getUserData = async () => {
 		const nickname: string = $profileModalStore.nickname;
-		const uri: string = `http://localhost:3000/api/user/info?nickname=${nickname}`;
+		const uri: string = `${apiUrl}/api/user/info?nickname=${nickname}`;
 		const response = await fetch(uri, {
 			method: "GET",
 			credentials: 'include',
@@ -112,26 +112,10 @@
 		margin-top: 20px;
 	}
 
-	.button_area {
-		display: flex;
-		flex-direction: row;
-		width: 750px;
-		height: 30px;
-		margin: 20px 10px 10px 15px;
-	}
-
 	button {
 		width: 150px;
 		margin-right: 15px;
 		background-color: var(--dark-color);
 	}
 
-	.button_area > button:hover {
-		background-color: var(--hover-color);
-	}
-
-	.selected {
-		border: 1px solid var(--point-color);
-		background-color: var(--hover-color);
-	}
 </style>

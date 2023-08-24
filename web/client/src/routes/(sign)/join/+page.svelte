@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { myData } from "../../../store";
+  import { apiUrl, myData } from "../../../store";
   import type { MyData } from "../../../interfaces";
   import { goto } from "$app/navigation";
 
@@ -82,7 +82,7 @@
   async function nicknameSetAPI(data: any) {
     try {
       const response = await fetch(
-        "http://localhost:3000/api/user/set/nickname",
+        `${apiUrl}/api/user/set/nickname`,
         {
           method: "POST",
           credentials: "include",
@@ -108,7 +108,7 @@
 
   const getMyData = async (): Promise<void> => {
     try {
-      const response = await fetch("http://localhost:3000/api/user/me", {
+      const response = await fetch(`${apiUrl}/api/user/me`, {
         method: "GET",
         credentials: "include",
         headers: {

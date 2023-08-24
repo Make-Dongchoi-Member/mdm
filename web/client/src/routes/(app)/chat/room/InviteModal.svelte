@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
+	import { apiUrl, modalStatesStore, myData, openedRoom, socketStore } from "../../../../store";
 	import { clickOutside, escapeKey } from '../../../../actions';
   import type { AlertData, OtherUserData, UserData } from "../../../../interfaces";
   import { AlertType } from "../../../../enums";
@@ -50,7 +50,7 @@
 			return false;
 		}
 		try {
-			const response = await fetch(`http://localhost:3000/api/user/search?nickname=${nickname}`, {
+			const response = await fetch(`${apiUrl}/api/user/search?nickname=${nickname}`, {
 				method: "GET",
 				credentials: 'include',
 				headers: {

@@ -243,7 +243,8 @@ export class GameService {
       (state === UserState.GAMING && user.state === UserState.ONLINE) ||
       (state === UserState.ONLINE && user.state === UserState.GAMING)
     ) {
-      this.userRepository.updateUser(user.id, { state: state });
+      user.state = state;
+      this.userRepository.save(user);
     }
   }
 
@@ -264,6 +265,14 @@ export class GameService {
       enemy: winner,
     });
     await this.userRepository.manager.save([winnerHistory, loserHistory]);
+  }
+
+  async getUserByNickname(nickname: string) {
+    return await this.userRepository.getUserByNickname(nickname);
+  }
+
+  async getUserById(id: number) {
+    return await this.userRepository.getUserById(id);
   }
 
   private randomSpeed(): number {

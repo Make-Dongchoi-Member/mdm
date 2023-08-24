@@ -13,7 +13,12 @@ import type {
 import { Level, RoomType, UserState } from "./enums";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3000", {
+const apiUrl: string =
+  process.env.NODE_ENV == "prod"
+    ? import.meta.env.VITE_API_URL
+    : import.meta.env.VITE_DEV_API_URL;
+
+const socket = io(apiUrl, {
   withCredentials: true,
   autoConnect: false,
 });
@@ -88,4 +93,5 @@ export {
   roomList,
   dm,
   profileModalStore,
+  apiUrl,
 };

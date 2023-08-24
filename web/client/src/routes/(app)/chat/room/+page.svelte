@@ -2,7 +2,7 @@
 	import InviteModal from './InviteModal.svelte';
 	import SettingModal from './SettingModal.svelte';
 	import RoomoutModal from './RoomoutModal.svelte';
-	import { modalStatesStore, socketStore, myData, openedRoom } from '../../../../store';
+	import { modalStatesStore, socketStore, myData, openedRoom, apiUrl } from '../../../../store';
 	import ChatMessage from './ChatMessage.svelte';
 	import ChatMember from './ChatMember.svelte';
 	import { onDestroy, onMount } from 'svelte';
@@ -21,7 +21,6 @@
 
 	onMount(() => {
 		getRoomData();
-		myDataUpdate(Number($page.url.searchParams.get("id")) as number);
 		$socketStore.emit("chat/join", { userId: $myData.id, roomId: $page.url.searchParams.get("id") });
 
 		$socketStore.on("chat/enter", (data: any) => {
@@ -70,14 +69,26 @@
 	});
 
 	const getRoomData = async () => {
-		const response = await fetch(`http://localhost:3000/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
+		const response = await fetch(`${apiUrl}/api/chat/room?room_id=${$page.url.searchParams.get("id")}`, {
 			method: "GET",
 			credentials: 'include',
 			headers: {
 				"Content-Type": "application/json",
 			},
 		})
-		.then(response => response.json())
+		.then(response => {
+			if (!response.ok) {
+				if (response.status === 404) {
+					alert(`room${$page.url.searchParams.get('id')} not found`)
+				} else if (response.status === 403) {
+					alert(`You do not have permission`)
+				}
+				goto('/chat')
+				throw Error
+			}
+			myDataUpdate(Number($page.url.searchParams.get("id")) as number);
+			return response.json()
+		})
 		.then(data => {
 			$openedRoom.hostId = data.openedRoom.hostId;
 			$openedRoom.roomId = data.openedRoom.roomId;

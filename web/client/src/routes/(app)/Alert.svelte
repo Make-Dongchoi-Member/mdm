@@ -2,7 +2,7 @@
   import type { AlertData } from "../../interfaces";
   import { AlertType } from "../../enums";
   import { goto } from "$app/navigation";
-  import { gameSettingStore, modalStatesStore, myData, socketStore } from "../../store";
+  import { apiUrl, gameSettingStore, modalStatesStore, myData, socketStore } from "../../store";
 
 	export let alertData: AlertData;
 	export let getAlertList: Function;
@@ -19,7 +19,7 @@
 
 	const postFollowAlertAccept = async (): Promise<void> => {
 		try {
-			const response = await fetch(`http://localhost:3000/api/alert/follow/accept`, {
+			const response = await fetch(`${apiUrl}/api/alert/follow/accept`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -37,7 +37,7 @@
 
 	const postChatAlertAccept = async (): Promise<void> => {
 		try {
-			const response = await fetch(`http://localhost:3000/api/alert/chat/accept`, {
+			const response = await fetch(`${apiUrl}/api/alert/chat/accept`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -58,7 +58,7 @@
 
 	const postGameAlertAccept = async (): Promise<void> => {
 		try {
-			const response = await fetch(`http://localhost:3000/api/alert/game/accept`, {
+			const response = await fetch(`${apiUrl}/api/alert/game/accept`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -86,7 +86,7 @@
 	const postAlertDeny = async (): Promise<void> => {
 		if (alertData === undefined) return;
 		try {
-			const response = await fetch(`http://localhost:3000/api/alert/deny`, {
+			const response = await fetch(`${apiUrl}/api/alert/deny`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {

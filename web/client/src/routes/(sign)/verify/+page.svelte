@@ -1,6 +1,7 @@
 <script lang='ts'>
 	import {goto} from '$app/navigation';
     import { onMount } from 'svelte';
+  import { apiUrl } from '../../../store';
 
 	let resendLink: string = 'send the code again';
 	let isInvalid: boolean = false;
@@ -9,7 +10,7 @@
 
 	async function emailCodeValidation(data: any) {
 		try {
-			const response = await fetch("http://localhost:3000/api/login/mailauth", {
+			const response = await fetch(`${apiUrl}/api/login/mailauth`, {
 				method: "POST",
 				credentials: 'include',
 				headers: {
@@ -60,6 +61,7 @@
 
 	const checkUserIdCookie = async (): Promise<void> => {
 		const value: any = document.cookie.match('user_id=');
+		console.log('isGot?', value)
 		if (value) {
 			isGotCookie = true;
 			return;
@@ -83,7 +85,7 @@
 <div class="resend-link">
 	<span>Do you have any problem?</span>
 	<span>&#8594;</span>
-	<a href="http://localhost:3000/api/login" class="mail_address">{resendLink}</a>
+	<a href={`${apiUrl}/api/login`} class="mail_address">{resendLink}</a>
 </div>
 {/if}
 

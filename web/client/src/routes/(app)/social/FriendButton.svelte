@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { UserData } from "../../../interfaces";
-  import { dm, modalStatesStore, profileModalStore, socketStore } from "../../../store";
+  import { apiUrl, dm, modalStatesStore, profileModalStore, socketStore } from "../../../store";
   import { UserState } from "../../../enums";
 
 	export let user: UserData;
@@ -21,7 +21,7 @@
 	}
 
 	const chatClickEvent = async (): Promise<void> => {
-		const response = await fetch(`http://localhost:3000/api/dm/history?other=${user.id}`, {
+		const response = await fetch(`${apiUrl}/api/dm/history?other=${user.id}`, {
 			method: "GET",
 			credentials: 'include',
 			headers: {
