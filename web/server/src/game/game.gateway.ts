@@ -72,6 +72,16 @@ export class GameGateway implements OnGatewayDisconnect {
           this.gameService.deleteGameStatus(roomKey);
           this.io.to(roomKey).emit('game/quit', gamePlayInfo);
         }
+        this.gameService.setUserState(
+          gameStatus.playerA.nickname,
+          UserState.ONLINE,
+        );
+        this.gameService.setUserState(
+          gameStatus.playerB.nickname,
+          UserState.ONLINE,
+        );
+        this.sendStateToFriends(gameStatus.playerA.nickname, UserState.ONLINE);
+        this.sendStateToFriends(gameStatus.playerB.nickname, UserState.ONLINE);
 
         client.leave(roomKey);
       }

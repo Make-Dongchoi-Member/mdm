@@ -229,8 +229,6 @@ export class GameService {
       gs.playerB.life = 0;
       this.saveGameToDB(gs.playerA.nickname, gs.playerB.nickname);
     }
-    this.setUserState(gs.playerA.nickname, UserState.ONLINE);
-    this.setUserState(gs.playerB.nickname, UserState.ONLINE);
     gm.deleteGameRoomKey(roomKey);
     this.deleteGameStatus(roomKey);
   }
@@ -242,7 +240,7 @@ export class GameService {
       (state === UserState.ONLINE && user.state === UserState.GAMING)
     ) {
       user.state = state;
-      this.userRepository.save(user);
+      const savedUser = await this.userRepository.save(user);
     }
   }
 

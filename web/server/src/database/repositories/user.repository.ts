@@ -12,7 +12,7 @@ import { Message } from 'src/types/interfaces';
 @CustomRepository(Users)
 export class UserRepository extends Repository<Users> {
   async saveNewUser(user: PendingUser) {
-    const existUser = this.findOneBy({ id: user.id });
+    const existUser = await this.findOneBy({ id: user.id });
     const newUserEntity = this.create({
       id: user.id,
       userName: user.login,

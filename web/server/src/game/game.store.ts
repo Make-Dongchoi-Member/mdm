@@ -128,7 +128,7 @@ export class GameStore {
   }
 
   private generateRandomString(length: number): string {
-    const characters = '0123456789';
+    const characters = '123456789';
     const charactersLength = characters.length;
     let randomString = '';
 
