@@ -54,6 +54,8 @@
 
 		margin-top: 220px;
 		margin-left: 55px;
+
+		z-index: 1;
 	}
 
 	.modal-content {
