@@ -223,11 +223,13 @@
     if (gameRoom && gameRoom.playerB === undefined) {
       gameInfo.roomKey = gameRoom.roomKey;
       $myData.isInGame = true;
+      wait = true;
       ready = true;
       gamePrefer.message = "WAIT ENEMY...";
     } else if (gameRoom && gameRoom.playerB) {
       gameInfo = gameRoom;
       $myData.isInGame = true;
+      wait = true;
       matching = true;
       gamePrefer.message = "WAIT TO START";
     }
@@ -251,6 +253,7 @@
       if (arg.roomKey.length > 0) {
         matching = true;
         $myData.isInGame = true;
+        wait = true;
         gamePrefer.message = "WAIT TO START";
       }
 
