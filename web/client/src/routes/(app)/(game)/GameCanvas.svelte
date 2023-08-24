@@ -269,19 +269,8 @@
 
       // 공 잔상 그리기
       for (const i in ballSpectrums) {
-        // TODO *****************************************
-        // 이 부분에서 공 색깔에 따라 잔상 색깔도 반영되도록 변경해야함
-        // gamesettingstore의 ballcolor를 활용하되, fillStyle말고 다른 메소드를 활용해 투명도만 조절할 수 있는지 찾아볼 것.
-        // 밑의 코드대로 구현할 경우 공의 바뀐 색깔은 반영이 되지만 잔상의 자국이 남는 버그가 있으므로 고칠 것.
-
-        // ctx.fillStyle = `rgba(
-        // ${gamePrefer.ballColor.red},
-        // ${gamePrefer.ballColor.green},
-        // ${gamePrefer.ballColor.blue},
-        // ${0.02 * +i}
-        // )`;
         ctx.fillStyle = $gameSettingStore.ballColor;
-        ctx.globalAlpha = 0.02 * +i;
+        ctx.globalAlpha = 0.03 * +i;
         ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
       }
 
