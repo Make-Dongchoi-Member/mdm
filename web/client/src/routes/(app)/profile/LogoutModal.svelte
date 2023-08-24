@@ -1,18 +1,14 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-	import { modalStatesStore, myData, socketStore } from "../../../store";
-	import { clickOutside, escapeKey } from "../../../actions";
+  import { goto } from "$app/navigation";
+  import { modalStatesStore, myData, socketStore } from "../../../store";
+  import { clickOutside, escapeKey } from "../../../actions";
 
   const logoutEvent = () => {
     /*
 			@TODO
 			LOGOUT 했다는 API 요청
 		*/
-		$socketStore.emit('app/logout');
-		deleteToken('access_token');
-		goto("/signin");
-		modalCloseEvent();
-	}
+    $socketStore.emit("app/logout");
 
     deleteToken("access_token");
     goto("/signin");
