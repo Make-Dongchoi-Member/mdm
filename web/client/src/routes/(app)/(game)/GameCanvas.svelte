@@ -79,6 +79,7 @@
 
   let matching: boolean = false;
   let ready: boolean = false;
+  let wait: boolean = false;
   let gaming: boolean = false;
   let gameRoomMaster: boolean = false;
   let gameOver: boolean = false;
@@ -97,8 +98,10 @@
     gamePrefer.message = "READY FOR THE NEXT MATCH";
     gamePrefer.controlWithMouse = false;
 
+    $myData.isInGame = false;
     matching = false;
     ready = false;
+    wait = false;
     gaming = false;
     gameRoomMaster = false;
     gameOver = false;
@@ -106,22 +109,29 @@
   };
 
   const gameReady = () => {
-    // 이미 레디 눌렀으면 동작 안 함
-    if (ready) return;
+    if (ready === true) {
+      ready = false;
+      gamePrefer.message = "READY FOR THE NEXT MATCH";
+      $myData.isInGame = false;
+      $socketStore.emit("game/matchout", { nickname: $myData.nickname });
+    } else if (ready === false) {
+      // 레디 상태로 변경
+      ready = true;
 
-    // 레디 상태로 변경
-    ready = true;
+      // 게임 버튼 메시지 변경
+      gamePrefer.message = "WAITING...";
 
-    // 게임 버튼 메시지 변경
-    gamePrefer.message = "WAITING...";
+      // 게임 스킨 설정창 비활성화
+      $myData.isInGame = true;
 
-    // 소켓에 "game/match" 로 emit, 내 닉네임과 게임 모드, 막대 컬러를 전송
-    $socketStore.emit("game/match", {
-      nickname: $myData.nickname,
-      gameMode: $gameSettingStore.gameMode,
-      barColor: $gameSettingStore.barColor,
-      roomId: gameInfo.roomKey,
-    });
+      // 소켓에 "game/match" 로 emit, 내 닉네임과 게임 모드, 막대 컬러를 전송
+      $socketStore.emit("game/match", {
+        nickname: $myData.nickname,
+        gameMode: $gameSettingStore.gameMode,
+        barColor: $gameSettingStore.barColor,
+        roomId: gameInfo.roomKey,
+      });
+    }
   };
 
   const gameStart = () => {
@@ -137,7 +147,8 @@
 
   const revengeMatch = () => {
     gameOver = false;
-    ready = true;
+    ready = false;
+    wait = true;
     gamePrefer.message = "WAIT FOR THE ENEMY";
     gameRoomMaster = false;
     // if (gameInfo.playerA === $myData.nickname) gameRoomMaster = true;
@@ -218,8 +229,11 @@
     });
 
     $socketStore.on("game/play", (arg: GameStatus) => {
+      // 배경 그리기
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 배경 가운데 점선 그리기
       ctx.beginPath();
       ctx.moveTo(canvas.width / 2, 0);
       ctx.lineTo(canvas.width / 2, canvas.height);
@@ -227,38 +241,44 @@
       ctx.setLineDash([20]);
       ctx.stroke();
 
+      // 공 좌표를 받아서 잔상 만들기
       ballSpectrums.push({ x: ball.x, y: ball.y });
       if (ballSpectrums.length > 35) {
         ballSpectrums.shift();
       }
 
+      // 왼쪽 막대 정보 받아 저장하기
       leftBar.y = arg.playerA.bar.y;
       leftBar.h = arg.playerA.bar.h;
       leftBar.color = arg.playerA.bar.color;
 
+      // 오른쪽 막대 정보 받아 저장하기
       rightBar.y = arg.playerB.bar.y;
       rightBar.h = arg.playerB.bar.h;
       rightBar.color = arg.playerB.bar.color;
 
+      // 왼쪽, 오른쪽 막대 그리기
       ctx.fillStyle = leftBar.color;
       ctx.fillRect(leftBar.x, leftBar.y, leftBar.w, leftBar.h);
       ctx.fillStyle = rightBar.color;
       ctx.fillRect(rightBar.x, rightBar.y, rightBar.w, rightBar.h);
 
+      // 공 정보 받아 저장하기
       ball.x = arg.ball.x;
       ball.y = arg.ball.y;
+
+      // 공 잔상 그리기
       for (const i in ballSpectrums) {
-        ctx.fillStyle = `rgba(
-        ${gamePrefer.ballColor.red},
-        ${gamePrefer.ballColor.green},
-        ${gamePrefer.ballColor.blue},
-        ${0.02 * +i}
-        )`;
+        ctx.fillStyle = $gameSettingStore.ballColor;
+        ctx.globalAlpha = 0.03 * +i;
         ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
       }
-      ctx.fillStyle = ball.color;
+
+      // 공 그리기
+      ctx.fillStyle = $gameSettingStore.ballColor;
       ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
 
+      // 목숨 정보 받아 저장하기
       leftLife = arg.playerA.life;
       rightLife = arg.playerB.life;
     });
@@ -360,7 +380,6 @@
       }
     } else {
       $socketStore.emit("game/matchout", { nickname: $myData.nickname });
-      console.log(gameInfo);
       $socketStore.emit("game/private-matchout", { roomKey: gameInfo.roomKey });
     }
   });
@@ -377,7 +396,11 @@
   {#if gameRoomMaster}
     <button on:click={gameStart}>GAME START</button>
   {:else if !gameRoomMaster}
-    <button disabled={ready} on:click={gameReady}>{gamePrefer.message}</button>
+    <button
+      disabled={wait}
+      class={ready ? "ready-off" : "ready-on"}
+      on:click={gameReady}>{gamePrefer.message}</button
+    >
   {/if}
   {#if gameOver}
     <div class="rematch">
@@ -427,6 +450,7 @@
     font-weight: 100;
   }
 
+  .button-area > .ready-off,
   .button-area > button:disabled {
     background-color: var(--hover-color);
     border: 1px solid var(--point-color);

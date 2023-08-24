@@ -1,17 +1,17 @@
 <script lang="ts">
-	import ProfileHistory from "./ProfileHistory.svelte";
-	import MyInfo from "./MyInfo.svelte";
-	import LogoutModal from "./LogoutModal.svelte";
-	import NicknameModal from "./NicknameModal.svelte";
+  import ProfileHistory from "./ProfileHistory.svelte";
+  import MyInfo from "./MyInfo.svelte";
+  import LogoutModal from "./LogoutModal.svelte";
+  import NicknameModal from "./NicknameModal.svelte";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import type { MyData, Record } from "../../../interfaces";
   import { apiUrl, myData } from "../../../store";
 
-	let records: Record[] = [];
-	onMount(() => {
-		getMyData();
-	})
+  let records: Record[] = [];
+  onMount(() => {
+    getMyData();
+  });
 
 	const getMyData = async (): Promise<void> => {
 		try {
@@ -42,25 +42,25 @@
 <NicknameModal />
 
 <div class="info_container">
-	<MyInfo {records} />
+  <MyInfo {records} />
 </div>
 <div class="data_container">
-	<ProfileHistory {records} />
+  <ProfileHistory {records} />
 </div>
 
 <style>
-	.info_container {
-		display: flex;
-		flex-direction: row;
-		border: 1px solid var(--border-color);
-		height: 250px;
-		box-sizing: border-box;
-	}
+  .info_container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid var(--border-color);
+    height: 250px;
+    box-sizing: border-box;
+  }
 
-	.data_container {
-		border: 1px solid var(--border-color);
-		height: 380px;
-		margin-top: 20px;
-		box-sizing: border-box;
-	}
+  .data_container {
+    border: 1px solid var(--border-color);
+    height: 380px;
+    margin-top: 20px;
+    box-sizing: border-box;
+  }
 </style>

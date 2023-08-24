@@ -17,6 +17,7 @@ import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
 import { UserNicknameDto } from './dto/UserNickname.dto';
 import { UserState } from 'src/types/enums';
 import { SearchUserDTO } from './dto/SearchUser.dto';
+import { Limit } from './guards/limit.guard';
 
 @Controller('api/user')
 export class UserController {
@@ -102,6 +103,7 @@ export class UserController {
    * >> avatar: string
    * <<
    */
+  @Limit(1024 * 1024 * 3)
   @Post('set/avatar')
   async setAvatar(
     @UserId(ParseIntPipe) userId: number,

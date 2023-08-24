@@ -9,7 +9,7 @@ import type {
 
 export interface UserData {
   id: string;
-  avatar: string;
+  avatar?: string;
   nickname: string;
   record?: Record[];
   state?: UserState;
@@ -127,7 +127,7 @@ export interface RoomInfoDTO {
 export interface GameSetting {
   gameMode: string;
   barColor: string;
-  ballShape: string;
+  ballColor: string;
 }
 
 export interface ModalStates {
@@ -147,6 +147,7 @@ export interface MyData extends UserData {
   rooms: number[];
   friends: UserData[];
   isAlert: boolean;
+  isInGame: boolean;
 }
 
 export interface SetRequestDTO {

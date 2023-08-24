@@ -3,53 +3,39 @@
   import { gameSettingStore } from "../../../store";
   import { clickOutside } from "../../../actions";
 
-  let isColorOptionShow: boolean = false;
-  let isShapeOptionShow: boolean = false;
-
-  interface gameMode {
-    [index: string]: boolean;
-    basic: boolean;
-    hard: boolean;
-  }
-
-  let mode: gameMode = {
-    basic: true,
-    hard: false,
-  };
+  let barColorOptionOpen: boolean = false;
+  let ballColorOptionOpen: boolean = false;
 
   const gameModeSetEvent = (e: any) => {
-    for (const key of Object.keys(mode)) {
-      mode[key] = false;
-    }
-    mode[e.target.value] = true;
     $gameSettingStore.gameMode = e.target.value;
   };
 
-  const colorButtonEvent = () => {
-    isColorOptionShow = !isColorOptionShow;
-    isShapeOptionShow = false;
+  const barColorList = () => {
+    barColorOptionOpen = !barColorOptionOpen;
+    ballColorOptionOpen = false;
   };
 
-  const shapeButtonEvent = () => {
-    isShapeOptionShow = !isShapeOptionShow;
-    isColorOptionShow = false;
+  const ballColorList = () => {
+    ballColorOptionOpen = !ballColorOptionOpen;
+    barColorOptionOpen = false;
   };
 
   const barColorEvent = (e: any) => {
     $gameSettingStore.barColor = e.target.value;
-    isColorOptionShow = false;
+    barColorOptionOpen = false;
   };
 
-  const ballShapeEvent = (e: any) => {
-    $gameSettingStore.ballShape = e.target.value;
-    isShapeOptionShow = false;
+  const ballColorEvent = (e: any) => {
+    $gameSettingStore.ballColor = e.target.value;
+    ballColorOptionOpen = false;
   };
 
-  const optionCloseEvent = () => {
-    if (isColorOptionShow || isShapeOptionShow) {
-      isColorOptionShow = false;
-      isShapeOptionShow = false;
-    }
+  const barOptionCloseEvent = () => {
+    barColorOptionOpen = false;
+  };
+
+  const ballOptionCloseEvent = () => {
+    ballColorOptionOpen = false;
   };
 </script>
 
@@ -58,30 +44,29 @@
     <div>GAME MODE</div>
     <button
       value="basic"
-      class={mode.basic ? "selected" : ""}
+      class={$gameSettingStore.gameMode === "basic" ? "selected" : ""}
       on:click={gameModeSetEvent}>BASIC</button
     >
     <button
       value="hard"
-      class={mode.hard ? "selected" : ""}
+      class={$gameSettingStore.gameMode === "hard" ? "selected" : ""}
       on:click={gameModeSetEvent}>HARD</button
     >
   </div>
   <div class="skin-option">
     <div>SKIN OPTION</div>
     <div class="color-option">
-      <button on:click={colorButtonEvent}>
+      <button on:click={barColorList}>
         BAR COLOR
         <div
-          class="color-circle"
+          class="bar-color-circle"
           style="background-color: {$gameSettingStore.barColor}"
         />
       </button>
       <div
-        class="test"
-        style="display: {isColorOptionShow ? 'flex' : 'none'}"
+        style="display: {barColorOptionOpen ? 'flex' : 'none'}"
         use:clickOutside
-        on:outclick={optionCloseEvent}
+        on:outclick={barOptionCloseEvent}
       >
         <button
           value="#ff6231"
@@ -99,11 +84,31 @@
       </div>
     </div>
     <div class="shape-option">
-      <button on:click={shapeButtonEvent}> BALL SHAPE </button>
-      <div style="display: {isShapeOptionShow ? 'flex' : 'none'}">
-        <button value="square" on:click={ballShapeEvent}> Square </button>
-        <button value="diamond" on:click={ballShapeEvent}> Diamond </button>
-        <button value="circle" on:click={ballShapeEvent}> Circle </button>
+      <button on:click={ballColorList}>
+        BALL COLOR
+        <div
+          class="ball-color-circle"
+          style="background-color: {$gameSettingStore.ballColor}"
+        />
+      </button>
+      <div
+        style="display: {ballColorOptionOpen ? 'flex' : 'none'}"
+        use:clickOutside
+        on:outclick={ballOptionCloseEvent}
+      >
+        <button
+          value="#ff6231"
+          on:click={ballColorEvent}
+          style="background-color: #ff6231"
+        />
+        <button
+          value="#00BABC"
+          on:click={ballColorEvent}
+          style="background-color: #00babc"
+        />
+        <form>
+          <input type="color" bind:value={$gameSettingStore.ballColor} />
+        </form>
       </div>
     </div>
   </div>
@@ -196,7 +201,8 @@
     background-color: var(--hover-color);
   }
 
-  .color-circle {
+  .bar-color-circle,
+  .ball-color-circle {
     position: absolute;
     top: 12px;
     right: 14px;

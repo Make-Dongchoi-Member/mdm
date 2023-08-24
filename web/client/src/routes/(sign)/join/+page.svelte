@@ -14,9 +14,47 @@
     (document.querySelector("#input-profile") as HTMLInputElement).click();
   };
 
-  const fileUpload = async (e: any) => {
-    profileSrc = e.target.files[0];
+  async function avatarSetAPI(data: any) {
+    try {
+      console.log("data", data);
+      const response = await fetch(
+        "http://localhost:3000/api/user/set/avatar",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      return response;
+    } catch (error) {
+      console.error("프로필 사진 설정 실패:", error);
+    }
+  }
 
+  const fileUpload = async (e: any) => {
+    const selectedfile: FileList = e.target.files;
+    let newAvatar: string | undefined = "";
+    if (selectedfile.length > 0) {
+      const [imageFile] = selectedfile;
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        const srcData = fileReader.result;
+        newAvatar = srcData?.toString();
+        avatarSetAPI({ data: { avatar: newAvatar } }).then((res) => {
+          if (res) {
+            if (res.ok) {
+              $myData.avatar = newAvatar;
+            } else {
+              alert("Profile Image Setting Failed!");
+            }
+          }
+        });
+      };
+      fileReader.readAsDataURL(imageFile);
+    }
     /**
      * @TODO
      * 업로드한 이미지가 적절한지 확인

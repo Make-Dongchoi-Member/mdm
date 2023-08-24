@@ -16,6 +16,8 @@ export class PendingUserService {
   }
 
   verify(userId: number, emailCode: string) {
+    console.log(userId, emailCode);
+    console.log(this.users);
     const findUser = this.search(userId);
     const currentTime = new Date();
     if (!findUser) {
@@ -28,7 +30,7 @@ export class PendingUserService {
     }
     if (emailCode !== findUser.authCode) {
       // err) 인증번호가 다름
-      throw new UnauthorizedException('WorngCode');
+      throw new UnauthorizedException('WrongCode');
     }
     this.delete(userId);
     this.deleteExpireUser();

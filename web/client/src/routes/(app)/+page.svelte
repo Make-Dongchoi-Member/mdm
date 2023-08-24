@@ -9,6 +9,9 @@
 
 <div class="game-box">
   <GameCanvas />
+  {#if $myData.isInGame}
+    <div class="filter" />
+  {/if}
   <GameSetting />
 </div>
 
@@ -19,5 +22,20 @@
     justify-content: space-between;
 
     height: 650px;
+  }
+
+  .filter {
+    position: absolute;
+    top: 583px;
+
+    width: 800px;
+    height: 197px;
+
+    background-color: var(--dark-color);
+    opacity: 0.8;
+    border: 1px solid var(--border-color);
+
+    box-sizing: border-box;
+    z-index: 2;
   }
 </style>
