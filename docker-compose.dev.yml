@@ -10,6 +10,8 @@ services:
     ports:
       - "5173:5173"
       - "3000:3000"
+    env_file:
+      - ./.env
     environment:
       NODE_ENV: dev
     networks:
@@ -20,11 +22,9 @@ services:
   db:
     build: ./database
     image: database
-    environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_USER: postgres
-      POSTGRES_DB: mydatabase
     container_name: database
+    env_file:
+      - ./.env
     restart: always
     expose:
       - "5432"
