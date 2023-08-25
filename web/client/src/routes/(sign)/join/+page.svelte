@@ -130,32 +130,34 @@
 </script>
 
 {#if isSigned}
-  <div class="box">
-    <button type="button" id="change-button" on:click={profileClickEvent}>
-      <img class="image" src={$myData.avatar} alt="profile" />
-    </button>
-    <input
-      id="input-profile"
-      type="file"
-      accept="image/*"
-      on:change={fileUpload}
-      style="display: none;"
-    />
-    <form>
+  <div>
+    <div class="box">
+      <button type="button" id="change-button" on:click={profileClickEvent}>
+        <img class="image" src={$myData.avatar} alt="profile" />
+      </button>
       <input
-        type="text"
-        maxlength="10"
-        placeholder="put your nickname"
-        bind:value={nickname}
-        on:focus={focusEvent}
-        class={isInvalidNickname ? "invalid" : "valid"}
-        disabled={block ? true : false}
-        required
+        id="input-profile"
+        type="file"
+        accept="image/*"
+        on:change={fileUpload}
+        style="display: none;"
       />
-      <button on:click={nicknameClickEvent} type="submit"
-        ><i class="fa-solid fa-paper-plane" /></button
-      >
-    </form>
+      <form>
+        <input
+          type="text"
+          maxlength="10"
+          placeholder="put your nickname"
+          bind:value={nickname}
+          on:focus={focusEvent}
+          class={isInvalidNickname ? "invalid" : "valid"}
+          disabled={block ? true : false}
+          required
+        />
+        <button on:click={nicknameClickEvent} type="submit"
+          ><i class="fa-solid fa-paper-plane" /></button
+        >
+      </form>
+    </div>
   </div>
 {/if}
 
@@ -171,15 +173,15 @@
   }
 
   .box > button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 200px;
     height: 200px;
     border-radius: 70%;
     border: 1px solid var(--border-color);
     color: var(--text-color);
     box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     margin-bottom: 30px;
     overflow: hidden;
   }
