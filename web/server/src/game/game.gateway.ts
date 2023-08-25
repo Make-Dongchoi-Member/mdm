@@ -34,10 +34,17 @@ export class GameGateway implements OnGatewayDisconnect {
   // queue
 
   async handleDisconnect(client: Socket) {
+    let privateRoomKey: string = this.gameStore.getPrivateRoomKeyBySocketId(
+      client.id,
+    );
     // 게임 서버가 들고있는 유저 정보 삭제하기
     if (this.gameStore.hasQueueBySocketId(client.id)) {
       // 큐에 들어있는 경우 아직 매칭되지 않은 유저
       this.gameStore.deletePlayerAtQueueBySocketId(client.id);
+    } else if (privateRoomKey) {
+      console.log(privateRoomKey);
+      // 프라이빗 큐에 들어있는놈 삭제
+      this.gameStore.deletePrivateGame(privateRoomKey);
     } else {
       // 큐에 없는 경우 ready하지 않았거나, 게임이 이미 끝났거나, 재경기 대기 중이거나, 게임 진행중이던 유저
       // 게임 진행중이던 유저인 경우 roomKey가 존재함
@@ -65,6 +72,16 @@ export class GameGateway implements OnGatewayDisconnect {
           this.gameService.deleteGameStatus(roomKey);
           this.io.to(roomKey).emit('game/quit', gamePlayInfo);
         }
+        this.gameService.setUserState(
+          gameStatus.playerA.nickname,
+          UserState.ONLINE,
+        );
+        this.gameService.setUserState(
+          gameStatus.playerB.nickname,
+          UserState.ONLINE,
+        );
+        this.sendStateToFriends(gameStatus.playerA.nickname, UserState.ONLINE);
+        this.sendStateToFriends(gameStatus.playerB.nickname, UserState.ONLINE);
 
         client.leave(roomKey);
       }
@@ -253,6 +270,7 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('game/quit')
   handleGameQuit(client: Socket, data: GameEndDTO) {
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    if (!gameStatus) return;
     const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameStore.getIntervalID(data.roomKey));
     this.gameService.setUserState(

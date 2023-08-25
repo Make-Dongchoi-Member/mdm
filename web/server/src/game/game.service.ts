@@ -14,6 +14,7 @@ import { GameHistory } from 'src/database/entities/game-history.entity';
 import { GameStore } from './game.store';
 import { clearInterval } from 'timers';
 import { GamePlayDTO } from './dto/GamePlay.dto';
+import { GameRoomDTO } from './dto/GameRoom.dto';
 
 @Injectable()
 export class GameService {
@@ -228,8 +229,6 @@ export class GameService {
       gs.playerB.life = 0;
       this.saveGameToDB(gs.playerA.nickname, gs.playerB.nickname);
     }
-    this.setUserState(gs.playerA.nickname, UserState.ONLINE);
-    this.setUserState(gs.playerB.nickname, UserState.ONLINE);
     gm.deleteGameRoomKey(roomKey);
     this.deleteGameStatus(roomKey);
   }
@@ -241,7 +240,7 @@ export class GameService {
       (state === UserState.ONLINE && user.state === UserState.GAMING)
     ) {
       user.state = state;
-      this.userRepository.save(user);
+      const savedUser = await this.userRepository.save(user);
     }
   }
 
@@ -270,6 +269,10 @@ export class GameService {
 
   async getUserById(id: number) {
     return await this.userRepository.getUserById(id);
+  }
+
+  getPrivateRoomKey(nickname: string): GameRoomDTO | null {
+    return this.gameStore.getPrivateRoomKeyByNickname(nickname);
   }
 
   private randomSpeed(): number {

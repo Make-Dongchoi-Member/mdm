@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { GameUtil } from './game.util';
 import { GAME_LIFE } from 'src/configs/constants';
+import { GameRoomDTO } from './dto/GameRoom.dto';
 
 @Injectable()
 export class GameStore {
@@ -91,6 +92,29 @@ export class GameStore {
     return arr.length > 0;
   }
 
+  getPrivateRoomKeyBySocketId(socketId: string): string | null {
+    for (const [key, value] of this.privateGameWaitList) {
+      if (value.socket.id === socketId) return key;
+    }
+    return null;
+  }
+
+  getPrivateRoomKeyByNickname(nickname: string): GameRoomDTO | null {
+    for (const [key, value] of this.privateGameWaitList) {
+      if (value.nickname === nickname)
+        return { playerA: nickname, playerB: undefined, roomKey: key };
+    }
+    for (const [key, value] of this.gameRoomStatusMap) {
+      if (value.playerB.nickname === nickname)
+        return {
+          playerA: value.playerA.nickname,
+          playerB: nickname,
+          roomKey: key,
+        };
+    }
+    return null;
+  }
+
   deletePlayerAtQueue(nickname: string) {
     const arr = this.gameQueue.toArray().filter((e) => e.nickname !== nickname);
     this.gameQueue = new Queue<Player>(arr);
@@ -104,7 +128,7 @@ export class GameStore {
   }
 
   private generateRandomString(length: number): string {
-    const characters = '0123456789';
+    const characters = '123456789';
     const charactersLength = characters.length;
     let randomString = '';
 
