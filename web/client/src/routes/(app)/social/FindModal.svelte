@@ -157,7 +157,7 @@
     left: 50%;
     margin-left: -240px;
     width: 537px;
-    height: 150px;
+    height: 140px;
 
     display: flex;
 
