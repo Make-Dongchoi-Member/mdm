@@ -259,7 +259,7 @@
     height: 30px;
 
     border: none;
-    background-color: var(--dark-color);
+    background-color: var(--bg-color);
     color: var(--text-color);
   }
 
