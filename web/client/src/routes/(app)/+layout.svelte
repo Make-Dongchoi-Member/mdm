@@ -13,10 +13,10 @@
     $socketStore.on("alert", () => {
       isAlert = true;
     });
-    $socketStore.on('app/disconnect-another-user', () => {
-      alert('Account in use by another user. Session will be terminated.');      
-      goto('/signin');
-    })
+    $socketStore.on("app/disconnect-another-user", () => {
+      alert("Account in use by another user. Session will be terminated.");
+      goto("/signin");
+    });
   });
 
   const getMyData = async (): Promise<void> => {
@@ -82,7 +82,9 @@
     {#if isAlert}
       <div class="new-alert" />
     {/if}
-    <button on:click={alertButtonClickEvent}> &#x1F4E2; </button>
+    <button on:click={alertButtonClickEvent}
+      ><i class="fa-solid fa-bell" /></button
+    >
   </div>
   {#if $modalStatesStore.isNotiModal}
     <NotiModal />
@@ -150,6 +152,8 @@
     border: 1px solid var(--border-color);
     border-radius: 70%;
     text-align: center;
+    width: 30px;
+    height: 30px;
   }
 
   .new-alert {

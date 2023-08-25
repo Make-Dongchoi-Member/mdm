@@ -128,9 +128,11 @@
     </div>
     <div class="button-area">
       <button class="yes-button" on:click={acceptButtonClickEvent}
-        >&#x2713;</button
+        ><i class="fa-solid fa-check" /></button
       >
-      <button class="no-button" on:click={postAlertDeny}>&#x2715;</button>
+      <button class="no-button" on:click={postAlertDeny}
+        ><i class="fa-solid fa-xmark" /></button
+      >
     </div>
   </div>
 {/if}
@@ -185,9 +187,6 @@
     background-color: var(--dark-color);
     color: var(--point-color);
     border: none;
-
-    font-size: 21px;
-    font-weight: 400;
   }
 
   .yes-button:active {

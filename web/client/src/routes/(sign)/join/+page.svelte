@@ -130,33 +130,47 @@
 </script>
 
 {#if isSigned}
-  <button type="button" class="profile_image" on:click={profileClickEvent}>
-    <img class="image" src={$myData.avatar} alt="profile" />
-  </button>
-  <input
-    id="input-profile"
-    type="file"
-    accept="image/*"
-    on:change={fileUpload}
-    style="display: none;"
-  />
-  <form>
+  <div class="box">
+    <button type="button" id="change-button" on:click={profileClickEvent}>
+      <img class="image" src={$myData.avatar} alt="profile" />
+    </button>
     <input
-      type="text"
-      maxlength="10"
-      placeholder="put your nickname"
-      bind:value={nickname}
-      on:focus={focusEvent}
-      class={isInvalidNickname ? "invalid" : "valid"}
-      disabled={block ? true : false}
-      required
+      id="input-profile"
+      type="file"
+      accept="image/*"
+      on:change={fileUpload}
+      style="display: none;"
     />
-    <button on:click={nicknameClickEvent} type="submit" />
-  </form>
+    <form>
+      <input
+        type="text"
+        maxlength="10"
+        placeholder="put your nickname"
+        bind:value={nickname}
+        on:focus={focusEvent}
+        class={isInvalidNickname ? "invalid" : "valid"}
+        disabled={block ? true : false}
+        required
+      />
+      <button on:click={nicknameClickEvent} type="submit"
+        ><i class="fa-solid fa-paper-plane" /></button
+      >
+    </form>
+  </div>
 {/if}
 
 <style>
-  .profile_image {
+  .box {
+    width: 800px;
+    height: 650px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .box > button {
     width: 200px;
     height: 200px;
     border-radius: 70%;
@@ -170,13 +184,13 @@
     overflow: hidden;
   }
 
-  .profile_image:hover {
+  .box > button:hover {
     border: 2px solid white;
     cursor: pointer;
     opacity: 0.5;
   }
 
-  .profile_image > .image {
+  .box > button > .image {
     width: 110%;
     height: 110%;
     object-fit: cover;
@@ -184,8 +198,6 @@
 
   form {
     position: relative;
-    display: flex;
-    align-items: center;
   }
 
   .valid {
@@ -241,18 +253,17 @@
 
   form > button {
     position: absolute;
+    top: 7px;
     right: 10px;
-    width: 20px;
-    height: 20px;
-    background-color: var(--text-color);
-    border-radius: 70%;
-    border-color: var(--point-color);
-    margin: 0;
-    padding: 0;
+
+    height: 30px;
+
+    border: none;
+    background-color: var(--dark-color);
+    color: var(--text-color);
   }
 
-  form > button:hover {
-    background-color: var(--point-color);
-    border-radius: 10%;
+  form > button:active {
+    padding-top: 0.2rem;
   }
 </style>
