@@ -70,7 +70,7 @@ export class ChatGateway {
       return;
     }
 
-    const sender = await this.userRepository.getUserById(
+    const sender = await this.userRepository.getUserByIdWithRecord(
       data.message.sender.id,
     );
     this.roomRepository.pushMessage(sender, data.message);

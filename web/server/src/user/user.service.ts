@@ -16,7 +16,7 @@ export class UserService {
   constructor(private userRepository: UserRepository) {}
 
   async getMyData(id: number) {
-    const user = await this.userRepository.getUserById(id);
+    const user = await this.userRepository.getUserByIdWithRecord(id);
     if (!user) throw new NotFoundException(`user_id ${id} Not Found`);
     const friends = (await this.userRepository.getUserList(user.friends)).map(
       this.convertToFriendData,
@@ -35,7 +35,9 @@ export class UserService {
   }
 
   async getUserData(id: number, nickname: string) {
-    const other = await this.userRepository.getUserByNickname(nickname);
+    const other = await this.userRepository.getUserByNicknameWithRecord(
+      nickname,
+    );
     if (!other) throw new NotFoundException(`nickname ${nickname} Not Found`);
     const record = other.record.map(this.convertToRecord);
     const otherUserData: OtherUserData = {
@@ -50,7 +52,9 @@ export class UserService {
   }
 
   async searchUser(nickname: string) {
-    const user = await this.userRepository.getUserByNickname(nickname);
+    const user = await this.userRepository.getUserByNicknameWithRecord(
+      nickname,
+    );
     const ret = new SearchUserDTO();
     if (!user) {
       ret.exist = false;
@@ -78,7 +82,9 @@ export class UserService {
   }
 
   async getStatus(nickname: string): Promise<UserState> {
-    const other = await this.userRepository.getUserByNickname(nickname);
+    const other = await this.userRepository.getUserByNicknameWithRecord(
+      nickname,
+    );
     if (!other) throw new NotFoundException(`nickname ${nickname} Not Found`);
     return other.state;
   }
@@ -92,8 +98,10 @@ export class UserService {
   }
 
   async friendDelete(id: number, friendNickname: string) {
-    const me = await this.userRepository.getUserById(id);
-    const friend = await this.userRepository.getUserByNickname(friendNickname);
+    const me = await this.userRepository.getUserByIdWithRecord(id);
+    const friend = await this.userRepository.getUserByNicknameWithRecord(
+      friendNickname,
+    );
     if (!me || !friend) throw new NotFoundException();
     me.friends = me.friends.filter((e) => e !== friend.id);
     friend.friends = friend.friends.filter((e) => e !== id);
@@ -101,8 +109,10 @@ export class UserService {
   }
 
   async blockRequest(id: number, userNickname: string) {
-    const me = await this.userRepository.getUserById(id);
-    const other = await this.userRepository.getUserByNickname(userNickname);
+    const me = await this.userRepository.getUserByIdWithRecord(id);
+    const other = await this.userRepository.getUserByNicknameWithRecord(
+      userNickname,
+    );
     if (!me || !other) throw new NotFoundException();
     me.friends = me.friends.filter((e) => e !== other.id);
     me.blocks.push(other.id);
@@ -111,8 +121,10 @@ export class UserService {
   }
 
   async blockCancel(id: number, userNickname: string) {
-    const me = await this.userRepository.getUserById(id);
-    const other = await this.userRepository.getUserByNickname(userNickname);
+    const me = await this.userRepository.getUserByIdWithRecord(id);
+    const other = await this.userRepository.getUserByNicknameWithRecord(
+      userNickname,
+    );
     if (!me || !other) throw new NotFoundException();
     me.blocks = me.blocks.filter((e) => e !== other.id);
     this.userRepository.save(me);
@@ -123,8 +135,10 @@ export class UserService {
      * @TODO
      * 이미 친구로 저장된 경우엔 무시
      */
-    const friend = await this.userRepository.getUserByNickname(friendNickname);
-    const me = await this.userRepository.getUserById(id);
+    const friend = await this.userRepository.getUserByNicknameWithRecord(
+      friendNickname,
+    );
+    const me = await this.userRepository.getUserByIdWithRecord(id);
     friend.friends.push(me.id);
     me.friends.push(friend.id);
     this.userRepository.save([friend, me]);
@@ -143,8 +157,10 @@ export class UserService {
   async addGame(id: number, enemy: string) {
     const date = new Date();
     const win = date.getSeconds() % 2 === 0;
-    const user = await this.userRepository.getUserById(id);
-    const enemyUser = await this.userRepository.getUserByNickname(enemy);
+    const user = await this.userRepository.getUserByIdWithRecord(id);
+    const enemyUser = await this.userRepository.getUserByNicknameWithRecord(
+      enemy,
+    );
 
     const myHistory = new GameHistory();
     myHistory.date = date;
