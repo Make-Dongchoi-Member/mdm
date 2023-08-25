@@ -214,7 +214,7 @@ export class GameService {
     return null;
   }
 
-  deleteAbortedGame(
+  async deleteAbortedGame(
     socketId: string,
     roomKey: string,
     gm: GameStore,
@@ -224,30 +224,31 @@ export class GameService {
     clearInterval(gm.getIntervalID(roomKey));
     if (gs.playerA.nickname === abortPlayer) {
       gs.playerA.life = 0;
-      this.saveGameToDB(gs.playerB.nickname, gs.playerA.nickname);
+      await this.saveGameToDB(gs.playerB.nickname, gs.playerA.nickname);
     } else {
       gs.playerB.life = 0;
-      this.saveGameToDB(gs.playerA.nickname, gs.playerB.nickname);
+      await this.saveGameToDB(gs.playerA.nickname, gs.playerB.nickname);
     }
     gm.deleteGameRoomKey(roomKey);
     this.deleteGameStatus(roomKey);
   }
 
-  async setUserState(nickname: string, state: UserState) {
-    const user = await this.userRepository.getUserByNickname(nickname);
-    if (
-      (state === UserState.GAMING && user.state === UserState.ONLINE) ||
-      (state === UserState.ONLINE && user.state === UserState.GAMING)
-    ) {
-      user.state = state;
-      const savedUser = await this.userRepository.save(user);
-    }
+  async setUserState(playerA: string, playerB: string, state: UserState) {
+    const userA = await this.userRepository.getUserByNickname(playerA);
+    const userB = await this.userRepository.getUserByNickname(playerB);
+    if (userA.state !== UserState.OFFLINE) userA.state = state;
+    if (userB.state !== UserState.OFFLINE) userB.state = state;
+    await this.userRepository.save([userA, userB]);
   }
 
   async saveGameToDB(winnerNickname: string, loserNickname: string) {
     const date = new Date();
-    const winner = await this.userRepository.getUserByNickname(winnerNickname);
-    const loser = await this.userRepository.getUserByNickname(loserNickname);
+    const winner = await this.userRepository.getUserByNicknameWithRecord(
+      winnerNickname,
+    );
+    const loser = await this.userRepository.getUserByNicknameWithRecord(
+      loserNickname,
+    );
     const winnerHistory = this.userRepository.manager.create(GameHistory, {
       date,
       win: true,

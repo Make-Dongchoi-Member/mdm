@@ -26,11 +26,19 @@ export class UserRepository extends Repository<Users> {
     return this.findOne({ where: { id }, relations: { record: true } });
   }
 
+  async getUserByIdWithRecord(id: number) {
+    return this.findOne({ where: { id }, relations: { record: true } });
+  }
+
   async getUserByIdWithAlert(id: number) {
     return this.findOne({ where: { id }, relations: { receiveAlerts: true } });
   }
 
   async getUserByNickname(nickName: string) {
+    return this.findOne({ where: { nickName } });
+  }
+
+  async getUserByNicknameWithRecord(nickName: string) {
     return this.findOne({ where: { nickName }, relations: { record: true } });
   }
 
@@ -66,7 +74,7 @@ export class UserRepository extends Repository<Users> {
   }
 
   async getRelation(userId: number, otherId: number) {
-    const user = await this.getUserById(userId);
+    const user = await this.getUserByIdWithRecord(userId);
     if (user.friends.includes(otherId)) {
       return Relation.FRIEND;
     } else if (user.blocks.includes(otherId)) {

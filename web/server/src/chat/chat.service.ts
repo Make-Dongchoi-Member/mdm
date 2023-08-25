@@ -33,7 +33,7 @@ export class ChatService {
   ) {}
 
   async getEnterUser(roomId: number, userId: number) {
-    const userdata = await this.userRepository.getUserById(userId);
+    const userdata = await this.userRepository.getUserByIdWithRecord(userId);
     const room = await this.roomRepository.getRoomById(roomId);
     const roomMembers = [room.host, ...room.admin, ...room.members];
     if (!roomMembers.includes(userId)) return null;

@@ -27,8 +27,12 @@ export class AlertService {
   }
 
   async followAlertSave(alert: AlertData) {
-    const sender = await this.userRepository.getUserById(alert.sender.id);
-    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    const sender = await this.userRepository.getUserByIdWithRecord(
+      alert.sender.id,
+    );
+    const receiver = await this.userRepository.getUserByIdWithRecord(
+      alert.receiver.id,
+    );
     if (
       sender.blocks.includes(receiver.id) ||
       receiver.blocks.includes(sender.id)
@@ -39,8 +43,12 @@ export class AlertService {
   }
 
   async chatAlertSave(alert: AlertData) {
-    const sender = await this.userRepository.getUserById(alert.sender.id);
-    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    const sender = await this.userRepository.getUserByIdWithRecord(
+      alert.sender.id,
+    );
+    const receiver = await this.userRepository.getUserByIdWithRecord(
+      alert.receiver.id,
+    );
     const room = await this.roomRepository.getRoomById(+alert.roomId);
     if (
       sender.blocks.includes(receiver.id) ||
@@ -59,8 +67,12 @@ export class AlertService {
   }
 
   async gameAlertSave(alert: AlertData) {
-    const sender = await this.userRepository.getUserById(alert.sender.id);
-    const receiver = await this.userRepository.getUserById(alert.receiver.id);
+    const sender = await this.userRepository.getUserByIdWithRecord(
+      alert.sender.id,
+    );
+    const receiver = await this.userRepository.getUserByIdWithRecord(
+      alert.receiver.id,
+    );
     if (
       sender.blocks.includes(receiver.id) ||
       receiver.blocks.includes(sender.id)
@@ -102,13 +114,13 @@ export class AlertService {
   }
 
   async getSocketId(userId: number): Promise<string> | null {
-    const user = await this.userRepository.getUserById(userId);
+    const user = await this.userRepository.getUserByIdWithRecord(userId);
     return user.socket;
   }
 
   async acceptFollowAlert(myId: number, friendId: number) {
-    const friend = await this.userRepository.getUserById(friendId);
-    const me = await this.userRepository.getUserById(myId);
+    const friend = await this.userRepository.getUserByIdWithRecord(friendId);
+    const me = await this.userRepository.getUserByIdWithRecord(myId);
 
     if (friend.friends.includes(me.id)) return;
 
@@ -122,7 +134,7 @@ export class AlertService {
   }
 
   async acceptChatAlert(userId: number, roomId: number) {
-    const user = await this.userRepository.getUserById(userId);
+    const user = await this.userRepository.getUserByIdWithRecord(userId);
     if (!user) throw new NotFoundException(`user_id ${userId} Not Found`);
     const room = await this.roomRepository.getRoomById(roomId);
     if (!room) throw new NotFoundException(`room_id ${roomId} Not Found`);

@@ -411,7 +411,7 @@
     canvas.removeEventListener("click", mouseControl);
     document.removeEventListener("mousemove", handleMousePointer);
     if (matching) {
-      if (gameOver) {
+      if (gameOver || !gaming) {
         $socketStore.emit("game/quit", {
           nickname: $myData.nickname,
           roomKey: gameInfo.roomKey,

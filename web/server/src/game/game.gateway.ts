@@ -57,7 +57,7 @@ export class GameGateway implements OnGatewayDisconnect {
           gameStatus.state === GameState.GAMING ||
           gameStatus.state === GameState.PAUSE
         ) {
-          this.gameService.deleteAbortedGame(
+          await this.gameService.deleteAbortedGame(
             client.id,
             roomKey,
             this.gameStore,
@@ -74,9 +74,6 @@ export class GameGateway implements OnGatewayDisconnect {
         }
         this.gameService.setUserState(
           gameStatus.playerA.nickname,
-          UserState.ONLINE,
-        );
-        this.gameService.setUserState(
           gameStatus.playerB.nickname,
           UserState.ONLINE,
         );
@@ -116,8 +113,11 @@ export class GameGateway implements OnGatewayDisconnect {
       playerB.socket.join(key);
 
       // 두 플레이어의 현재 상태를 '게임 중' 으로 변경
-      this.gameService.setUserState(playerA.nickname, UserState.GAMING);
-      this.gameService.setUserState(playerB.nickname, UserState.GAMING);
+      this.gameService.setUserState(
+        playerA.nickname,
+        playerB.nickname,
+        UserState.GAMING,
+      );
       this.sendStateToFriends(playerA.nickname, UserState.GAMING);
       this.sendStateToFriends(playerB.nickname, UserState.GAMING);
 
@@ -151,8 +151,8 @@ export class GameGateway implements OnGatewayDisconnect {
     client.join(data.alert.roomId);
 
     // 두 플레이어의 현재 상태를 '게임 중' 으로 변경
-    this.gameService.setUserState(data.alert.sender.nickname, UserState.GAMING);
     this.gameService.setUserState(
+      data.alert.sender.nickname,
       data.alert.receiver.nickname,
       UserState.GAMING,
     );
@@ -275,9 +275,6 @@ export class GameGateway implements OnGatewayDisconnect {
     clearInterval(this.gameStore.getIntervalID(data.roomKey));
     this.gameService.setUserState(
       gameStatus.playerA.nickname,
-      UserState.ONLINE,
-    );
-    this.gameService.setUserState(
       gameStatus.playerB.nickname,
       UserState.ONLINE,
     );
@@ -291,28 +288,25 @@ export class GameGateway implements OnGatewayDisconnect {
 
   // 게임 중간 이탈자 발생 시 처리하는 핸들러
   @SubscribeMessage('game/roomout')
-  handleGameRoomOut(client: Socket, data: GameEndDTO) {
+  async handleGameRoomOut(client: Socket, data: GameEndDTO) {
     const gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
     const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     clearInterval(this.gameStore.getIntervalID(data.roomKey));
     if (gameStatus.playerA.nickname === data.nickname) {
       gameStatus.playerA.life = 0;
-      this.gameService.saveGameToDB(
+      await this.gameService.saveGameToDB(
         gameStatus.playerB.nickname,
         gameStatus.playerA.nickname,
       );
     } else {
       gameStatus.playerB.life = 0;
-      this.gameService.saveGameToDB(
+      await this.gameService.saveGameToDB(
         gameStatus.playerA.nickname,
         gameStatus.playerB.nickname,
       );
     }
     this.gameService.setUserState(
       gameStatus.playerA.nickname,
-      UserState.ONLINE,
-    );
-    this.gameService.setUserState(
       gameStatus.playerB.nickname,
       UserState.ONLINE,
     );
