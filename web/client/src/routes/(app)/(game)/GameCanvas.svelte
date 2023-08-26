@@ -302,13 +302,13 @@
 
       // 공 잔상 그리기
       for (const i in ballSpectrums) {
-        ctx.fillStyle = $gameSettingStore.ballColor;
+        ctx.fillStyle = $gameSettingStore.themeColor;
         ctx.globalAlpha = 0.03 * +i;
         ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
       }
 
       // 공 그리기
-      ctx.fillStyle = $gameSettingStore.ballColor;
+      ctx.fillStyle = $gameSettingStore.themeColor;
       ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
 
       // 목숨 정보 받아 저장하기
@@ -431,8 +431,26 @@
 
 <div class="life">
   {#if matching}
-    <span>{gameInfo.playerA} : {leftLife !== undefined ? leftLife : ""}</span>
-    <span>{gameInfo.playerB} : {rightLife !== undefined ? rightLife : ""}</span>
+    <!-- <span>{gameInfo.playerA} : {leftLife !== undefined ? leftLife : ""}</span>
+    <span>{gameInfo.playerB} : {rightLife !== undefined ? rightLife : ""}</span> -->
+    <div
+      class="left-player-life"
+      style={gameInfo.playerA === $myData.nickname
+        ? `color: ${$gameSettingStore.themeColor}`
+        : "color: var(--text-color)"}
+    >
+      <span>{gameInfo.playerA}</span>
+      <i class="fa-solid fa-heart" />
+    </div>
+    <div
+      class="right-player-life"
+      style={gameInfo.playerB === $myData.nickname
+        ? `color: ${$gameSettingStore.themeColor}`
+        : "color: var(--text-color)"}
+    >
+      <i class="fa-solid fa-heart" />
+      <span>{gameInfo.playerB}</span>
+    </div>
   {/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
@@ -461,10 +479,31 @@
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     width: 800px;
 
     color: var(--point-color);
+  }
+
+  .left-player-life {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .left-player-life > span {
+    padding-right: 10px;
+  }
+
+  .right-player-life {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .right-player-life > span {
+    padding-left: 10px;
   }
 
   #game-canvas {

@@ -38,7 +38,7 @@ const myData: Writable<MyData> = writable({
 const gameSettingStore: Writable<GameSetting> = writable({
   gameMode: "basic",
   barColor: "#D2D2D2",
-  ballColor: "#D2D2D2",
+  themeColor: "#FF6231",
 });
 
 const modalStatesStore: Writable<ModalStates> = writable({
