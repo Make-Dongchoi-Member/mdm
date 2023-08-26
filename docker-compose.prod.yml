@@ -2,9 +2,9 @@ version: "3"
 
 services:
   web:
-    build:
-      context: ./web
+    build: ./web
     image: web
+    pull_policy: never
     container_name: web
     restart: always
     ports:
@@ -21,6 +21,7 @@ services:
   db:
     build: ./database
     image: database
+    pull_policy: never
     env_file:
       - ./.env
     container_name: database
