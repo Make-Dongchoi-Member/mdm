@@ -15,6 +15,7 @@
     Position,
   } from "../../../interfaces";
   import { goto } from "$app/navigation";
+  import LifeDisplay from "./LifeDisplay.svelte";
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -431,26 +432,7 @@
 
 <div class="life">
   {#if matching}
-    <!-- <span>{gameInfo.playerA} : {leftLife !== undefined ? leftLife : ""}</span>
-    <span>{gameInfo.playerB} : {rightLife !== undefined ? rightLife : ""}</span> -->
-    <div
-      class="left-player-life"
-      style={gameInfo.playerA === $myData.nickname
-        ? `color: ${$gameSettingStore.themeColor}`
-        : "color: var(--text-color)"}
-    >
-      <span>{gameInfo.playerA}</span>
-      <i class="fa-solid fa-heart" />
-    </div>
-    <div
-      class="right-player-life"
-      style={gameInfo.playerB === $myData.nickname
-        ? `color: ${$gameSettingStore.themeColor}`
-        : "color: var(--text-color)"}
-    >
-      <i class="fa-solid fa-heart" />
-      <span>{gameInfo.playerB}</span>
-    </div>
+    <LifeDisplay {gameInfo}/>
   {/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
@@ -484,26 +466,6 @@
     width: 800px;
 
     color: var(--point-color);
-  }
-
-  .left-player-life {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .left-player-life > span {
-    padding-right: 10px;
-  }
-
-  .right-player-life {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  .right-player-life > span {
-    padding-left: 10px;
   }
 
   #game-canvas {
