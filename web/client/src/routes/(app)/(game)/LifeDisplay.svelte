@@ -3,10 +3,10 @@
   import { gameSettingStore, myData } from "../../../store";
 
   export let gameInfo: GameRoom;
+  export let leftLife: number;
+  export let rightLife: number;
 </script>
 
-<!-- <span>{gameInfo.playerA} : {leftLife !== undefined ? leftLife : ""}</span>
-    <span>{gameInfo.playerB} : {rightLife !== undefined ? rightLife : ""}</span> -->
 <div
   class="left-player-life"
   style={gameInfo.playerA === $myData.nickname
@@ -14,7 +14,9 @@
     : "color: var(--text-color)"}
 >
   <span>{gameInfo.playerA}</span>
-  <i class="fa-solid fa-heart" />
+  {#each Array(leftLife) as _}
+    <i class="fa-solid fa-heart" />
+  {/each}
 </div>
 <div
   class="right-player-life"
@@ -22,7 +24,9 @@
     ? `color: ${$gameSettingStore.themeColor}`
     : "color: var(--text-color)"}
 >
-  <i class="fa-solid fa-heart" />
+  {#each Array(rightLife) as _}
+    <i class="fa-solid fa-heart" />
+  {/each}
   <span>{gameInfo.playerB}</span>
 </div>
 
@@ -37,6 +41,10 @@
     padding-right: 10px;
   }
 
+  .left-player-life > i {
+    padding-right: 5px;
+  }
+
   .right-player-life {
     display: flex;
     align-items: center;
@@ -45,5 +53,9 @@
 
   .right-player-life > span {
     padding-left: 10px;
+  }
+
+  .right-player-life > i {
+    padding-left: 5px;
   }
 </style>

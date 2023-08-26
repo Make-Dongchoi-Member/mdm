@@ -90,8 +90,8 @@
   let gameOver: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
-  let leftLife: number;
-  let rightLife: number;
+  let leftLife: number = 0;
+  let rightLife: number = 0;
 
   let ballSpectrums: Position[] = new Array();
 
@@ -317,7 +317,7 @@
       rightLife = arg.playerB.life;
     });
 
-    $socketStore.on("game/pause", (arg: string) => {
+    $socketStore.on("game/pause", (arg: string, info: GameStatus) => {
       gaming = true;
       ballSpectrums = new Array();
       if (arg === "restart") {
@@ -327,6 +327,9 @@
         });
         return;
       }
+
+      leftLife = info.playerA.life;
+      rightLife = info.playerB.life;
 
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -432,7 +435,7 @@
 
 <div class="life">
   {#if matching}
-    <LifeDisplay {gameInfo}/>
+    <LifeDisplay {gameInfo} {leftLife} {rightLife}/>
   {/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
