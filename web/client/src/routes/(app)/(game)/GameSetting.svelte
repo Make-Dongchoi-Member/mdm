@@ -26,7 +26,7 @@
   };
 
   const ballColorEvent = (e: any) => {
-    $gameSettingStore.ballColor = e.target.value;
+    $gameSettingStore.themeColor = e.target.value;
     ballColorOptionOpen = false;
   };
 
@@ -85,10 +85,10 @@
     </div>
     <div class="shape-option">
       <button on:click={ballColorList}>
-        BALL COLOR
+        THEME COLOR
         <div
           class="ball-color-circle"
-          style="background-color: {$gameSettingStore.ballColor}"
+          style="background-color: {$gameSettingStore.themeColor}"
         />
       </button>
       <div
@@ -97,9 +97,9 @@
         on:outclick={ballOptionCloseEvent}
       >
         <button
-          value="#ff6231"
+          value="#d2d2d2"
           on:click={ballColorEvent}
-          style="background-color: #ff6231"
+          style="background-color: #d2d2d2"
         />
         <button
           value="#00BABC"
@@ -107,7 +107,7 @@
           style="background-color: #00babc"
         />
         <form>
-          <input type="color" bind:value={$gameSettingStore.ballColor} />
+          <input type="color" bind:value={$gameSettingStore.themeColor} />
         </form>
       </div>
     </div>

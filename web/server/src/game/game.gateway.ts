@@ -183,6 +183,7 @@ export class GameGateway implements OnGatewayDisconnect {
   handleGameStart(client: Socket, data: GameStartDTO) {
     // 서버에 저장해뒀던 게임 정보를 소켓 룸 키를 이용해 불러오기
     let gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
 
     // 방장 플레이어의 닉네임으로 온 요청이 아니라면 동작하지 않음
     if (data.nickname !== gameStatus.playerA.nickname) return;
@@ -191,15 +192,15 @@ export class GameGateway implements OnGatewayDisconnect {
     this.gameService.setGameState(data.roomKey, GameState.GAMING);
 
     // 반복함수에 게임 엔진과 게임 정보 넘겨서 3초 후 게임 진행
-    this.io.to(data.roomKey).emit('game/pause', '3');
+    this.io.to(data.roomKey).emit('game/pause', '3', gamePlayInfo);
     setTimeout(() => {
       gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
       if (!gameStatus) return;
-      this.io.to(data.roomKey).emit('game/pause', '2');
+      this.io.to(data.roomKey).emit('game/pause', '2', gamePlayInfo);
       setTimeout(() => {
         gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
         if (!gameStatus) return;
-        this.io.to(data.roomKey).emit('game/pause', '1');
+        this.io.to(data.roomKey).emit('game/pause', '1', gamePlayInfo);
         // 게임 정보 세팅 및 반복함수 재등록
         setTimeout(() => {
           gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
@@ -221,6 +222,7 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('game/revenge')
   handleGameRevenge(client: Socket, data: GameStartDTO) {
     let gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
+    const gamePlayInfo = this.gameService.gamePlayByGameStatus(gameStatus);
     this.gameService.setNewGame(data.roomKey);
 
     if (gameStatus.playerA.nickname === data.nickname) {
@@ -238,15 +240,15 @@ export class GameGateway implements OnGatewayDisconnect {
       }
     }
     if (gameStatus.state === GameState.GAMING) {
-      this.io.to(data.roomKey).emit('game/pause', '3');
+      this.io.to(data.roomKey).emit('game/pause', '3', gamePlayInfo);
       setTimeout(() => {
         gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
         if (!gameStatus) return;
-        this.io.to(data.roomKey).emit('game/pause', '2');
+        this.io.to(data.roomKey).emit('game/pause', '2', gamePlayInfo);
         setTimeout(() => {
           gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
           if (!gameStatus) return;
-          this.io.to(data.roomKey).emit('game/pause', '1');
+          this.io.to(data.roomKey).emit('game/pause', '1', gamePlayInfo);
           // 게임 정보 세팅 및 반복함수 재등록
           setTimeout(() => {
             gameStatus = this.gameService.getGameStatusByKey(data.roomKey);
@@ -360,7 +362,7 @@ export class GameGateway implements OnGatewayDisconnect {
       gs.setGame(roomKey);
       io.to(roomKey).emit('game/play', gamePlayInfo);
 
-      io.to(roomKey).emit('game/pause', 'restart');
+      io.to(roomKey).emit('game/pause', 'restart', gamePlayInfo);
     } else if (gameStatus.state === GameState.END) {
       clearInterval(gm.getIntervalID(roomKey));
       // 게임 결과 DB에 저장

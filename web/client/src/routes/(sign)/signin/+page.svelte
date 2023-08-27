@@ -5,8 +5,7 @@
 </script>
 
 <div class="logo">LOGO</div>
-<!-- <a href="http://localhost:3000/api/login"> -->
-<a href={ `${apiUrl}/api/login`}>
+<a href={`${apiUrl}/api/login`}>
   <button>LOGIN WITH 42</button>
 </a>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { modalStatesStore, myData } from "../../../store";
+  import { apiUrl, modalStatesStore, myData } from "../../../store";
   import MatchStat from "./MatchStat.svelte";
   import type { Record } from "../../../interfaces";
   import { onMount } from "svelte";
@@ -13,17 +13,14 @@
 
   async function avatarSetAPI(data: any) {
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/user/set/avatar",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${apiUrl}/api/user/set/avatar`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
       return response;
     } catch (error) {
       console.error("프로필 사진 설정 실패:", error);

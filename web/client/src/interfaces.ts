@@ -127,7 +127,7 @@ export interface RoomInfoDTO {
 export interface GameSetting {
   gameMode: string;
   barColor: string;
-  ballColor: string;
+  themeColor: string;
 }
 
 export interface ModalStates {

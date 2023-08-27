@@ -15,6 +15,7 @@
     Position,
   } from "../../../interfaces";
   import { goto } from "$app/navigation";
+  import LifeDisplay from "./LifeDisplay.svelte";
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -89,8 +90,8 @@
   let gameOver: boolean = false;
 
   // 내 목숨도 서버에서 전부 관리하는 것이 더 좋을 듯.
-  let leftLife: number;
-  let rightLife: number;
+  let leftLife: number = 0;
+  let rightLife: number = 0;
 
   let ballSpectrums: Position[] = new Array();
 
@@ -302,13 +303,13 @@
 
       // 공 잔상 그리기
       for (const i in ballSpectrums) {
-        ctx.fillStyle = $gameSettingStore.ballColor;
+        ctx.fillStyle = $gameSettingStore.themeColor;
         ctx.globalAlpha = 0.03 * +i;
         ctx.fillRect(ballSpectrums[i].x, ballSpectrums[i].y, ball.w, ball.h);
       }
 
       // 공 그리기
-      ctx.fillStyle = $gameSettingStore.ballColor;
+      ctx.fillStyle = $gameSettingStore.themeColor;
       ctx.fillRect(ball.x, ball.y, ball.w, ball.h);
 
       // 목숨 정보 받아 저장하기
@@ -316,7 +317,7 @@
       rightLife = arg.playerB.life;
     });
 
-    $socketStore.on("game/pause", (arg: string) => {
+    $socketStore.on("game/pause", (arg: string, info: GameStatus) => {
       gaming = true;
       ballSpectrums = new Array();
       if (arg === "restart") {
@@ -326,6 +327,9 @@
         });
         return;
       }
+
+      leftLife = info.playerA.life;
+      rightLife = info.playerB.life;
 
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -431,8 +435,7 @@
 
 <div class="life">
   {#if matching}
-    <span>{gameInfo.playerA} : {leftLife !== undefined ? leftLife : ""}</span>
-    <span>{gameInfo.playerB} : {rightLife !== undefined ? rightLife : ""}</span>
+    <LifeDisplay {gameInfo} {leftLife} {rightLife}/>
   {/if}
 </div>
 <canvas id="game-canvas">Canvas</canvas>
@@ -461,6 +464,7 @@
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     width: 800px;
 
