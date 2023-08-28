@@ -109,6 +109,7 @@
     .then((response) => response.json())
     .then((data) => {
       $blacklist = data.blackList;
+      $blacklist = $blacklist;
       $openedRoom = $openedRoom;
     });
   }
