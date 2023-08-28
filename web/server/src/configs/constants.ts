@@ -29,5 +29,5 @@ export const BALL_SIZE = 6;
 export const BAR_W = 7;
 export const BAR_BASIC_H = 120;
 export const BAR_HARD_H = 60;
-export const GAME_LIFE = 2;
+export const GAME_LIFE = 3;
 export const FRAME_PER_MS = 4;
