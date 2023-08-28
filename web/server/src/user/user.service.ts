@@ -103,6 +103,10 @@ export class UserService {
     await this.userRepository.updateUser(id, { skin });
   }
 
+  async setTwoFactorAuth(id: number, twoFactorAuth: boolean) {
+    await this.userRepository.updateUser(id, { twoFactorAuth });
+  }
+
   async friendDelete(id: number, friendNickname: string) {
     const me = await this.userRepository.getUserByIdWithRecord(id);
     const friend = await this.userRepository.getUserByNicknameWithRecord(

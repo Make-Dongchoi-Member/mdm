@@ -57,11 +57,18 @@ export class LoginService {
   }
 
   async generatePendingUser(code: string) {
-    const accessToken = await this.requestToken(code);
+    let accessToken = await this.requestToken(code);
+    const userData = await this.getUserFromFT(accessToken);
+    const dbUser = await this.userRepository.getUserById(userData.id);
+
+    if (dbUser && !dbUser.twoFactorAuth) {
+      accessToken = await this.generateJwtToken(userData);
+      return { id: dbUser.id, email: dbUser.email, accessToken };
+    }
     const newUser = await this.newPendingUser(accessToken);
     this.pendingUsers.save(newUser);
     this.sendMail(newUser.id);
-    return { id: newUser.id, email: newUser.email };
+    return { id: newUser.id, email: newUser.email, accessToken: undefined };
   }
 
   async verifyEmailCode(userId: number, emailCode: string) {
@@ -90,6 +97,24 @@ export class LoginService {
       this.httpService.post(oauthTokenUrl, data),
     );
     return response.data.access_token;
+  }
+
+  private async getUserFromFT(token: string) {
+    const baseUrl = this.config.get(OAUTH42_BASE_URL);
+    const userInfoApiUrl = baseUrl + this.config.get(USER_INFO_PATH);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    const response = await firstValueFrom(
+      this.httpService.get(userInfoApiUrl, { headers }),
+    );
+    return {
+      id: response.data.id,
+      email: response.data.email,
+      login: response.data.login,
+      image: response.data.image.link,
+    };
   }
 
   private async newPendingUser(token: string): Promise<PendingUser> {

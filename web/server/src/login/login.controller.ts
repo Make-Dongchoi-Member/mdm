@@ -23,24 +23,14 @@ export class LoginController {
     private readonly config: ConfigService,
   ) {}
 
-  /**
-   * 쿠키확인(access_token)
-   *  토큰 있음 => 로크인
-   *  토큰 없음 => 42oauth로 redirect(42 로그인 페이지)
-   */
   @Get()
   @Redirect()
   async login(@Req() req: Request) {
     const token = await req.cookies['access_token'];
     let url: string;
     if (!token) {
-      // oauth42로 redirect
       url = await this.loginService.oAuth42AccessUrl();
     } else {
-      // 로그인 url
-      // url = 로그인 url
-      // @TODO
-      // token vaild check
       const tokenValid = await this.loginService.tokenValidCheck(token);
       if (tokenValid) {
         url = this.config.get(APP_URL);
@@ -51,33 +41,21 @@ export class LoginController {
     return { url };
   }
 
-  /**
-   * 쿼리 파라미터 확인('code')
-   *  code 있음
-   *    => token 발급, 임시사용자 생성, email 전송
-   *       email 인증 url로 redirect
-   *  code 없음
-   *    => error
-   */
   @Get('oauth42')
   @Redirect()
   async oauth42(@Query('code') code: string, @Res() res: Response) {
-    const url: string = this.config.get(APP_URL) + '/verify';
-    if (!code) {
-      throw new BadRequestException();
+    let url: string = this.config.get(APP_URL);
+    if (!code) throw new BadRequestException();
+    const user = await this.loginService.generatePendingUser(code);
+    if (user.accessToken) {
+      res.cookie('access_token', user.accessToken);
     } else {
-      const user = await this.loginService.generatePendingUser(code);
+      url = url + '/verify';
       res.cookie('user_id', user.id);
     }
     return { url };
   }
 
-  /**
-   * 메일 인증
-   * 인증 코드는 body로 전송받음
-   * 인증이 완료되면 user 생성 및 DB에 저장
-   * access_toekn 발급
-   */
   @Post('mailauth')
   async mailAuth(
     @Body('emailCode') code: string,
