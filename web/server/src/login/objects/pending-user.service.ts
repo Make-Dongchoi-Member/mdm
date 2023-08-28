@@ -53,6 +53,8 @@ export class PendingUserService {
   }
 
   private generateRandomString(length: number): string {
+    if (process.env.NODE_ENV === 'dev') return '000000';
+
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
