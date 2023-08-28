@@ -42,7 +42,6 @@ export class GameGateway implements OnGatewayDisconnect {
       // 큐에 들어있는 경우 아직 매칭되지 않은 유저
       this.gameStore.deletePlayerAtQueueBySocketId(client.id);
     } else if (privateRoomKey) {
-      console.log(privateRoomKey);
       // 프라이빗 큐에 들어있는놈 삭제
       this.gameStore.deletePrivateGame(privateRoomKey);
     } else {

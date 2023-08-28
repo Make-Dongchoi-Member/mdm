@@ -75,7 +75,6 @@
       })
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
           if (response) {
             alertData.gameSetting = $gameSettingStore;
             $socketStore.emit("game/private-match", { alert: alertData });

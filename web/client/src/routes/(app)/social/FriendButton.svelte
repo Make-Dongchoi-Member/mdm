@@ -122,8 +122,8 @@
 
 	.gaming {
 		background-color: var(--point-color);
-		width: 5px;
-		height: 5px;
+		width: 10px;
+		height: 10px;
 		border-radius: 100px;
 		position: absolute;
 		top: 20px;

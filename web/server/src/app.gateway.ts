@@ -51,7 +51,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
       await this.userRepository.unsetSocketId(client.id);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -92,7 +92,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
       }
     } catch (e) {
-      console.log('There is error!');
+      console.error('There is error!');
       client.disconnect();
     }
   }

@@ -218,9 +218,7 @@
 
   onMount(async () => {
     refreshInfo();
-    // const roomKey = $page.url.searchParams.get("key");
     const gameRoom = await getRoomKeyAPI();
-    // console.log(gameRoom);
     if (gameRoom && gameRoom.playerB === undefined) {
       gameInfo.roomKey = gameRoom.roomKey;
       $myData.isInGame = true;
@@ -394,7 +392,6 @@
     });
 
     $socketStore.on("game/disconnect", () => {
-      console.log("emit: disconnect");
       ctx.fillStyle = gamePrefer.backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       refreshInfo();
