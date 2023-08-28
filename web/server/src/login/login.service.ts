@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { PendingUser } from './objects/pending-user.object';
@@ -65,10 +65,9 @@ export class LoginService {
       accessToken = await this.generateJwtToken(userData);
       return { id: dbUser.id, email: dbUser.email, accessToken };
     }
-    const newUser = await this.newPendingUser(accessToken);
-    this.pendingUsers.save(newUser);
-    this.sendMail(newUser.id);
-    return { id: newUser.id, email: newUser.email, accessToken: undefined };
+    this.pendingUsers.save(userData);
+    this.sendMail(userData.id);
+    return { id: userData.id, email: userData.email, accessToken: undefined };
   }
 
   async verifyEmailCode(userId: number, emailCode: string) {
@@ -93,10 +92,15 @@ export class LoginService {
       code: code,
       redirect_uri: `${this.config.get(API_URL)}/api/login/oauth42`,
     };
-    const response = await firstValueFrom(
-      this.httpService.post(oauthTokenUrl, data),
-    );
-    return response.data.access_token;
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post(oauthTokenUrl, data),
+      );
+      return response.data.access_token;
+    } catch (e) {
+      console.error(e);
+      throw new BadGatewayException();
+    }
   }
 
   private async getUserFromFT(token: string) {
@@ -106,34 +110,20 @@ export class LoginService {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     };
-    const response = await firstValueFrom(
-      this.httpService.get(userInfoApiUrl, { headers }),
-    );
-    return {
-      id: response.data.id,
-      email: response.data.email,
-      login: response.data.login,
-      image: response.data.image.link,
-    };
-  }
-
-  private async newPendingUser(token: string): Promise<PendingUser> {
-    const baseUrl = this.config.get(OAUTH42_BASE_URL);
-    const userInfoApiUrl = baseUrl + this.config.get(USER_INFO_PATH);
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-    const userInfo = await firstValueFrom(
-      this.httpService.get(userInfoApiUrl, { headers }),
-    );
-    const pendingUser = {
-      id: userInfo.data.id,
-      email: userInfo.data.email,
-      login: userInfo.data.login,
-      image: userInfo.data.image.link,
-    } as PendingUser;
-    return pendingUser;
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(userInfoApiUrl, { headers }),
+      );
+      return {
+        id: response.data.id,
+        email: response.data.email,
+        login: response.data.login,
+        image: response.data.image.link,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new BadGatewayException();
+    }
   }
 
   private async sendMail(id: number) {

@@ -161,4 +161,12 @@ export class AlertService {
   getNewGameRoomKey(): string {
     return this.gameStore.newGameRoomKey();
   }
+
+  async isBlocked(senderId: number, receiverId: number): Promise<boolean> {
+    const sender = await this.userRepository.getUserById(senderId);
+    const receiver = await this.userRepository.getUserById(receiverId);
+    return (
+      sender.blocks.includes(receiverId) || receiver.blocks.includes(senderId)
+    );
+  }
 }

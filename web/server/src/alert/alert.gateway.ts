@@ -53,16 +53,19 @@ export class AlertGateway {
   @SubscribeMessage('alert/game')
   async handleAlertGame(client: Socket, data: AlertData) {
     try {
-      await this.alertService.gameAlertSave(data);
+      if (this.alertService.isBlocked(data.sender.id, data.receiver.id)) {
+        this.io.to(client.id).emit('alert/redirect', { go: false });
+      }
       data.roomId = this.alertService.getNewGameRoomKey();
       this.gameStore.pushPrivateGame(client, data);
+      await this.alertService.gameAlertSave(data);
       client.join(data.roomId);
       const receiverSocketId = await this.alertService.getSocketId(
         data.receiver.id,
       );
       this.alertService.setAlertState(data.receiver.id, true);
       client.to(receiverSocketId).emit('alert');
-      this.io.to(client.id).emit('alert/redirect');
+      this.io.to(client.id).emit('alert/redirect', { go: true });
     } catch (error) {
       console.error(error);
     }

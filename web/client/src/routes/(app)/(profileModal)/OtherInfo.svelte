@@ -19,8 +19,8 @@
   let isplaywithchecked: boolean = false;
 
   onMount(() => {
-    $socketStore.on("alert/redirect", () => {
-      goto("/");
+    $socketStore.on("alert/redirect", (arg: { go: boolean }) => {
+      if (arg.go) goto("/");
     });
   });
 
@@ -106,12 +106,12 @@
         "Content-Type": "application/json",
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      $blacklist = data.blackList;
-      $openedRoom = $openedRoom;
-    });
-  }
+      .then((response) => response.json())
+      .then((data) => {
+        $blacklist = data.blackList;
+        $openedRoom = $openedRoom;
+      });
+  };
 </script>
 
 <div class="personal_box">
@@ -131,19 +131,19 @@
   <MatchStat records={user.record} />
 </div>
 <div class="option_box">
-  <button disabled={user.relation === Relation.BLOCK} on:click={sendFollow}>    
-      {#if isfollowchecked && user.relation !== Relation.FRIEND && user.relation !== Relation.BLOCK}
-        <div class="follow-checked"><i class="fa-solid fa-check" /></div>
-      {:else}
-       <div>{user.relation === Relation.FRIEND ? "UNFOLLOW" : "FOLLOW"}</div>
-      {/if}    
+  <button disabled={user.relation === Relation.BLOCK} on:click={sendFollow}>
+    {#if isfollowchecked && user.relation !== Relation.FRIEND && user.relation !== Relation.BLOCK}
+      <div class="follow-checked"><i class="fa-solid fa-check" /></div>
+    {:else}
+      <div>{user.relation === Relation.FRIEND ? "UNFOLLOW" : "FOLLOW"}</div>
+    {/if}
   </button>
-  <button disabled={user.relation === Relation.BLOCK} on:click={sendGame}>    
-      {#if isplaywithchecked && user.relation !== Relation.BLOCK}
-        <div class="playwith-checked"><i class="fa-solid fa-check" /></div>
-      {:else}
-        <div>PLAY WITH</div>
-      {/if}    
+  <button disabled={user.relation === Relation.BLOCK} on:click={sendGame}>
+    {#if isplaywithchecked && user.relation !== Relation.BLOCK}
+      <div class="playwith-checked"><i class="fa-solid fa-check" /></div>
+    {:else}
+      <div>PLAY WITH</div>
+    {/if}
   </button>
   <button on:click={sendBlock}>
     {user.relation === Relation.BLOCK ? "UNBLOCK" : "BLOCK"}
@@ -177,7 +177,7 @@
     width: 150px;
     height: 40px;
     margin-bottom: 20px;
-    background-color: var(--dark-color);    
+    background-color: var(--dark-color);
   }
 
   .option_box > button:hover {
@@ -221,9 +221,9 @@
     background-color: var(--dark-color);
   }
 
-  .follow-checked, .playwith-checked  {
+  .follow-checked,
+  .playwith-checked {
     color: var(--point-color);
-    margin-left: 5px;    
+    margin-left: 5px;
   }
-  
 </style>

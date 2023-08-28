@@ -19,15 +19,12 @@ export class PendingUserService {
     const findUser = this.search(userId);
     const currentTime = new Date();
     if (!findUser) {
-      // err) 유저를 찾을 수 없음
       throw new NotFoundException('NotFound');
     }
     if (currentTime > findUser.validity) {
-      // err) 인증시간이 지남
       throw new NotFoundException('TimeOver');
     }
     if (emailCode !== findUser.authCode) {
-      // err) 인증번호가 다름
       throw new UnauthorizedException('WrongCode');
     }
     this.delete(userId);

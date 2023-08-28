@@ -16,8 +16,8 @@ if [ "$NODE_ENV" == "prod" ]; then
 
 	cd $SERVER_PATH
 	npm install
-	# npm run build
-	npm run start:dev
+	npm run build
+	npm run start:prod
 
 else
 	echo ""
