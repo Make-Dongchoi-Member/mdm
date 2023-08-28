@@ -130,7 +130,7 @@
   <div>
     <div class="box">
       <button type="button" id="change-button" on:click={profileClickEvent}>
-        <img class="image" src={$myData.avatar} alt="profile" />
+        <img class="profile" src={$myData.avatar} alt="profile" />
       </button>
       <input
         id="input-profile"
@@ -189,7 +189,7 @@
     opacity: 0.5;
   }
 
-  .box > button > .image {
+  .box > button > .profile {
     width: 110%;
     height: 110%;
     object-fit: cover;
