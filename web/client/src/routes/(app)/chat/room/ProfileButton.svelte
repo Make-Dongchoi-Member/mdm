@@ -10,8 +10,7 @@
   } from "../../../../store";
   import { page } from "$app/stores";
   import { onDestroy } from "svelte";
-
-  export let key: string;
+  
   export let value: Profile;
 
   let isClicked: boolean = false;
