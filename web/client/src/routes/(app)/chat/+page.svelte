@@ -3,12 +3,13 @@
   import ChatRoomEnterPasswordModal from "./ChatRoomEnterPasswordModal.svelte";
   import {
     apiUrl,
+    blacklist,
     modalStatesStore,
     myData,
     roomList,
     socketStore,
   } from "../../../store";
-  import type { Room, RoomEnterDTO } from "../../../interfaces";
+  import type { Room } from "../../../interfaces";
   import { onMount } from "svelte";
   import { RoomType } from "../../../enums";
   import { goto } from "$app/navigation";
@@ -18,7 +19,22 @@
   onMount(() => {
     $modalStatesStore.isRoomCreateModal = false;
     getRoomList();
+    getBlackList();
   });
+
+  const getBlackList = async () => {
+    const response = await fetch(`${apiUrl}/api/user/blacklist`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      $blacklist = data.blackList;
+    });
+  }
 
   const getRoomList = async () => {
     const response = await fetch(`${apiUrl}/api/chat/list`, {
@@ -28,16 +44,16 @@
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        $roomList.clear();
-        for (let i = 0; i < data.rooms.length; i++) {
-          const element = data.rooms[i];
-          $roomList.set(Number(element.roomId), element);
-        }
-        $roomList = $roomList;
-      })
-      .catch((error) => console.error("Error:", error));
+    .then((response) => response.json())
+    .then((data) => {
+      $roomList.clear();
+      for (let i = 0; i < data.rooms.length; i++) {
+        const element = data.rooms[i];
+        $roomList.set(Number(element.roomId), element);
+      }
+      $roomList = $roomList;
+    })
+    .catch((error) => console.error("Error:", error));
   };
 
   const postRoomEnter = (roomId: string, password: string) => {

@@ -209,6 +209,7 @@ export class ChatService {
 
   private convertMessageEntityToMessage(entity: MessageEntity): Message {
     const sender: UserData = {
+      id: entity.sender.id,
       avatar: entity.sender.avatar,
       nickname: entity.sender.nickName,
     };

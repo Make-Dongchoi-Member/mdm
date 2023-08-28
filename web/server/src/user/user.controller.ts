@@ -11,7 +11,7 @@ import { UserId } from 'src/decorators/user-id.decorator';
 import { SetStatusDto } from './dto/SetStatusDto';
 import { SetAvatarDto } from './dto/SetAvatarDto';
 import { SetSkinDto } from './dto/SetSkinDto';
-import { MyData, OtherUserData, UserData } from 'src/types/interfaces';
+import { MyData, OtherUserData } from 'src/types/interfaces';
 import { InfoValidPipe } from './pipes/info.valid.pipe';
 import { SetNicknameValidPipe } from './pipes/setnickname.valid.pipe';
 import { UserNicknameDto } from './dto/UserNickname.dto';
