@@ -44,9 +44,6 @@ export class AlertController {
 
   @Post('deny')
   async postDeny(@Body('data') data: AlertDTO): Promise<void> {
-    // if (data.alert.alertType === AlertType.GAME_REQUEST) {
-    //   this.gameStore.deletePrivateGame(data.alert.roomId);
-    // }
     await this.alertService.alertDelete(data.alert.alertId);
   }
 

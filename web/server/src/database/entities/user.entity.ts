@@ -51,6 +51,9 @@ export class Users extends BaseEntity {
   @Column({ default: false })
   isAlert: boolean;
 
+  @Column({ default: true })
+  twoFactorAuth: boolean;
+
   @OneToMany(() => GameHistory, (history) => history.user)
   record: GameHistory[];
 

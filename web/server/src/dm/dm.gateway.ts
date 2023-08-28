@@ -5,7 +5,6 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { DirectMessageDTO } from './dto/DirectMessage.dto';
-import { UserRepository } from 'src/database/repositories/user.repository';
 import { DMService } from './dm.service';
 
 @WebSocketGateway({
