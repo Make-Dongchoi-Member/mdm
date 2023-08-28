@@ -34,6 +34,12 @@ export class UserService {
     return myData;
   }
 
+  async getBlackList(id: number) {
+    const user = await this.userRepository.getUserById(id);
+    if (!user) throw new NotFoundException(`user_id ${id} Not Found`);
+    return { blackList: user.blocks };
+  }
+
   async getUserData(id: number, nickname: string) {
     const other = await this.userRepository.getUserByNicknameWithRecord(
       nickname,
