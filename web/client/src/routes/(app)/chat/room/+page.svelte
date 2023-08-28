@@ -8,6 +8,7 @@
     myData,
     openedRoom,
     apiUrl,
+    blacklist,
   } from "../../../../store";
   import ChatMessage from "./ChatMessage.svelte";
   import ChatMember from "./ChatMember.svelte";
@@ -26,6 +27,7 @@
     $openedRoom.roomtype === RoomType.LOCK ? "initialpw" : "";
 
   onMount(() => {
+    getBlackList();
     getRoomData();
     $socketStore.emit("chat/join", {
       userId: $myData.id,
@@ -78,6 +80,20 @@
     $socketStore.off("chat/set-mute");
     $socketStore.off("chat/unset-mute");
   });
+
+  const getBlackList = async () => {
+    const response = await fetch(`${apiUrl}/api/user/blacklist`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      $blacklist = data.blackList;
+    });
+  }
 
   const getRoomData = async () => {
     const response = await fetch(
