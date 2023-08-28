@@ -28,7 +28,7 @@
   <div class="other-profile-container">
     {#each Array.from($openedRoom.members) as [key, value]}
       {#if key != $myData.id}
-        <ProfileButton {key} {value} />
+        <ProfileButton {value} />
       {/if}
     {/each}
   </div>

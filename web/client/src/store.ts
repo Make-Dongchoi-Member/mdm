@@ -8,9 +8,8 @@ import type {
   RoomList,
   DMHistory,
   UserData,
-  OtherUserData,
 } from "./interfaces";
-import { Level, RoomType, UserState } from "./enums";
+import { Level, RoomType } from "./enums";
 import { io } from "socket.io-client";
 
 const apiUrl: string =
@@ -84,6 +83,8 @@ const dm: Writable<DMHistory> = writable({
   history: [],
 });
 
+const blacklist: Writable<number[]> = writable([]);
+
 export {
   gameSettingStore,
   modalStatesStore,
@@ -94,4 +95,5 @@ export {
   dm,
   profileModalStore,
   apiUrl,
+  blacklist,
 };

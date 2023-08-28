@@ -59,11 +59,6 @@
   };
 
   const changeButtonEvent = () => {
-    /*
-					@TODO
-					방 설정을 위해 필요한 입력 체크
-					방 설정 변경 API 요청
-			*/
     roomtype = RoomType.NORMAL;
     if (isPassword && !isPrivate) {
       roomtype = RoomType.LOCK;

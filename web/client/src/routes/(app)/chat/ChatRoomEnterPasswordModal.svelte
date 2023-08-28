@@ -8,10 +8,6 @@
   export let selectedRoomId: string;
 
   const makeButtonEvent = () => {
-    /*
-        @TODO
-        방 입장 api실행. 비밀번호 넣어서 실행.
-        */
     postRoomEnter(selectedRoomId, passwordValue);
   };
 

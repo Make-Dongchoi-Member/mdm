@@ -2,9 +2,11 @@
   import MatchStat from "./MatchStat.svelte";
   import {
     apiUrl,
+    blacklist,
     gameSettingStore,
     modalStatesStore,
     myData,
+    openedRoom,
     socketStore,
   } from "../../../store";
   import type { AlertData, OtherUserData } from "../../../interfaces";
@@ -84,12 +86,28 @@
         if (response.ok) {
           user.relation =
             user.relation === Relation.BLOCK ? Relation.NONE : Relation.BLOCK;
+          getBlackList();
         }
       })
       .catch((e) => {
         console.error(e);
       });
   };
+
+  const getBlackList = async () => {
+    const response = await fetch(`${apiUrl}/api/user/blacklist`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      $blacklist = data.blackList;
+      $openedRoom = $openedRoom;
+    });
+  }
 </script>
 
 <div class="personal_box">

@@ -4,10 +4,6 @@
   import { clickOutside, escapeKey } from "../../../actions";
 
   const logoutEvent = () => {
-    /*
-			@TODO
-			LOGOUT 했다는 API 요청
-		*/
     $socketStore.emit("app/logout");
 
     deleteToken("access_token");

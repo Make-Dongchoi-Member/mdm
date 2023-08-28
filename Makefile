@@ -11,5 +11,5 @@ down:
 	docker-compose -f docker-compose.prod.yml down
 
 re:
-	make pdown
+	make down
 	make

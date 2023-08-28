@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { myData, openedRoom, socketStore } from "../../../../store";
+  import { myData, openedRoom, socketStore, blacklist } from "../../../../store";
   import type { Message } from "../../../../interfaces";
   import { page } from "$app/stores";
 
@@ -80,6 +80,7 @@
 <div class="chat-main-box">
   <div class="chatting-box">
     {#each $openedRoom.history as message}
+      {#if !$blacklist.includes(Number(message.sender.id))}
       <div
         class={$myData.nickname === message.sender.nickname
           ? "chatting my-message"
@@ -106,6 +107,7 @@
           </div>
         </div>
       </div>
+      {/if}
     {/each}
   </div>
   <div class="chat-send-box">
