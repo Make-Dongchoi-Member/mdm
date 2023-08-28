@@ -42,6 +42,11 @@ export class DMService {
     const sender = await this.userRepository.getUserByIdWithRecord(
       message.sender.id,
     );
+    if (
+      receiver.blocks.includes(sender.id) ||
+      sender.blocks.includes(receiver.id)
+    )
+      return null;
     await this.userRepository.pushDM(sender, message);
     return receiver.socket;
   }

@@ -4,10 +4,10 @@ prod:
 dev:
 	docker-compose -f docker-compose.dev.yml up
 
-down:
+ddown:
 	docker-compose -f docker-compose.dev.yml down
 
-pdown:
+down:
 	docker-compose -f docker-compose.prod.yml down
 
 re:

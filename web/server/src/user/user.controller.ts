@@ -18,6 +18,7 @@ import { UserNicknameDto } from './dto/UserNickname.dto';
 import { UserState } from 'src/types/enums';
 import { SearchUserDTO } from './dto/SearchUser.dto';
 import { Limit } from './guards/limit.guard';
+import { BlackListDTO } from './dto/BlackListDto';
 
 @Controller('api/user')
 export class UserController {
@@ -32,6 +33,11 @@ export class UserController {
   @Get('me')
   async me(@UserId(ParseIntPipe) userId: number): Promise<MyData> {
     return await this.userService.getMyData(userId);
+  }
+
+  @Get('blacklist')
+  async blackList(@UserId(ParseIntPipe) userId: number): Promise<BlackListDTO> {
+    return await this.userService.getBlackList(userId);
   }
 
   /**
