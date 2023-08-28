@@ -20,6 +20,7 @@ export interface MyData extends UserData {
   rooms: number[];
   friends: UserData[];
   isAlert: boolean;
+  twoFactorAuth: boolean;
 }
 
 export interface OtherUserData extends UserData {

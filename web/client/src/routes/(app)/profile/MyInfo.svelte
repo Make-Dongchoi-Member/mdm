@@ -2,10 +2,9 @@
   import { apiUrl, modalStatesStore, myData } from "../../../store";
   import MatchStat from "./MatchStat.svelte";
   import type { Record } from "../../../interfaces";
-  import { onMount } from "svelte";
 
   export let records: Record[] = [];
-  let profileSrc: string = "";
+  let toggle: boolean = $myData.twoFactorAuth;
 
   const profileClickEvent = () => {
     (document.querySelector("#input-profile") as HTMLInputElement).click();
@@ -49,9 +48,47 @@
       fileReader.readAsDataURL(imageFile);
     }
   };
+
+  const authToggleButton = () => {
+    authSetAPI({ data: { twoFactorAuth: !toggle } }).then((res) => {
+      if (res) {
+        if (res.ok) {
+          toggle = !toggle;
+          $myData.twoFactorAuth = toggle;
+        } else {
+          alert("error! please retry");
+        }
+      }
+    });
+  };
+
+  async function authSetAPI(data: any) {
+    try {
+      const response = await fetch(`${apiUrl}/api/user/set/two_factor_auth`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      return response;
+    } catch (error) {
+      console.error("프로필 사진 설정 실패:", error);
+    }
+  }
 </script>
 
 <div class="personal_box">
+  {#if toggle}
+    <button class="toggle" on:click={authToggleButton}>
+      <i class="fa-solid fa-lock" />
+    </button>
+  {:else}
+    <button class="toggle" on:click={authToggleButton}>
+      <i class="fa-solid fa-lock-open" />
+    </button>
+  {/if}
   <button
     type="button"
     class="profile_image_circle"
@@ -88,7 +125,26 @@
 </div>
 
 <style>
+  .toggle {
+    position: absolute;
+    top: 125px;
+    left: 145px;
+    border: none;
+    background-color: var(--bg-color);
+  }
+
+  .fa-lock {
+    font-size: 20px;
+    color: var(--point-color);
+  }
+
+  .fa-lock-open {
+    font-size: 20px;
+    color: var(--border-color);
+  }
+
   .personal_box {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
