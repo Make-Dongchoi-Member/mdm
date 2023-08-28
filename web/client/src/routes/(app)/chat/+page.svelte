@@ -73,10 +73,7 @@
     })
       .then((response) => {
         if (response.status === 403) {
-          /**
-           * @TODO
-           * password 틀린 경우 처리
-           */
+          alert("wrong password!");
         } else if (response.status === 201) {
           $modalStatesStore.isPasswordInputModal = false;
           goto(`/chat/room?id=${roomId}`);
