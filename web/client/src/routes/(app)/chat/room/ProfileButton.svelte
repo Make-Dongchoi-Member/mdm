@@ -50,10 +50,6 @@
   };
 
   const kickClickEvent = () => {
-    /*
-			@TODO
-			강퇴 SOCKET 요청
-		*/
     if ($openedRoom.myLevel === Level.MEMBER) return;
     if ($openedRoom.myLevel === Level.ADMIN && value.level !== Level.MEMBER)
       return;

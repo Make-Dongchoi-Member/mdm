@@ -51,11 +51,6 @@
       };
       fileReader.readAsDataURL(imageFile);
     }
-    /**
-     * @TODO
-     * 업로드한 이미지가 적절한지 확인
-     * 프로필 변경 API
-     */
   };
 
   const nicknameClickEvent = () => {
