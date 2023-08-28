@@ -84,6 +84,8 @@ const dm: Writable<DMHistory> = writable({
   history: [],
 });
 
+const blacklist: Writable<string[]> = writable([]);
+
 export {
   gameSettingStore,
   modalStatesStore,
@@ -94,4 +96,5 @@ export {
   dm,
   profileModalStore,
   apiUrl,
+  blacklist,
 };
