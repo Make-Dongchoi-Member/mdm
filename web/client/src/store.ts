@@ -32,6 +32,7 @@ const myData: Writable<MyData> = writable({
   record: [],
   isAlert: false,
   isInGame: false,
+  twoFactorAuth: false,
 });
 
 const gameSettingStore: Writable<GameSetting> = writable({

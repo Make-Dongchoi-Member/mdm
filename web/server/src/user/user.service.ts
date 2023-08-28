@@ -30,6 +30,7 @@ export class UserService {
       friends,
       record,
       isAlert: user.isAlert,
+      twoFactorAuth: user.twoFactorAuth,
     };
     return myData;
   }

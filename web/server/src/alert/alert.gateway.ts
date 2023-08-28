@@ -53,10 +53,10 @@ export class AlertGateway {
   @SubscribeMessage('alert/game')
   async handleAlertGame(client: Socket, data: AlertData) {
     try {
+      await this.alertService.gameAlertSave(data);
       data.roomId = this.alertService.getNewGameRoomKey();
       this.gameStore.pushPrivateGame(client, data);
       client.join(data.roomId);
-      await this.alertService.gameAlertSave(data);
       const receiverSocketId = await this.alertService.getSocketId(
         data.receiver.id,
       );

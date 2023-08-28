@@ -122,7 +122,13 @@ export class AlertService {
     const friend = await this.userRepository.getUserByIdWithRecord(friendId);
     const me = await this.userRepository.getUserByIdWithRecord(myId);
 
-    if (friend.friends.includes(me.id)) return;
+    if (
+      friend.friends.includes(me.id) ||
+      me.blocks.includes(friend.id) ||
+      friend.blocks.includes(me.id)
+    ) {
+      return;
+    }
 
     friend.friends.push(me.id);
     me.friends.push(friend.id);

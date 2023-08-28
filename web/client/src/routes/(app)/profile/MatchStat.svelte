@@ -1,104 +1,94 @@
 <script lang="ts">
   import { onMount } from "svelte";
-	import type { Record } from "../../../interfaces";
+  import type { Record } from "../../../interfaces";
   import { myData } from "../../../store";
 
-	export let records: Record[] = [];
+  export let records: Record[] = [];
 
-	// onMount(() => {
-	// 	records = $myData.record as Record[];
-	// 	if (records && records.length !== 0) {
-	// 		plays = records.length;
-	// 		wins = records.filter((r) => r.win).length;
-	// 		losses = plays - wins;
-	// 		winRate = wins / plays * 100;
-	// 	}
-	// })
+  const win = (records: Record[]) => {
+    return records.filter((r) => r.win).length;
+  };
 
-	const win = (records: Record[]) => {
-		return records.filter((r) => r.win).length;
-	}
+  const losses = (records: Record[]) => {
+    return records.length - win(records);
+  };
 
-	const losses = (records: Record[]) => {
-		return records.length - win(records);
-	}
-
-	const winRate = (record: Record[]) => {
-		if (records.length !== 0) {
-			return (win(record) / records.length * 100).toFixed(2);
-		}
-		return 0;
-	}
+  const winRate = (record: Record[]) => {
+    if (records.length !== 0) {
+      return ((win(record) / records.length) * 100).toFixed(2);
+    }
+    return 0;
+  };
 </script>
 
 <div class="match_count_area">
-	<div>
-		plays
-		<span>{records.length}</span>
-	</div>
-	<div class="division_line"></div>
-	<div>
-		wins
-		<span>{win(records)}</span>
-	</div>
-	<div>
-		losses
-		<span>{losses(records)}</span>
-	</div>
+  <div>
+    plays
+    <span>{records.length}</span>
+  </div>
+  <div class="division_line" />
+  <div>
+    wins
+    <span>{win(records)}</span>
+  </div>
+  <div>
+    losses
+    <span>{losses(records)}</span>
+  </div>
 </div>
 <div class="win_rate_area">
-	win rate
-	<span>{winRate(records)}%</span>
+  win rate
+  <span>{winRate(records)}%</span>
 </div>
 
 <style>
-	.match_count_area {
-		height: 50%;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-evenly;
-		align-items: center;
-		text-align: center;
-		margin-top: 30px;
-	}
+  .match_count_area {
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    margin-top: 30px;
+  }
 
-	.match_count_area > div {
-		display: flex;
-		flex-direction: column;
-		font-size: 20px;
-		font-weight: 100;
-		color: var(--border-color);
-	}
-	
-	.match_count_area > div > span {
-		font-size: 30px;
-		color: var(--text-color);
-		margin-top: 10px;
-	}
+  .match_count_area > div {
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    font-weight: 100;
+    color: var(--border-color);
+  }
 
-	.division_line {
-		border-left: 1px solid var(--border-color);
-		height: 80px;
-		margin: 0;
-		padding: 0;
-	}
+  .match_count_area > div > span {
+    font-size: 30px;
+    color: var(--text-color);
+    margin-top: 10px;
+  }
 
-	.win_rate_area {
-		height: 50%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		text-align: center;
-		border: 1px solid var(--border-color);
-		font-size: 20px;
-		font-weight: 100;
-		color: var(--text-color);
-		margin: 20px;
-	}
+  .division_line {
+    border-left: 1px solid var(--border-color);
+    height: 80px;
+    margin: 0;
+    padding: 0;
+  }
 
-	.win_rate_area > span {
-		font-size: 30px;
-		color: var(--point-color);
-		padding-top: 7px;
-	}
+  .win_rate_area {
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    font-size: 20px;
+    font-weight: 100;
+    color: var(--text-color);
+    margin: 20px;
+  }
+
+  .win_rate_area > span {
+    font-size: 30px;
+    color: var(--point-color);
+    padding-top: 7px;
+  }
 </style>
