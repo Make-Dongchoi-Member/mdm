@@ -90,7 +90,9 @@
         if (response.ok) {
           user.relation =
             user.relation === Relation.BLOCK ? Relation.NONE : Relation.BLOCK;
-          getBlackList();
+          setTimeout(() => {
+            getBlackList();
+          }, 10);
         }
       })
       .catch((e) => {

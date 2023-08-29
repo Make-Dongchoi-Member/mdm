@@ -109,6 +109,8 @@
 
     margin-top: 130px;
     margin-left: 135px;
+
+    z-index: 10;
   }
 
   .close-button {
